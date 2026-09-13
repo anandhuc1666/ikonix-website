@@ -12,23 +12,35 @@ dotenv.config();
 
 const app = express();
 
+// Connect MongoDB
 connectDB();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
+
 app.use(
   express.urlencoded({
     extended: true,
   }),
 );
 
+// Routes
 app.use("/api/auth", authRouter);
 app.use("/api/brands", brandRouter);
 app.use("/api/products", productRouter);
 app.use("/api/Youtube", YoutubeRoute);
 app.use("/api/admin", adminRouter);
 
+// Port
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+
+// Local development server
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+// Important for Vercel
+export default app;
