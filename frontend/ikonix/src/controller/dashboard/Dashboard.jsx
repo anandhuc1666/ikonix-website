@@ -32,7 +32,7 @@ function Dashboard() {
       // ------------------------------------------
 
       const response = await axios.get(
-        "http://localhost:5000/api/brands/getAllBrands",
+        "https://ikonix-backend.vercel.app/api/brands/getAllBrands",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ function Dashboard() {
       // ------------------------------------------
 
       const productsResponse = await axios.get(
-        "http://localhost:5000/api/products/getAllProducts",
+        "https://ikonix-backend.vercel.app/api/products/getAllProducts",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -80,7 +80,7 @@ function Dashboard() {
       const token = localStorage.getItem("adminToken");
 
       const response = await axios.get(
-        "http://localhost:5000/api/Youtube/getYoutube",
+        "https://ikonix-backend.vercel.app/api/Youtube/getYoutube",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,7 +125,7 @@ function Dashboard() {
       }
 
       const response = await axios.post(
-        "http://localhost:5000/api/Youtube/createYoutube",
+        "https://ikonix-backend.vercel.app/api/Youtube/createYoutube",
         youtubepost,
         {
           headers: {

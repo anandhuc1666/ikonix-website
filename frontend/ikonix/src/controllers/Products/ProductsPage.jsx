@@ -45,7 +45,7 @@ function ProductsPage() {
       setLoading(true);
 
       const response = await axios.get(
-        "http://localhost:5000/api/products/getAllProducts"
+        "https://ikonix-backend.vercel.app/api/products/getAllProducts"
       );
 
       console.log(

@@ -54,11 +54,11 @@ function BrandProducts() {
           productResponse,
         ] = await Promise.all([
           axios.get(
-            "http://localhost:5000/api/brands/getAllBrands"
+            "https://ikonix-backend.vercel.app/api/brands/getAllBrands"
           ),
 
           axios.get(
-            "http://localhost:5000/api/products/getAllProducts"
+            "https://ikonix-backend.vercel.app/api/products/getAllProducts"
           ),
         ]);
 

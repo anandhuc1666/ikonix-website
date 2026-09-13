@@ -52,7 +52,7 @@ function Home() {
   const fetchYoutubeVideo = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/Youtube/getYoutube",
+        "https://ikonix-backend.vercel.app/api/Youtube/getYoutube",
       );
 
       console.log("YouTube Response:", response.data);

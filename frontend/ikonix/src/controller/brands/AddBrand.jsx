@@ -3,7 +3,7 @@ import axios from "axios";
 import { ArrowLeft, ImagePlus, X, Plus, Check, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
 
 const AddBrand = () => {
   const navigate = useNavigate();

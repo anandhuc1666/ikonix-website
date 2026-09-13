@@ -36,7 +36,7 @@ function Brands() {
       setLoading(true);
 
       const response = await axios.get(
-        "http://localhost:5000/api/brands/getAllBrands"
+        "https://ikonix-backend.vercel.app/api/brands/getAllBrands"
       );
 
       console.log(

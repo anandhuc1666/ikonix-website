@@ -45,7 +45,7 @@ function ProductDetails() {
     try {
       const response =
         await axios.get(
-          `http://localhost:5000/api/products/getProductById/${id}`
+          `https://ikonix-backend.vercel.app/api/products/getProductById/${id}`
         );
 
       const selectedProduct =
@@ -81,7 +81,7 @@ function ProductDetails() {
     try {
       const response =
         await axios.get(
-          "http://localhost:5000/api/products/getAllProducts"
+          "https://ikonix-backend.vercel.app/api/products/getAllProducts"
         );
 
       setAllProducts(

@@ -13,7 +13,7 @@ function IndustryBrands() {
     try {
       setLoading(true);
 
-      const response = await axios.get("http://localhost:5000/api/brands/getAllBrands");
+      const response = await axios.get("https://ikonix-backend.vercel.app/api/brands/getAllBrands");
 
       console.log("Brands Response:", response.data);
 
