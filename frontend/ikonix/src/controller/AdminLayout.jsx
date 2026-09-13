@@ -1,7 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-import Navigation from "./navigation/navigation.jsx";
+import Navigation from "./navigation/Navigation.jsx";
 
 function AdminLayout() {
   return (
