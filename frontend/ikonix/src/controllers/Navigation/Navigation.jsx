@@ -2,6 +2,7 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { UserCircle, Menu, X } from "lucide-react";
 import { useState } from "react";
+import logo from "../../../public/imageone.png"
 
 function Navigation() {
   const location = useLocation();
@@ -67,12 +68,12 @@ function Navigation() {
               md:w-14
               md:h-14
               rounded-full
-              bg-black
               flex
               items-center
               justify-center
             "
           >
+            <img src={logo} alt="ikonix" className="rounded-full"/>
             {/* Add your logo image here later */}
 
             {/* Example:
