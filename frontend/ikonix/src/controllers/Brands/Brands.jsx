@@ -116,6 +116,7 @@ function Brands() {
         w-full
         min-h-screen
         bg-white
+        sm:mt-20 mt-16
       "
     >
 
@@ -140,7 +141,7 @@ function Brands() {
             items-center
             gap-2
             text-[9px]
-            sm:text-[10px]
+            sm:text-[12px]
             uppercase
             text-gray-400
           "

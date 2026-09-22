@@ -41,7 +41,7 @@ function IndustryBrands() {
   }, []);
 
   return (
-    <section className="w-full bg-white">
+    <section className="w-full bg-white sm:mt-20 mt-16">
       {/* ==================================================
           ABOUT / INTRO SECTION
       ================================================== */}
@@ -71,7 +71,7 @@ function IndustryBrands() {
             <h2
               className="
                 text-2xl
-                sm:text-3xl
+                sm:text-4xl
                 font-semibold
                 text-gray-900
               "
@@ -84,7 +84,7 @@ function IndustryBrands() {
               className="
                 mt-5
                 text-xs
-                sm:text-sm
+                sm:text-[16px]
                 leading-5
                 text-gray-700
               "
@@ -98,7 +98,7 @@ function IndustryBrands() {
               className="
                 mt-3
                 text-xs
-                sm:text-sm
+                sm:text-[16px]
                 leading-5
                 text-gray-700
               "
@@ -132,8 +132,8 @@ function IndustryBrands() {
         <div className="mt-10">
           <p
             className="
-              text-xs
-              font-medium
+              text-[14px]
+              font-bold
               text-[#FC9D03]
             "
           >
@@ -173,14 +173,14 @@ function IndustryBrands() {
                 </span>
 
                 <div>
-                  <h3 className="text-sm font-semibold">
+                  <h3 className="text-ml font-semibold">
                     Product Consultation
                   </h3>
 
                   <p
                     className="
                       mt-1
-                      text-[10px]
+                      text-[13px]
                       leading-4
                     "
                   >
@@ -213,12 +213,12 @@ function IndustryBrands() {
                 </span>
 
                 <div>
-                  <h3 className="text-sm font-semibold">Calibration Support</h3>
+                  <h3 className="text-ml font-semibold">Calibration Support</h3>
 
                   <p
                     className="
                       mt-1
-                      text-[10px]
+                      text-[13px]
                       leading-4
                     "
                   >
@@ -251,14 +251,14 @@ function IndustryBrands() {
                 </span>
 
                 <div>
-                  <h3 className="text-sm font-semibold">
+                  <h3 className="text-ml font-semibold">
                     Technical Assistance
                   </h3>
 
                   <p
                     className="
                       mt-1
-                      text-[10px]
+                      text-[13px]
                       leading-4
                     "
                   >
@@ -291,12 +291,12 @@ function IndustryBrands() {
                 </span>
 
                 <div>
-                  <h3 className="text-sm font-semibold">Product Enquiry</h3>
+                  <h3 className="text-ml font-semibold">Product Enquiry</h3>
 
                   <p
                     className="
                       mt-1
-                      text-[10px]
+                      text-[13px]
                       leading-4
                     "
                   >
@@ -329,8 +329,8 @@ function IndustryBrands() {
         <div className="text-center">
           <h2
             className="
-              text-2xl
-              sm:text-3xl
+              text-3xl
+              sm:text-4xl
               font-semibold
               text-gray-900
             "
@@ -345,7 +345,7 @@ function IndustryBrands() {
               max-w-2xl
               mx-auto
               text-xs
-              sm:text-sm
+              sm:text-[16px]
               text-gray-600
             "
           >
@@ -468,7 +468,7 @@ function IndustryBrands() {
           <h2
             className="
               text-lg
-              sm:text-xl
+              sm:text-[22px]
               font-semibold
               text-gray-900
             "
@@ -481,7 +481,7 @@ function IndustryBrands() {
               mt-5
               space-y-3
               text-xs
-              sm:text-sm
+              sm:text-[15px]
               leading-5
               text-gray-700
             "

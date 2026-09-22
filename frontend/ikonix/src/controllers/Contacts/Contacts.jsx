@@ -58,7 +58,7 @@ function Contacts() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-white text-black">
+    <div className="w-full min-h-screen bg-white text-black sm:mt-20 mt-16">
 
       {/* ==================================================
           BREADCRUMB
@@ -70,7 +70,7 @@ function Contacts() {
           flex
           items-center
           gap-2
-          text-[9px]
+          text-[12px]
           uppercase
           text-gray-400
         ">
@@ -123,7 +123,7 @@ function Contacts() {
             {/* SECTION LABEL */}
 
             <p className="
-              text-[10px]
+              text-[11px]
               uppercase
               tracking-wide
               text-[#FC9D03]
@@ -152,7 +152,7 @@ function Contacts() {
             <p className="
               mt-3
               max-w-xl
-              text-xs
+              text-[15px]
               leading-5
               text-gray-600
             ">
@@ -165,7 +165,7 @@ function Contacts() {
             <p className="
               mt-2
               max-w-xl
-              text-xs
+              text-[15px]
               leading-5
               text-gray-600
             ">
@@ -181,7 +181,7 @@ function Contacts() {
 
             <h2 className="
               mt-7
-              text-sm
+              text-[15px]
               font-semibold
               text-[#FC9D03]
             ">
@@ -288,7 +288,7 @@ function Contacts() {
             <h2 className="
               mt-2
               text-lg
-              sm:text-xl
+              sm:text-[25px]
               font-semibold
               text-gray-900
             ">
@@ -487,7 +487,7 @@ function Contacts() {
               {/* WHATSAPP */}
 
               <a
-                href="https://wa.me/91811856618"
+                href="https://wa.me/918111856618"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="

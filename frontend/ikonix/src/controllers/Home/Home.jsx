@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import IndustryBrands from "./IndustryBrands.jsx";
 import Footer from "../Footer/Footer.jsx";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 function Home() {
   const image_homepage =
@@ -73,11 +74,17 @@ function Home() {
   }, []);
 
   return (
-    <section className="w-full bg-white font-Arimo">
+    <section className="w-full bg-white font-Arimo sm:mt-10 mt-16">
       {/* =====================================================
           HERO SECTION
       ===================================================== */}
-
+      <a
+        href="https://wa.me/918111856618"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+         <IoLogoWhatsapp className="text-6xl animate-bounce text-green-600 fixed bottom-10 right-10" />
+      </a>
       <div
         className="
           max-w-7xl
@@ -144,7 +151,7 @@ function Home() {
                 mt-5
                 max-w-xl
                 text-sm
-                sm:text-[15px]
+                sm:text-[16px]
                 leading-6
                 text-gray-700
               "
@@ -164,7 +171,7 @@ function Home() {
                 flex
                 items-center
                 gap-2
-                text-sm
+                text-md
                 text-gray-600
               "
             >
@@ -257,6 +264,7 @@ function Home() {
                 mt-1
                 text-[10px]
                 sm:text-xs
+                font-bold
                 text-gray-500
               "
             >
@@ -307,6 +315,7 @@ function Home() {
                 mt-1
                 text-[10px]
                 sm:text-xs
+                font-bold
                 text-gray-500
               "
             >
@@ -353,6 +362,7 @@ function Home() {
                 mt-1
                 text-[10px]
                 sm:text-xs
+                font-bold
                 text-gray-500
               "
             >
@@ -399,6 +409,7 @@ function Home() {
                 mt-1
                 text-[10px]
                 sm:text-xs
+                font-bold
                 text-gray-500
               "
             >
@@ -467,7 +478,7 @@ function Home() {
               className="
           mt-3
           text-xs
-          sm:text-sm
+          sm:text-lg
           text-gray-600
         "
             >
@@ -548,7 +559,7 @@ function Home() {
                   className="
               text-xs
               sm:text-sm
-              font-medium
+              font-bold
               text-gray-800
             "
                 >
@@ -609,7 +620,7 @@ function Home() {
                   className="
               text-xs
               sm:text-sm
-              font-medium
+              font-bold
               text-gray-800
             "
                 >
@@ -670,7 +681,7 @@ function Home() {
                   className="
               text-xs
               sm:text-sm
-              font-medium
+              font-bold
               text-gray-800
             "
                 >
@@ -731,7 +742,7 @@ function Home() {
                   className="
               text-xs
               sm:text-sm
-              font-medium
+              font-bold
               text-gray-800
             "
                 >

@@ -5,7 +5,12 @@ import React, {
 } from "react";
 
 import axios from "axios";
-import { Link } from "react-router-dom";
+
+import {
+  Link,
+  useSearchParams,
+} from "react-router-dom";
+
 import {
   Search,
   ChevronDown,
@@ -14,16 +19,30 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
+
 function ProductsPage() {
+
+  // ======================================================
+  // URL SEARCH
+  // ======================================================
+
+  const [searchParams] = useSearchParams();
+
+
   // ======================================================
   // STATES
   // ======================================================
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] =
+    useState([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] =
+    useState(
+      searchParams.get("search") || ""
+    );
 
   const [category, setCategory] =
     useState("All Categories");
@@ -34,192 +53,313 @@ function ProductsPage() {
   const [currentPage, setCurrentPage] =
     useState(1);
 
+
   const productsPerPage = 12;
+
 
   // ======================================================
   // FETCH PRODUCTS
   // ======================================================
 
   const fetchProducts = async () => {
+
     try {
+
       setLoading(true);
 
-      const response = await axios.get(
-        "https://ikonix-backend.vercel.app/api/products/getAllProducts"
-      );
+      const response =
+        await axios.get(
+          "https://ikonix-backend.vercel.app/api/products/getAllProducts"
+        );
+
 
       console.log(
         "Products:",
         response.data
       );
 
+
       setProducts(
         response.data.products || []
       );
 
     } catch (error) {
+
       console.error(
         "Fetch Products Error:",
         error
       );
+
     } finally {
+
       setLoading(false);
+
     }
+
   };
 
+
   useEffect(() => {
+
     fetchProducts();
+
   }, []);
+
+
+  // ======================================================
+  // UPDATE SEARCH FROM URL
+  // ======================================================
+
+  useEffect(() => {
+
+    const urlSearch =
+      searchParams.get("search") || "";
+
+    setSearch(urlSearch);
+
+  }, [searchParams]);
+
 
   // ======================================================
   // CATEGORIES
   // ======================================================
 
   const categories = useMemo(() => {
+
     const values = products
-      .map((product) => product.category)
+      .map(
+        (product) =>
+          product.category
+      )
       .filter(Boolean);
+
 
     return [
       "All Categories",
       ...new Set(values),
     ];
+
   }, [products]);
+
 
   // ======================================================
   // FILTER PRODUCTS
   // ======================================================
 
-  const filteredProducts = useMemo(() => {
-    return products.filter((product) => {
-      // -----------------------------------------------
-      // SEARCH
-      // -----------------------------------------------
+  const filteredProducts =
+    useMemo(() => {
 
-      const searchValue =
-        search.toLowerCase().trim();
+      return products.filter(
+        (product) => {
 
-      const matchesSearch =
-        !searchValue ||
-        product.productName
-          ?.toLowerCase()
-          .includes(searchValue) ||
-        product.brandName
-          ?.toLowerCase()
-          .includes(searchValue) ||
-        product.modelNumber
-          ?.toLowerCase()
-          .includes(searchValue);
+          // -----------------------------------------------
+          // SEARCH
+          // -----------------------------------------------
 
-      // -----------------------------------------------
-      // CATEGORY
-      // -----------------------------------------------
+          const searchValue =
+            search
+              .toLowerCase()
+              .trim();
 
-      const matchesCategory =
-        category === "All Categories" ||
-        product.category === category;
 
-      // -----------------------------------------------
-      // AVAILABILITY
-      // -----------------------------------------------
+          const matchesSearch =
+            !searchValue ||
+            product.productName
+              ?.toLowerCase()
+              .includes(searchValue) ||
 
-      const stock =
-        Number(product.stock) || 0;
+            product.brandName
+              ?.toLowerCase()
+              .includes(searchValue) ||
 
-      let matchesAvailability = true;
+            product.modelNumber
+              ?.toLowerCase()
+              .includes(searchValue);
 
-      if (availability === "In Stock") {
-        matchesAvailability = stock > 0;
-      }
 
-      if (availability === "Out of Stock") {
-        matchesAvailability = stock <= 0;
-      }
+          // -----------------------------------------------
+          // CATEGORY
+          // -----------------------------------------------
 
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesAvailability
+          const matchesCategory =
+            category ===
+              "All Categories" ||
+            product.category ===
+              category;
+
+
+          // -----------------------------------------------
+          // AVAILABILITY
+          // -----------------------------------------------
+
+          const stock =
+            Number(product.stock) || 0;
+
+
+          let matchesAvailability =
+            true;
+
+
+          if (
+            availability ===
+            "In Stock"
+          ) {
+
+            matchesAvailability =
+              stock > 0;
+
+          }
+
+
+          if (
+            availability ===
+            "Out of Stock"
+          ) {
+
+            matchesAvailability =
+              stock <= 0;
+
+          }
+
+
+          return (
+            matchesSearch &&
+            matchesCategory &&
+            matchesAvailability
+          );
+
+        }
       );
-    });
-  }, [
-    products,
-    search,
-    category,
-    availability,
-  ]);
+
+    }, [
+      products,
+      search,
+      category,
+      availability,
+    ]);
+
 
   // ======================================================
   // PAGINATION
   // ======================================================
 
-  const totalPages = Math.ceil(
-    filteredProducts.length /
-      productsPerPage
-  );
+  const totalPages =
+    Math.ceil(
+      filteredProducts.length /
+        productsPerPage
+    );
+
 
   const startIndex =
     (currentPage - 1) *
     productsPerPage;
 
+
   const displayedProducts =
     filteredProducts.slice(
       startIndex,
-      startIndex + productsPerPage
+      startIndex +
+        productsPerPage
     );
+
 
   // ======================================================
   // RESET PAGE WHEN FILTER CHANGES
   // ======================================================
 
   useEffect(() => {
+
     setCurrentPage(1);
+
   }, [
     search,
     category,
     availability,
   ]);
 
+
   // ======================================================
   // IMAGE
   // ======================================================
 
-  const getProductImage = (product) => {
-    if (
-      Array.isArray(product.Image) &&
-      product.Image.length > 0
-    ) {
-      return product.Image[0];
-    }
+  const getProductImage =
+    (product) => {
 
-    if (
-      typeof product.Image === "string" &&
-      product.Image
-    ) {
-      return product.Image;
-    }
+      if (
+        Array.isArray(
+          product.Image
+        ) &&
+        product.Image.length > 0
+      ) {
 
-    return "/placeholder-product.png";
-  };
+        return product.Image[0];
+
+      }
+
+
+      if (
+        typeof product.Image ===
+          "string" &&
+        product.Image
+      ) {
+
+        return product.Image;
+
+      }
+
+
+      return "/placeholder-product.png";
+
+    };
+
 
   // ======================================================
   // PRICE
   // ======================================================
 
-  const formatPrice = (price) => {
-    const value = Number(price) || 0;
+  const formatPrice =
+    (price) => {
 
-    return `AED ${value.toLocaleString(
-      "en-AE",
-      {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }
-    )}`;
+      const value =
+        Number(price) || 0;
+
+
+      return `AED ${value.toLocaleString(
+        "en-AE",
+        {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        }
+      )}`;
+
+    };
+
+
+  // ======================================================
+  // CLEAR SEARCH
+  // ======================================================
+
+  const clearSearch = () => {
+
+    setSearch("");
+
+    window.history.replaceState(
+      {},
+      "",
+      "/products/page"
+    );
+
   };
 
+
+  // ======================================================
+  // UI
+  // ======================================================
+
   return (
-    <div className="w-full bg-white">
+
+    <div className="w-full bg-white sm:mt-20 mt-16">
+
 
       {/* ==================================================
           BREADCRUMB
@@ -235,29 +375,37 @@ function ProductsPage() {
           pt-5
         "
       >
+
         <p
           className="
             text-[9px]
-            sm:text-[10px]
+            sm:text-[12px]
             text-gray-500
             uppercase
           "
         >
+
           <Link
             to="/"
-            className="hover:text-[#FC9D03]"
+            className="
+              hover:text-[#FC9D03]
+            "
           >
             Home
           </Link>
+
 
           <span className="mx-2">
             &gt;
           </span>
 
+
           <span className="text-gray-800">
             Product All
           </span>
+
         </p>
+
       </div>
 
 
@@ -287,42 +435,56 @@ function ProductsPage() {
           "
         >
 
+
           {/* CATEGORY */}
 
-          <div className="relative w-full md:w-[190px]">
+          <div
+            className="
+              relative
+              w-full
+              md:w-[190px]
+            "
+          >
 
             <select
               value={category}
               onChange={(e) =>
-                setCategory(e.target.value)
+                setCategory(
+                  e.target.value
+                )
               }
               className="
                 appearance-none
                 w-full
-                h-10
+                h-12
                 px-3
                 pr-9
                 rounded-md
                 border
-                border-gray-200
+                border-gray-300
                 bg-white
-                text-[11px]
+                text-[12px]
                 text-gray-600
                 outline-none
                 focus:border-[#FC9D03]
               "
             >
+
               {categories.map(
                 (item) => (
+
                   <option
                     key={item}
                     value={item}
                   >
                     {item}
                   </option>
+
                 )
               )}
+
             </select>
+
 
             <ChevronDown
               size={15}
@@ -345,6 +507,7 @@ function ProductsPage() {
             className="
               relative
               w-full
+              sm:hidden
               md:w-[280px]
             "
           >
@@ -360,6 +523,7 @@ function ProductsPage() {
               "
             />
 
+
             <input
               type="text"
               value={search}
@@ -373,7 +537,7 @@ function ProductsPage() {
                 w-full
                 h-10
                 pl-9
-                pr-3
+                pr-10
                 rounded-md
                 border
                 border-gray-200
@@ -382,6 +546,27 @@ function ProductsPage() {
                 focus:border-[#FC9D03]
               "
             />
+
+
+            {search && (
+
+              <button
+                type="button"
+                onClick={clearSearch}
+                className="
+                  absolute
+                  right-3
+                  top-1/2
+                  -translate-y-1/2
+                  text-gray-400
+                  hover:text-black
+                  text-sm
+                "
+              >
+                ×
+              </button>
+
+            )}
 
           </div>
 
@@ -398,10 +583,18 @@ function ProductsPage() {
           >
 
             <div className="hidden sm:block">
-              <p className="text-[9px] text-gray-400">
+
+              <p
+                className="
+                  text-[12px]
+                  text-gray-400
+                "
+              >
                 Availability
               </p>
+
             </div>
+
 
             <div className="relative">
 
@@ -416,17 +609,18 @@ function ProductsPage() {
                   appearance-none
                   h-10
                   min-w-[130px]
-                  px-3
+                  px-4
                   pr-8
                   rounded-md
                   border
-                  border-gray-200
+                  border-gray-300
                   bg-white
-                  text-[11px]
+                  text-[12px]
                   text-gray-600
                   outline-none
                 "
               >
+
                 <option value="All">
                   All
                 </option>
@@ -438,7 +632,9 @@ function ProductsPage() {
                 <option value="Out of Stock">
                   Out of Stock
                 </option>
+
               </select>
+
 
               <ChevronDown
                 size={14}
@@ -476,6 +672,7 @@ function ProductsPage() {
         "
       >
 
+
         {/* RESULT COUNT */}
 
         <div
@@ -487,14 +684,26 @@ function ProductsPage() {
           "
         >
 
-          <p className="text-[11px] text-orange-500">
-            {filteredProducts.length}{" "}
+          <p
+            className="
+              text-[12px]
+              text-orange-500
+            "
+          >
+
+            {filteredProducts.length}
+            {" "}
             products found
+
           </p>
+
 
           <SlidersHorizontal
             size={15}
-            className="text-orange-400 md:hidden"
+            className="
+              text-orange-400
+              md:hidden
+            "
           />
 
         </div>
@@ -556,6 +765,7 @@ function ProductsPage() {
               >
                 No products found
               </p>
+
 
               <p
                 className="
@@ -649,19 +859,22 @@ function ProductsPage() {
 
                     <div className="p-3">
 
+
                       {/* BRAND */}
 
                       {product.brandName && (
+
                         <p
                           className="
-                            text-[8px]
+                            text-[10px]
                             uppercase
                             text-[#FC9D03]
-                            font-medium
+                            font-bold
                           "
                         >
                           {product.brandName}
                         </p>
+
                       )}
 
 
@@ -686,10 +899,11 @@ function ProductsPage() {
                       {/* MODEL */}
 
                       {product.modelNumber && (
+
                         <p
                           className="
                             mt-1
-                            text-[9px]
+                            text-[10px]
                             text-gray-400
                             truncate
                           "
@@ -697,6 +911,7 @@ function ProductsPage() {
                           Model:{" "}
                           {product.modelNumber}
                         </p>
+
                       )}
 
 
@@ -705,7 +920,7 @@ function ProductsPage() {
                       <p
                         className="
                           mt-2
-                          text-[11px]
+                          text-[12px]
                           sm:text-xs
                           font-semibold
                           text-[#FC9D03]
@@ -867,21 +1082,23 @@ function ProductsPage() {
             <h2
               className="
                 text-xl
-                sm:text-2xl
+                sm:text-3xl
                 font-semibold
                 text-gray-900
               "
             >
               Product Catalogue{" "}
+
               <span className="text-[#FC9D03]">
                 CTA
               </span>
             </h2>
 
+
             <p
               className="
                 mt-2
-                text-xs
+                text-ml
                 text-gray-600
               "
             >
@@ -889,12 +1106,13 @@ function ProductsPage() {
               Measurement Instrument?
             </p>
 
+
             <p
               className="
                 mt-2
                 max-w-xl
                 text-[10px]
-                sm:text-xs
+                sm:text-[15px]
                 leading-4
                 text-gray-500
               "
@@ -933,6 +1151,7 @@ function ProductsPage() {
       </section>
 
     </div>
+
   );
 }
 

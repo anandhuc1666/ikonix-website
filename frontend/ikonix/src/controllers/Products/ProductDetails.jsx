@@ -323,7 +323,7 @@ function ProductDetails() {
             rounded-md
             bg-[#FC9D03]
             text-white
-            text-sm
+            text-ml
           "
         >
           Back to Products
@@ -333,7 +333,7 @@ function ProductDetails() {
   }
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white sm:mt-20 mt-16">
 
       {/* ==================================================
           BREADCRUMB
@@ -356,7 +356,7 @@ function ProductDetails() {
             items-center
             gap-2
             text-[9px]
-            sm:text-[10px]
+            sm:text-[12px]
             uppercase
             text-gray-400
           "
@@ -436,7 +436,6 @@ function ProductDetails() {
                   h-[330px]
                   md:h-[400px]
                   rounded-lg
-                  bg-[#fafafa]
                   flex
                   items-center
                   justify-center
@@ -512,8 +511,8 @@ function ProductDetails() {
                           flex
                           items-center
                           justify-center
-                          p-2
-                          bg-white
+                          p-1
+                          bg-gray-200
                           ${
                             selectedImage ===
                             image
@@ -557,9 +556,9 @@ function ProductDetails() {
 
                 <p
                   className="
-                    text-xs
+                    text-ml
                     uppercase
-                    font-medium
+                    font-bold
                     text-[#FC9D03]
                   "
                 >
@@ -575,7 +574,7 @@ function ProductDetails() {
                 className="
                   mt-2
                   text-xl
-                  sm:text-2xl
+                  sm:text-3xl
                   md:text-3xl
                   font-semibold
                   text-gray-900
@@ -1023,7 +1022,7 @@ function ProductDetails() {
                 className="
                   mt-2
                   text-xl
-                  sm:text-2xl
+                  sm:text-3xl
                   font-semibold
                 "
               >
@@ -1033,7 +1032,7 @@ function ProductDetails() {
               <p
                 className="
                   mt-2
-                  text-xs
+                  text-ml
                   text-gray-500
                 "
               >
@@ -1138,7 +1137,7 @@ function ProductDetails() {
                               category
                             )}`}
                             className="
-                              text-[10px]
+                              text-[12px]
                               text-[#FC9D03]
                               hover:underline
                             "

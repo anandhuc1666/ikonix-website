@@ -7,7 +7,7 @@ import {
 
 function AboutPage() {
   return (
-    <div className="w-full bg-white text-black">
+    <div className="w-full bg-white text-black sm:mt-20 mt-16">
 
       {/* ==================================================
           BREADCRUMB
@@ -19,7 +19,7 @@ function AboutPage() {
           flex
           items-center
           gap-2
-          text-[9px]
+          text-[12px]
           uppercase
           text-gray-400
         ">
@@ -62,7 +62,7 @@ function AboutPage() {
           <div>
 
             <p className="
-              text-[10px]
+              text-[11px]
               uppercase
               tracking-wider
               text-[#FC9D03]
@@ -91,7 +91,7 @@ function AboutPage() {
               mt-5
               max-w-2xl
               text-xs
-              sm:text-sm
+              sm:text-[15px]
               leading-6
               text-gray-600
             ">
@@ -106,7 +106,7 @@ function AboutPage() {
               mt-4
               max-w-2xl
               text-xs
-              sm:text-sm
+              sm:text-[15px]
               leading-6
               text-gray-600
             ">
@@ -219,7 +219,7 @@ function AboutPage() {
 
               <p className="
                 mt-5
-                text-xs
+                text-[15px]
                 leading-5
                 text-gray-600
               ">
@@ -292,7 +292,7 @@ function AboutPage() {
             md:col-span-2
             space-y-4
             text-xs
-            sm:text-sm
+            sm:text-[15px]
             leading-6
             text-gray-600
           ">
@@ -374,7 +374,7 @@ function AboutPage() {
               mt-3
               max-w-2xl
               mx-auto
-              text-xs
+              text-[15px]
               text-gray-500
               leading-5
             ">
