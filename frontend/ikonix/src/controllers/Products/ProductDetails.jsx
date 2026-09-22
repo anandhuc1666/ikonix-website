@@ -1,22 +1,10 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import axios from "axios";
 
-import {
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-import {
-  ChevronRight,
-  Download,
-  MessageCircle,
-  Package,
-} from "lucide-react";
+import { ChevronRight, Download, MessageCircle, Package } from "lucide-react";
 
 function ProductDetails() {
   const { id } = useParams();
@@ -25,17 +13,13 @@ function ProductDetails() {
   // STATES
   // ======================================================
 
-  const [product, setProduct] =
-    useState(null);
+  const [product, setProduct] = useState(null);
 
-  const [allProducts, setAllProducts] =
-    useState([]);
+  const [allProducts, setAllProducts] = useState([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
-  const [selectedImage, setSelectedImage] =
-    useState("");
+  const [selectedImage, setSelectedImage] = useState("");
 
   // ======================================================
   // FETCH SELECTED PRODUCT
@@ -43,33 +27,23 @@ function ProductDetails() {
 
   const fetchProduct = async () => {
     try {
-      const response =
-        await axios.get(
-          `https://ikonix-backend.vercel.app/api/products/getProductById/${id}`
-        );
+      const response = await axios.get(
+        `https://ikonix-backend.vercel.app/api/products/getProductById/${id}`,
+      );
 
-      const selectedProduct =
-        response.data.product;
+      const selectedProduct = response.data.product;
 
       setProduct(selectedProduct);
 
       // Set first image
       if (
-        Array.isArray(
-          selectedProduct?.Image
-        ) &&
+        Array.isArray(selectedProduct?.Image) &&
         selectedProduct.Image.length > 0
       ) {
-        setSelectedImage(
-          selectedProduct.Image[0]
-        );
+        setSelectedImage(selectedProduct.Image[0]);
       }
-
     } catch (error) {
-      console.error(
-        "Fetch Product Error:",
-        error
-      );
+      console.error("Fetch Product Error:", error);
     }
   };
 
@@ -79,20 +53,13 @@ function ProductDetails() {
 
   const fetchAllProducts = async () => {
     try {
-      const response =
-        await axios.get(
-          "https://ikonix-backend.vercel.app/api/products/getAllProducts"
-        );
-
-      setAllProducts(
-        response.data.products || []
+      const response = await axios.get(
+        "https://ikonix-backend.vercel.app/api/products/getAllProducts",
       );
 
+      setAllProducts(response.data.products || []);
     } catch (error) {
-      console.error(
-        "Fetch Products Error:",
-        error
-      );
+      console.error("Fetch Products Error:", error);
     }
   };
 
@@ -104,10 +71,7 @@ function ProductDetails() {
     const loadData = async () => {
       setLoading(true);
 
-      await Promise.all([
-        fetchProduct(),
-        fetchAllProducts(),
-      ]);
+      await Promise.all([fetchProduct(), fetchAllProducts()]);
 
       setLoading(false);
     };
@@ -120,25 +84,15 @@ function ProductDetails() {
   // ======================================================
 
   const productImages = useMemo(() => {
-    if (
-      !product?.Image
-    ) {
+    if (!product?.Image) {
       return [];
     }
 
-    if (
-      Array.isArray(product.Image)
-    ) {
-      return product.Image.filter(
-        Boolean
-      );
+    if (Array.isArray(product.Image)) {
+      return product.Image.filter(Boolean);
     }
 
-    if (
-      typeof product.Image ===
-        "string" &&
-      product.Image
-    ) {
+    if (typeof product.Image === "string" && product.Image) {
       return [product.Image];
     }
 
@@ -146,113 +100,165 @@ function ProductDetails() {
   }, [product]);
 
   // ======================================================
-  // SAME CATEGORY PRODUCTS
+  // RELATED PRODUCTS
+  // SAME CATEGORY
+  //
+  // IMPORTANT:
+  // The selected product is NOT removed.
+  // Therefore it can appear inside Related Products.
   // ======================================================
 
-  const sameCategoryProducts =
-    useMemo(() => {
-      if (!product) {
-        return [];
-      }
+  const relatedProducts = useMemo(() => {
+    if (!product) {
+      return [];
+    }
 
-      return allProducts
-        .filter(
-          (item) =>
-            item._id !== product._id &&
-            item.category ===
-              product.category
-        )
-        .slice(0, 8);
-    }, [
-      allProducts,
-      product,
-    ]);
+    return allProducts
+      .filter((item) => item.category === product.category)
+      .slice(0, 8);
+  }, [allProducts, product]);
+
+  // ======================================================
+  // OTHER BRANDS IN SAME CATEGORY
+  // ======================================================
+
+  const otherBrandsInCategory = useMemo(() => {
+    if (!product) {
+      return [];
+    }
+
+    const brands = allProducts
+      .filter(
+        (item) =>
+          item.category === product.category &&
+          item.brandName &&
+          item.brandName !== product.brandName,
+      )
+      .map((item) => item.brandName)
+      .filter(Boolean);
+
+    return [...new Set(brands)];
+  }, [allProducts, product]);
+
+  // ======================================================
+  // PRODUCTS FROM OTHER BRAND
+  // SAME CATEGORY
+  // ======================================================
+
+  const getBrandProducts = (brandName) => {
+    if (!product) {
+      return [];
+    }
+
+    return allProducts
+      .filter(
+        (item) =>
+          item.category === product.category && item.brandName === brandName,
+      )
+      .slice(0, 5);
+  };
 
   // ======================================================
   // OTHER CATEGORIES
   // ======================================================
 
-  const otherCategories =
-    useMemo(() => {
-      if (!product) {
-        return [];
-      }
+  const otherCategories = useMemo(() => {
+    if (!product) {
+      return [];
+    }
 
-      const categories =
-        allProducts
-          .map(
-            (item) =>
-              item.category
-          )
-          .filter(Boolean)
-          .filter(
-            (category) =>
-              category !==
-              product.category
-          );
+    const categories = allProducts
+      .map((item) => item.category)
+      .filter(Boolean)
+      .filter((category) => category !== product.category);
 
-      return [
-        ...new Set(categories),
-      ];
-    }, [
-      allProducts,
-      product,
-    ]);
+    return [...new Set(categories)];
+  }, [allProducts, product]);
 
   // ======================================================
   // PRODUCTS BY OTHER CATEGORY
   // ======================================================
 
-  const getCategoryProducts =
-    (category) => {
-      return allProducts
-        .filter(
-          (item) =>
-            item.category ===
-            category
-        )
-        .slice(0, 5);
-    };
+  const getCategoryProducts = (category) => {
+    return allProducts.filter((item) => item.category === category).slice(0, 5);
+  };
 
   // ======================================================
   // FORMAT PRICE
   // ======================================================
 
-  const formatPrice = (
-    price
-  ) => {
-    const value =
-      Number(price) || 0;
+  const formatPrice = (price) => {
+    const value = Number(price) || 0;
 
-    return `AED ${value.toLocaleString(
-      "en-AE",
-      {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-      }
-    )}`;
+    return `AED ${value.toLocaleString("en-AE", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    })}`;
   };
 
   // ======================================================
   // WHATSAPP
   // ======================================================
 
-  const whatsappNumber =
-    "918111856618";
+  const whatsappNumber = "918111856618";
 
-  const enquiryMessage =
-    product
-      ? `Hello IKONIX, I am interested in ${product.productName}${
-          product.modelNumber
-            ? ` (${product.modelNumber})`
-            : ""
-        }. Please provide more information.`
-      : "";
+  const enquiryMessage = product
+    ? `Hello IKONIX, I am interested in ${product.productName}${
+        product.modelNumber ? ` (${product.modelNumber})` : ""
+      }. Please provide more information.`
+    : "";
 
-  const whatsappUrl =
-    `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-      enquiryMessage
-    )}`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+    enquiryMessage,
+  )}`;
+
+  // ======================================================
+  // DOWNLOAD PDF
+  // ======================================================
+
+  const handleDownloadPDF = async () => {
+    if (!product?.pdfFile) {
+      return;
+    }
+
+    try {
+      const response = await fetch(product.pdfFile);
+
+      if (!response.ok) {
+        throw new Error("Failed to download PDF");
+      }
+
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      // Create safe filename
+      const safeName = (product.productName || "IKONIX-Product")
+        .replace(/[<>:"/\\|?*]/g, "")
+        .trim();
+
+      const fileName = `${safeName || "IKONIX-Product"}.pdf`;
+
+      const link = document.createElement("a");
+
+      link.href = blobUrl;
+
+      link.download = fileName;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("PDF Download Error:", error);
+
+      // Fallback
+      window.open(product.pdfFile, "_blank");
+    }
+  };
 
   // ======================================================
   // LOADING
@@ -299,10 +305,7 @@ function ProductDetails() {
           justify-center
         "
       >
-        <Package
-          size={45}
-          className="text-gray-300"
-        />
+        <Package size={45} className="text-gray-300" />
 
         <h2
           className="
@@ -323,7 +326,7 @@ function ProductDetails() {
             rounded-md
             bg-[#FC9D03]
             text-white
-            text-ml
+            text-sm
           "
         >
           Back to Products
@@ -332,9 +335,12 @@ function ProductDetails() {
     );
   }
 
+  // ======================================================
+  // MAIN
+  // ======================================================
+
   return (
     <div className="w-full bg-white sm:mt-20 mt-16">
-
       {/* ==================================================
           BREADCRUMB
       ================================================== */}
@@ -349,7 +355,6 @@ function ProductDetails() {
           pt-5
         "
       >
-
         <div
           className="
             flex
@@ -361,33 +366,21 @@ function ProductDetails() {
             text-gray-400
           "
         >
-
-          <Link
-            to="/"
-            className="hover:text-[#FC9D03]"
-          >
+          <Link to="/" className="hover:text-[#FC9D03]">
             Home
           </Link>
 
           <ChevronRight size={11} />
 
-          <Link
-            to="/products/page"
-            className="hover:text-[#FC9D03]"
-          >
+          <Link to="/products/page" className="hover:text-[#FC9D03]">
             Product All
           </Link>
 
           <ChevronRight size={11} />
 
-          <span className="text-gray-700">
-            Product Details
-          </span>
-
+          <span className="text-gray-700">Product Details</span>
         </div>
-
       </div>
-
 
       {/* ==================================================
           MAIN PRODUCT
@@ -403,7 +396,6 @@ function ProductDetails() {
           py-6
         "
       >
-
         <div
           className="
             border
@@ -413,7 +405,6 @@ function ProductDetails() {
             md:p-7
           "
         >
-
           <div
             className="
               grid
@@ -422,13 +413,11 @@ function ProductDetails() {
               gap-8
             "
           >
-
             {/* =================================================
                 PRODUCT IMAGES
             ================================================= */}
 
             <div>
-
               {/* MAIN IMAGE */}
 
               <div
@@ -442,23 +431,17 @@ function ProductDetails() {
                   p-8
                 "
               >
-
                 {selectedImage ? (
-
                   <img
                     src={selectedImage}
-                    alt={
-                      product.productName
-                    }
+                    alt={product.productName}
                     className="
                       max-w-full
                       max-h-full
                       object-contain
                     "
                   />
-
                 ) : (
-
                   <div
                     className="
                       text-sm
@@ -467,17 +450,12 @@ function ProductDetails() {
                   >
                     No image available
                   </div>
-
                 )}
-
               </div>
-
 
               {/* THUMBNAILS */}
 
-              {productImages.length >
-                1 && (
-
+              {productImages.length > 1 && (
                 <div
                   className="
                     flex
@@ -487,22 +465,12 @@ function ProductDetails() {
                     overflow-x-auto
                   "
                 >
-
-                  {productImages.map(
-                    (
-                      image,
-                      index
-                    ) => (
-
-                      <button
-                        key={image}
-                        type="button"
-                        onClick={() =>
-                          setSelectedImage(
-                            image
-                          )
-                        }
-                        className={`
+                  {productImages.map((image, index) => (
+                    <button
+                      key={image}
+                      type="button"
+                      onClick={() => setSelectedImage(image)}
+                      className={`
                           w-16
                           h-16
                           flex-shrink-0
@@ -514,49 +482,38 @@ function ProductDetails() {
                           p-1
                           bg-gray-200
                           ${
-                            selectedImage ===
-                            image
+                            selectedImage === image
                               ? "border-[#FC9D03]"
                               : "border-gray-200"
                           }
                         `}
-                      >
-
-                        <img
-                          src={image}
-                          alt={`Product ${index + 1}`}
-                          className="
+                    >
+                      <img
+                        src={image}
+                        alt={`Product ${index + 1}`}
+                        className="
                             w-full
                             h-full
                             object-contain
                           "
-                        />
-
-                      </button>
-
-                    )
-                  )}
-
+                      />
+                    </button>
+                  ))}
                 </div>
-
               )}
-
             </div>
-
 
             {/* =================================================
                 PRODUCT INFORMATION
             ================================================= */}
 
             <div>
-
               {/* BRAND */}
 
               {product.brandName && (
-
                 <p
                   className="
-                    text-ml
+                    text-sm
                     uppercase
                     font-bold
                     text-[#FC9D03]
@@ -564,9 +521,7 @@ function ProductDetails() {
                 >
                   {product.brandName}
                 </p>
-
               )}
-
 
               {/* PRODUCT NAME */}
 
@@ -584,11 +539,9 @@ function ProductDetails() {
                 {product.productName}
               </h1>
 
-
               {/* MODEL */}
 
               {product.modelNumber && (
-
                 <p
                   className="
                     mt-2
@@ -597,18 +550,13 @@ function ProductDetails() {
                   "
                 >
                   Model Number:{" "}
-                  <span className="text-gray-800">
-                    {product.modelNumber}
-                  </span>
+                  <span className="text-gray-800">{product.modelNumber}</span>
                 </p>
-
               )}
-
 
               {/* SHORT DESCRIPTION */}
 
               {product.shortDescription && (
-
                 <p
                   className="
                     mt-5
@@ -617,13 +565,9 @@ function ProductDetails() {
                     text-gray-600
                   "
                 >
-                  {
-                    product.shortDescription
-                  }
+                  {product.shortDescription}
                 </p>
-
               )}
-
 
               {/* DETAILS */}
 
@@ -636,11 +580,8 @@ function ProductDetails() {
                   space-y-3
                 "
               >
-
                 {product.category && (
-
                   <div className="flex">
-
                     <span
                       className="
                         w-32
@@ -660,16 +601,11 @@ function ProductDetails() {
                     >
                       {product.category}
                     </span>
-
                   </div>
-
                 )}
 
-
                 {product.unit && (
-
                   <div className="flex">
-
                     <span
                       className="
                         w-32
@@ -680,17 +616,11 @@ function ProductDetails() {
                       Unit
                     </span>
 
-                    <span className="text-xs">
-                      {product.unit}
-                    </span>
-
+                    <span className="text-xs">{product.unit}</span>
                   </div>
-
                 )}
 
-
                 <div className="flex">
-
                   <span
                     className="
                       w-32
@@ -706,30 +636,22 @@ function ProductDetails() {
                       text-xs
                       font-medium
                       ${
-                        Number(
-                          product.stock
-                        ) > 0
+                        Number(product.stock) > 0
                           ? "text-green-600"
                           : "text-red-500"
                       }
                     `}
                   >
-                    {Number(
-                      product.stock
-                    ) > 0
+                    {Number(product.stock) > 0
                       ? `In Stock (${product.stock})`
                       : "Out of Stock"}
                   </span>
-
                 </div>
-
               </div>
-
 
               {/* PRICE */}
 
               <div className="mt-6">
-
                 <p
                   className="
                     text-xs
@@ -747,13 +669,9 @@ function ProductDetails() {
                     text-[#FC9D03]
                   "
                 >
-                  {formatPrice(
-                    product.price
-                  )}
+                  {formatPrice(product.price)}
                 </p>
-
               </div>
-
 
               {/* ACTIONS */}
 
@@ -765,6 +683,7 @@ function ProductDetails() {
                   gap-3
                 "
               >
+                {/* WHATSAPP */}
 
                 <a
                   href={whatsappUrl}
@@ -786,20 +705,16 @@ function ProductDetails() {
                     transition
                   "
                 >
-                  <MessageCircle
-                    size={16}
-                  />
-
+                  <MessageCircle size={16} />
                   Enquiry Now
                 </a>
 
+                {/* PDF */}
 
                 {product.pdfFile && (
-
-                  <a
-                    href={product.pdfFile}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
+                    type="button"
+                    onClick={handleDownloadPDF}
                     className="
                       inline-flex
                       items-center
@@ -817,23 +732,13 @@ function ProductDetails() {
                       transition
                     "
                   >
-
-                    <Download
-                      size={16}
-                    />
-
+                    <Download size={16} />
                     Product PDF
-
-                  </a>
-
+                  </button>
                 )}
-
               </div>
-
             </div>
-
           </div>
-
 
           {/* =================================================
               FULL PRODUCT DESCRIPTION
@@ -847,7 +752,6 @@ function ProductDetails() {
               border-gray-100
             "
           >
-
             <h2
               className="
                 text-xs
@@ -872,24 +776,19 @@ function ProductDetails() {
               {product.productDescription ||
                 "Product description is not available."}
             </div>
-
           </div>
-
         </div>
-
       </section>
 
-
       {/* ==================================================
+          RELATED PRODUCTS
           SAME CATEGORY
+          SELECTED PRODUCT IS ALSO INCLUDED
       ================================================== */}
 
-      {product.category &&
-        sameCategoryProducts.length >
-          0 && (
-
-          <section
-            className="
+      {product.category && relatedProducts.length > 0 && (
+        <section
+          className="
               max-w-[1400px]
               mx-auto
               px-5
@@ -897,60 +796,61 @@ function ProductDetails() {
               lg:px-10
               py-10
             "
+        >
+          {/* HEADER */}
+
+          <div
+            className="
+                flex
+                items-end
+                justify-between
+              "
           >
-
-            <div className="flex items-end justify-between">
-
-              <div>
-
-                <p
-                  className="
+            <div>
+              <p
+                className="
                     text-[10px]
                     uppercase
                     text-[#FC9D03]
                     font-medium
                   "
-                >
-                  Products Category
-                </p>
+              >
+                Related Products
+              </p>
 
-                <h2
-                  className="
+              <h2
+                className="
                     mt-2
                     text-xl
                     sm:text-2xl
                     font-semibold
                     text-gray-900
                   "
-                >
-                  More{" "}
-                  <span className="text-[#FC9D03]">
-                    {product.category}
-                  </span>
-                </h2>
+              >
+                More <span className="text-[#FC9D03]">{product.category}</span>
+              </h2>
+            </div>
 
-              </div>
-
-              <Link
-                to={`/products/page?category=${encodeURIComponent(
-                  product.category
-                )}`}
-                className="
+            <Link
+              to={`/products/page?category=${encodeURIComponent(
+                product.category,
+              )}`}
+              className="
                   hidden
                   sm:block
                   text-xs
                   text-[#FC9D03]
                   hover:underline
                 "
-              >
-                View All
-              </Link>
+            >
+              View All
+            </Link>
+          </div>
 
-            </div>
+          {/* PRODUCTS */}
 
-
-            <div
-              className="
+          <div
+            className="
                 mt-6
                 grid
                 grid-cols-2
@@ -959,41 +859,242 @@ function ProductDetails() {
                 lg:grid-cols-5
                 gap-4
               "
-            >
+          >
+            {relatedProducts.map((item) => (
+              <ProductCard
+                key={item._id}
+                product={item}
+                isCurrentProduct={item._id === product._id}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-              {sameCategoryProducts.map(
-                (item) => (
+      {/* ==================================================
+          OTHER BRANDS IN SAME CATEGORY
+      ================================================== */}
 
-                  <ProductCard
-                    key={item._id}
-                    product={item}
-                  />
+      {product.category && otherBrandsInCategory.length > 0 && (
+        <section
+          className="
+              bg-[#fafafa]
+              border-t
+              border-gray-100
+            "
+        >
+          <div
+            className="
+                max-w-[1400px]
+                mx-auto
+                px-5
+                sm:px-8
+                lg:px-10
+                py-12
+              "
+          >
+            {/* SECTION HEADER */}
 
-                )
-              )}
+            <div className="text-center">
+              <p
+                className="
+                    text-[10px]
+                    uppercase
+                    text-[#FC9D03]
+                    font-medium
+                  "
+              >
+                Explore Brands
+              </p>
 
+              <h2
+                className="
+                    mt-2
+                    text-xl
+                    sm:text-2xl
+                    font-semibold
+                    text-gray-900
+                  "
+              >
+                Other Brands in{" "}
+                <span className="text-[#FC9D03]">{product.category}</span>
+              </h2>
+
+              <p
+                className="
+                    mt-2
+                    text-xs
+                    sm:text-sm
+                    text-gray-500
+                  "
+              >
+                Explore similar products from different brands.
+              </p>
             </div>
 
-          </section>
+            {/* BRAND BUTTONS */}
 
-        )}
+            <div
+              className="
+                  mt-7
+                  flex
+                  flex-wrap
+                  justify-center
+                  gap-3
+                "
+            >
+              {otherBrandsInCategory.map((brand) => {
+                const brandId = `brand-${brand
+                  .replace(/\s+/g, "-")
+                  .toLowerCase()}`;
 
+                return (
+                  <button
+                    key={brand}
+                    type="button"
+                    onClick={() => {
+                      document.getElementById(brandId)?.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      });
+                    }}
+                    className="
+                          px-5
+                          py-2.5
+                          rounded-full
+                          border
+                          border-orange-200
+                          bg-white
+                          text-xs
+                          text-gray-700
+                          hover:border-[#FC9D03]
+                          hover:text-[#FC9D03]
+                          transition
+                        "
+                  >
+                    {brand}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* BRAND PRODUCTS */}
+
+            <div
+              className="
+                  mt-10
+                  space-y-12
+                "
+            >
+              {otherBrandsInCategory.map((brand) => {
+                const brandProducts = getBrandProducts(brand);
+
+                if (brandProducts.length === 0) {
+                  return null;
+                }
+
+                const brandId = `brand-${brand
+                  .replace(/\s+/g, "-")
+                  .toLowerCase()}`;
+
+                return (
+                  <div
+                    key={brand}
+                    id={brandId}
+                    className="
+                          scroll-mt-24
+                        "
+                  >
+                    {/* BRAND HEADER */}
+
+                    <div
+                      className="
+                            flex
+                            items-center
+                            justify-between
+                          "
+                    >
+                      <div>
+                        <p
+                          className="
+                                text-[9px]
+                                uppercase
+                                text-[#FC9D03]
+                                font-medium
+                              "
+                        >
+                          {product.category}
+                        </p>
+
+                        <h3
+                          className="
+                                mt-1
+                                text-base
+                                sm:text-lg
+                                font-semibold
+                                text-gray-900
+                              "
+                        >
+                          {brand}
+                        </h3>
+                      </div>
+
+                      <Link
+                        to={`/products/page?category=${encodeURIComponent(
+                          product.category,
+                        )}&brand=${encodeURIComponent(brand)}`}
+                        className="
+                              text-[11px]
+                              sm:text-xs
+                              text-[#FC9D03]
+                              hover:underline
+                            "
+                      >
+                        View All
+                      </Link>
+                    </div>
+
+                    {/* PRODUCTS */}
+
+                    <div
+                      className="
+                            mt-5
+                            grid
+                            grid-cols-2
+                            sm:grid-cols-3
+                            md:grid-cols-4
+                            lg:grid-cols-5
+                            gap-4
+                          "
+                    >
+                      {brandProducts.map((item) => (
+                        <ProductCard
+                          key={item._id}
+                          product={item}
+                          isCurrentProduct={item._id === product._id}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ==================================================
           OTHER PRODUCT CATEGORIES
       ================================================== */}
 
-      {otherCategories.length >
-        0 && (
-
+      {otherCategories.length > 0 && (
         <section
           className="
-            bg-[#fafafa]
+            bg-white
             border-t
             border-gray-100
           "
         >
-
           <div
             className="
               max-w-[1400px]
@@ -1004,9 +1105,9 @@ function ProductDetails() {
               py-12
             "
           >
+            {/* HEADER */}
 
             <div className="text-center">
-
               <p
                 className="
                   text-[10px]
@@ -1032,16 +1133,13 @@ function ProductDetails() {
               <p
                 className="
                   mt-2
-                  text-ml
+                  text-sm
                   text-gray-500
                 "
               >
-                Discover more test and measurement
-                solutions from IKONIX.
+                Discover more test and measurement solutions from IKONIX.
               </p>
-
             </div>
-
 
             {/* CATEGORY BUTTONS */}
 
@@ -1054,16 +1152,11 @@ function ProductDetails() {
                 gap-3
               "
             >
-
-              {otherCategories.map(
-                (category) => (
-
-                  <Link
-                    key={category}
-                    to={`/products/page?category=${encodeURIComponent(
-                      category
-                    )}`}
-                    className="
+              {otherCategories.map((category) => (
+                <Link
+                  key={category}
+                  to={`/products/page?category=${encodeURIComponent(category)}`}
+                  className="
                       px-5
                       py-2.5
                       rounded-full
@@ -1076,80 +1169,66 @@ function ProductDetails() {
                       hover:text-[#FC9D03]
                       transition
                     "
-                  >
-                    {category}
-                  </Link>
-
-                )
-              )}
-
+                >
+                  {category}
+                </Link>
+              ))}
             </div>
 
+            {/* CATEGORY PRODUCTS */}
 
-            {/* =================================================
-                OTHER CATEGORY PRODUCTS
-            ================================================= */}
+            <div
+              className="
+                mt-10
+                space-y-12
+              "
+            >
+              {otherCategories.slice(0, 4).map((category) => {
+                const categoryProducts = getCategoryProducts(category);
 
-            <div className="mt-10 space-y-12">
+                if (categoryProducts.length === 0) {
+                  return null;
+                }
 
-              {otherCategories
-                .slice(0, 4)
-                .map(
-                  (category) => {
+                return (
+                  <div key={category}>
+                    {/* CATEGORY HEADER */}
 
-                    const categoryProducts =
-                      getCategoryProducts(
-                        category
-                      );
-
-                    if (
-                      categoryProducts.length ===
-                      0
-                    ) {
-                      return null;
-                    }
-
-                    return (
-                      <div
-                        key={category}
-                      >
-
-                        <div
-                          className="
+                    <div
+                      className="
                             flex
                             items-center
                             justify-between
                           "
-                        >
-
-                          <h3
-                            className="
+                    >
+                      <h3
+                        className="
                               text-base
                               font-semibold
                               text-gray-900
                             "
-                          >
-                            {category}
-                          </h3>
+                      >
+                        {category}
+                      </h3>
 
-                          <Link
-                            to={`/products/page?category=${encodeURIComponent(
-                              category
-                            )}`}
-                            className="
+                      <Link
+                        to={`/products/page?category=${encodeURIComponent(
+                          category,
+                        )}`}
+                        className="
                               text-[12px]
                               text-[#FC9D03]
                               hover:underline
                             "
-                          >
-                            View All
-                          </Link>
+                      >
+                        View All
+                      </Link>
+                    </div>
 
-                        </div>
+                    {/* PRODUCTS */}
 
-
-                        <div
-                          className="
+                    <div
+                      className="
                             mt-4
                             grid
                             grid-cols-2
@@ -1158,45 +1237,24 @@ function ProductDetails() {
                             lg:grid-cols-5
                             gap-4
                           "
-                        >
-
-                          {categoryProducts.map(
-                            (item) => (
-
-                              <ProductCard
-                                key={
-                                  item._id
-                                }
-                                product={
-                                  item
-                                }
-                              />
-
-                            )
-                          )}
-
-                        </div>
-
-                      </div>
-                    );
-                  }
-                )}
-
+                    >
+                      {categoryProducts.map((item) => (
+                        <ProductCard key={item._id} product={item} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-
           </div>
-
         </section>
-
       )}
-
 
       {/* ==================================================
           FINAL CTA
       ================================================== */}
 
       <section className="bg-white">
-
         <div
           className="
             max-w-[1400px]
@@ -1208,7 +1266,6 @@ function ProductDetails() {
             text-center
           "
         >
-
           <h2
             className="
               text-xl
@@ -1217,9 +1274,7 @@ function ProductDetails() {
             "
           >
             Need Help Choosing the{" "}
-            <span className="text-[#FC9D03]">
-              Right Instrument?
-            </span>
+            <span className="text-[#FC9D03]">Right Instrument?</span>
           </h2>
 
           <p
@@ -1229,9 +1284,8 @@ function ProductDetails() {
               text-gray-500
             "
           >
-            Contact our team for product
-            information, technical assistance
-            and quotations.
+            Contact our team for product information, technical assistance and
+            quotations.
           </p>
 
           <a
@@ -1255,41 +1309,154 @@ function ProductDetails() {
             <MessageCircle size={16} />
             Contact Us
           </a>
-
         </div>
-
       </section>
-
     </div>
   );
 }
-
 
 // ======================================================
 // PRODUCT CARD
 // ======================================================
 
-function ProductCard({
-  product,
-}) {
+function ProductCard({ product, isCurrentProduct = false }) {
   const getImage = () => {
-    if (
-      Array.isArray(product.Image) &&
-      product.Image.length > 0
-    ) {
+    if (Array.isArray(product.Image) && product.Image.length > 0) {
       return product.Image[0];
     }
 
-    if (
-      typeof product.Image ===
-        "string" &&
-      product.Image
-    ) {
+    if (typeof product.Image === "string" && product.Image) {
       return product.Image;
     }
 
     return "/placeholder-product.png";
   };
+
+  // ======================================================
+  // CURRENT PRODUCT CARD
+  // ======================================================
+
+  if (isCurrentProduct) {
+    return (
+      <div
+        className="
+          group
+          bg-white
+          rounded-lg
+          border-2
+          border-[#FC9D03]
+          overflow-hidden
+          relative
+        "
+      >
+        {/* CURRENT PRODUCT BADGE */}
+
+        <div
+          className="
+            absolute
+            top-2
+            left-2
+            z-10
+            px-2.5
+            py-1
+            rounded-full
+            bg-[#FC9D03]
+            text-white
+            text-[8px]
+            font-semibold
+            uppercase
+          "
+        >
+          Current Product
+        </div>
+
+        {/* IMAGE */}
+
+        <div
+          className="
+            h-[140px]
+            sm:h-[160px]
+            bg-white
+            flex
+            items-center
+            justify-center
+            p-4
+          "
+        >
+          <img
+            src={getImage()}
+            alt={product.productName || "Product"}
+            className="
+              w-full
+              h-full
+              object-contain
+            "
+          />
+        </div>
+
+        {/* DETAILS */}
+
+        <div className="p-3">
+          {product.brandName && (
+            <p
+              className="
+                text-[8px]
+                uppercase
+                text-[#FC9D03]
+                font-medium
+              "
+            >
+              {product.brandName}
+            </p>
+          )}
+
+          <h4
+            className="
+              mt-1
+              text-[10px]
+              sm:text-xs
+              font-medium
+              text-gray-800
+              line-clamp-2
+              leading-4
+              min-h-[32px]
+            "
+          >
+            {product.productName}
+          </h4>
+
+          {product.modelNumber && (
+            <p
+              className="
+                mt-1
+                text-[8px]
+                text-gray-400
+                truncate
+              "
+            >
+              {product.modelNumber}
+            </p>
+          )}
+
+          <p
+            className="
+              mt-2
+              text-[10px]
+              sm:text-xs
+              font-semibold
+              text-[#FC9D03]
+            "
+          >
+            AED {Number(product.price || 0).toLocaleString("en-AE")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // ======================================================
+  // NORMAL PRODUCT CARD
+  // ======================================================
 
   return (
     <Link
@@ -1307,7 +1474,6 @@ function ProductCard({
         duration-300
       "
     >
-
       {/* IMAGE */}
 
       <div
@@ -1321,13 +1487,9 @@ function ProductCard({
           p-4
         "
       >
-
         <img
           src={getImage()}
-          alt={
-            product.productName ||
-            "Product"
-          }
+          alt={product.productName || "Product"}
           className="
             w-full
             h-full
@@ -1337,16 +1499,12 @@ function ProductCard({
             duration-300
           "
         />
-
       </div>
-
 
       {/* DETAILS */}
 
       <div className="p-3">
-
         {product.brandName && (
-
           <p
             className="
               text-[8px]
@@ -1357,7 +1515,6 @@ function ProductCard({
           >
             {product.brandName}
           </p>
-
         )}
 
         <h4
@@ -1376,7 +1533,6 @@ function ProductCard({
         </h4>
 
         {product.modelNumber && (
-
           <p
             className="
               mt-1
@@ -1387,7 +1543,6 @@ function ProductCard({
           >
             {product.modelNumber}
           </p>
-
         )}
 
         <p
@@ -1399,16 +1554,9 @@ function ProductCard({
             text-[#FC9D03]
           "
         >
-          AED{" "}
-          {Number(
-            product.price || 0
-          ).toLocaleString(
-            "en-AE"
-          )}
+          AED {Number(product.price || 0).toLocaleString("en-AE")}
         </p>
-
       </div>
-
     </Link>
   );
 }
