@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 function BrandProducts() {
+  const colorCode = "#ff3f34";
   const { brandName } = useParams();
 
   const selectedBrand = decodeURIComponent(
@@ -215,10 +216,10 @@ function BrandProducts() {
             h-8
             border-4
             border-orange-100
-            border-t-[#FC9D03]
+            
             rounded-full
             animate-spin
-          "
+          "style={{ borderColor: colorCode }}
         />
       </div>
     );
@@ -256,7 +257,7 @@ function BrandProducts() {
 
           <Link
             to="/"
-            className="hover:text-[#FC9D03]"
+            className="hover:text-[#ff3f34]"
           >
             Home
           </Link>
@@ -265,7 +266,7 @@ function BrandProducts() {
 
           <Link
             to="/brands/page"
-            className="hover:text-[#FC9D03]"
+            className="hover:text-[#ff3f34]"
           >
             Brands
           </Link>
@@ -349,7 +350,7 @@ function BrandProducts() {
 
                 <Tag
                   size={45}
-                  className="text-[#FC9D03]"
+                  style={{ color: colorCode }}
                 />
 
               )}
@@ -366,9 +367,9 @@ function BrandProducts() {
                   text-[10px]
                   uppercase
                   tracking-wide
-                  text-[#FC9D03]
+                  
                   font-medium
-                "
+                "style={{ color: colorCode }}
               >
                 Brand
               </p>
@@ -440,9 +441,8 @@ function BrandProducts() {
                             py-1.5
                             rounded-full
                             bg-orange-50
-                            text-[10px]
-                            text-[#FC9D03]
-                          "
+                            text-[10px] 
+                          "style={{ color: colorCode }}
                         >
                           {category}
                         </span>
@@ -497,9 +497,8 @@ function BrandProducts() {
               className="
                 text-[10px]
                 uppercase
-                text-[#FC9D03]
                 font-medium
-              "
+              "style={{ color: colorCode }}
             >
               {selectedBrand}
             </p>
@@ -570,7 +569,7 @@ function BrandProducts() {
                 border-gray-200
                 text-xs
                 outline-none
-                focus:border-[#FC9D03]
+                focus:border-[#ff3f34]
               "
             />
 
@@ -714,9 +713,8 @@ function BrandProducts() {
                       className="
                         text-[8px]
                         uppercase
-                        text-[#FC9D03]
                         font-medium
-                      "
+                      "style={{ color: colorCode }}
                     >
                       {product.brandName}
                     </p>
@@ -758,8 +756,7 @@ function BrandProducts() {
                         text-[10px]
                         sm:text-xs
                         font-semibold
-                        text-[#FC9D03]
-                      "
+                      "style={{ color: colorCode }}
                     >
                       {formatPrice(
                         product.price
@@ -812,7 +809,7 @@ function BrandProducts() {
             "
           >
             Looking for a{" "}
-            <span className="text-[#FC9D03]">
+            <span style={{ color: colorCode }}>
               {selectedBrand}
             </span>{" "}
             Product?
@@ -838,7 +835,7 @@ function BrandProducts() {
               px-6
               py-3
               rounded-md
-              bg-[#FC9D03]
+              bg-[#ff3f34]
               text-white
               text-xs
               font-medium

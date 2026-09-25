@@ -14,6 +14,7 @@ import Footer from "../Footer/Footer.jsx";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 function Home() {
+  const colorCode = "#ff3f34";
   const image_homepage =
     "https://res.cloudinary.com/dkxluyjyz/image/upload/v1789222467/Untitled_design_11_u70gbw.png";
   const [youtubeVideo, setYoutubeVideo] = useState(null);
@@ -83,7 +84,7 @@ function Home() {
         target="_blank"
         rel="noopener noreferrer"
       >
-         <IoLogoWhatsapp className="text-6xl animate-bounce text-green-600 fixed bottom-10 right-10" />
+        <IoLogoWhatsapp className="text-6xl animate-bounce text-green-600 fixed bottom-10 right-10" />
       </a>
       <div
         className="
@@ -129,17 +130,17 @@ function Home() {
             </h1>
 
             <h2
-              className="
-                mt-1
-                text-4xl
-                sm:text-5xl
-                lg:text-[52px]
-                xl:text-[58px]
-                leading-[1.05]
-                font-bold
-                tracking-tight
-                text-[#FC9D03]
-              "
+              className={`
+  mt-1
+  text-4xl
+  sm:text-5xl
+  lg:text-[52px]
+  xl:text-[58px]
+  leading-[1.05]
+  font-bold
+  tracking-tight
+`}
+              style={{ color: colorCode }}
             >
               PERFECT RESULTS
             </h2>
@@ -156,8 +157,10 @@ function Home() {
                 text-gray-700
               "
             >
-              <span className="text-[#FC9D03] font-medium">IKONIX</span> Test
-              and Measurement LLP provides reliable test and measurement
+              <span className="font-medium" style={{ color: colorCode }}>
+                IKONIX
+              </span>{" "}
+              Test and Measurement LLP provides reliable test and measurement
               instruments designed to support accurate testing, inspection and
               measurement across a wide range of professional and industrial
               applications.
@@ -175,7 +178,11 @@ function Home() {
                 text-gray-600
               "
             >
-              <Scissors size={17} strokeWidth={2} className="text-[#FC9D03]" />
+              <Scissors
+                size={17}
+                strokeWidth={2}
+                style={{ color: colorCode }}
+              />
 
               <span>
                 Reliable Solutions. Professional Service. Built Around You
@@ -446,10 +453,11 @@ function Home() {
           text-[10px]
           sm:text-xs
           font-medium
-          text-[#FC9D03]
+          
           uppercase
           tracking-wide
         "
+              style={{ color: colorCode }}
             >
               Our Product Categories
             </p>
@@ -468,7 +476,7 @@ function Home() {
         "
             >
               High Quality{" "}
-              <span className="text-[#FC9D03]">Test & Measurement</span>{" "}
+              <span style={{ color: colorCode }}>Test & Measurement</span>{" "}
               Instruments
             </h2>
 
@@ -514,7 +522,7 @@ function Home() {
           sm:h-[110px]
           rounded-lg
           border
-          border-[#FC9D03]
+          
           bg-white
           flex
           items-center
@@ -525,6 +533,7 @@ function Home() {
           hover:-translate-y-1
           hover:shadow-md
         "
+              style={{ borderColor: colorCode }}
             >
               {/* IMAGE */}
 
@@ -579,7 +588,7 @@ function Home() {
           sm:h-[110px]
           rounded-lg
           border
-          border-[#FC9D03]
+          
           bg-white
           flex
           items-center
@@ -590,6 +599,7 @@ function Home() {
           hover:-translate-y-1
           hover:shadow-md
         "
+              style={{ borderColor: colorCode }}
             >
               <div
                 className="
@@ -640,7 +650,7 @@ function Home() {
           sm:h-[110px]
           rounded-lg
           border
-          border-[#FC9D03]
+          
           bg-white
           flex
           items-center
@@ -651,6 +661,7 @@ function Home() {
           hover:-translate-y-1
           hover:shadow-md
         "
+              style={{ borderColor: colorCode }}
             >
               <div
                 className="
@@ -701,7 +712,7 @@ function Home() {
           sm:h-[110px]
           rounded-lg
           border
-          border-[#FC9D03]
+          
           bg-white
           flex
           items-center
@@ -712,6 +723,7 @@ function Home() {
           hover:-translate-y-1
           hover:shadow-md
         "
+              style={{ borderColor: colorCode }}
             >
               <div
                 className="
@@ -776,8 +788,9 @@ function Home() {
           font-medium
           uppercase
           tracking-wide
-          text-[#FC9D03]
+          
         "
+                  style={{ color: colorCode }}
                 >
                   Discover IKONIX
                 </p>
@@ -793,7 +806,7 @@ function Home() {
         "
                 >
                   See Our{" "}
-                  <span className="text-[#FC9D03]">Products In Action</span>
+                  <span style={{ color: colorCode }}>Products In Action</span>
                 </h2>
 
                 <p

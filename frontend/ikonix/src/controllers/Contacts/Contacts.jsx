@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 function Contacts() {
+  const colorCode = "#ff3f34";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -77,7 +78,7 @@ function Contacts() {
 
           <Link
             to="/"
-            className="hover:text-[#FC9D03] transition"
+            className="hover:text-[#ff3f34] transition"
           >
             Home
           </Link>
@@ -126,9 +127,9 @@ function Contacts() {
               text-[11px]
               uppercase
               tracking-wide
-              text-[#FC9D03]
+            
               font-medium
-            ">
+            "style={{ color: colorCode }}>
               Get In Touch
             </p>
 
@@ -183,8 +184,8 @@ function Contacts() {
               mt-7
               text-[15px]
               font-semibold
-              text-[#FC9D03]
-            ">
+             
+            "style={{ color: colorCode }}>
               Contact Options
             </h2>
 
@@ -279,9 +280,9 @@ function Contacts() {
               text-[10px]
               uppercase
               tracking-wide
-              text-[#FC9D03]
+              
               font-medium
-            ">
+            "style={{ color: colorCode }}>
               Contact Us
             </p>
 
@@ -339,7 +340,7 @@ function Contacts() {
                     bg-white
                     text-xs
                     outline-none
-                    focus:border-[#FC9D03]
+                    focus:border-[#ff3f34]
                     transition
                   "
                 />
@@ -362,7 +363,7 @@ function Contacts() {
                     bg-white
                     text-xs
                     outline-none
-                    focus:border-[#FC9D03]
+                    focus:border-[#ff3f34]
                     transition
                   "
                 />
@@ -389,7 +390,7 @@ function Contacts() {
                   bg-white
                   text-xs
                   outline-none
-                  focus:border-[#FC9D03]
+                  focus:border-[#ff3f34]
                   transition
                 "
               />
@@ -416,7 +417,7 @@ function Contacts() {
                   text-xs
                   outline-none
                   resize-none
-                  focus:border-[#FC9D03]
+                  focus:border-[#ff3f34]
                   transition
                 "
               />
@@ -451,7 +452,7 @@ function Contacts() {
                   w-full
                   h-10
                   rounded-md
-                  bg-[#FC9D03]
+                  bg-[#ff3f34]
                   text-white
                   text-xs
                   font-medium
@@ -494,7 +495,7 @@ function Contacts() {
                   h-8
                   rounded-full
                   border
-                  border-[#FC9D03]
+                  
                   flex
                   items-center
                   justify-center
@@ -503,7 +504,7 @@ function Contacts() {
                   text-gray-700
                   hover:bg-orange-50
                   transition
-                "
+                "style={{ borderColor: colorCode }}
               >
 
                 <MessageCircle
@@ -524,7 +525,7 @@ function Contacts() {
                   h-8
                   rounded-full
                   border
-                  border-[#FC9D03]
+                  border-[#ff3f34]
                   flex
                   items-center
                   justify-center
@@ -538,7 +539,7 @@ function Contacts() {
 
                 <Mail
                   size={13}
-                  className="text-[#FC9D03]"
+                  style={{ color: colorCode }}
                 />
 
                 Email Us
@@ -621,6 +622,7 @@ function ContactOption({
   title,
   text,
 }) {
+  const colorCode = "#ff3f34";
   return (
     <div className="
       flex
@@ -634,11 +636,11 @@ function ContactOption({
         shrink-0
         rounded-md
         bg-orange-50
-        text-[#FC9D03]
+        
         flex
         items-center
         justify-center
-      ">
+      "style={{ color: colorCode }}>
         {icon}
       </div>
 
@@ -679,6 +681,7 @@ function ContactInfo({
   value,
   href,
 }) {
+const colorCode = "#ff3f34";
   const content = (
     <div className="
       flex
@@ -693,12 +696,12 @@ function ContactInfo({
         bg-white
         border
         border-orange-100
-        text-[#FC9D03]
+      
         flex
         items-center
         justify-center
         shrink-0
-      ">
+      " style={{ color: colorCode }}>
         {icon}
       </div>
 

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 function Brands() {
+  const colorCode = "#ff3f34";
   // ======================================================
   // STATES
   // ======================================================
@@ -150,7 +151,7 @@ function Brands() {
           <Link
             to="/"
             className="
-              hover:text-[#FC9D03]
+              hover:text-[#ff3f34]
               transition
             "
           >
@@ -204,9 +205,9 @@ function Brands() {
                 text-[10px]
                 uppercase
                 tracking-wide
-                text-[#FC9D03]
+                
                 font-medium
-              "
+              "style={{ color: colorCode }}
             >
               Our Partners
             </p>
@@ -222,7 +223,7 @@ function Brands() {
               "
             >
               Leading{" "}
-              <span className="text-[#FC9D03]">
+              <span style={{ color: colorCode }}>
                 Brands
               </span>
             </h1>
@@ -288,7 +289,7 @@ function Brands() {
                 text-xs
                 text-gray-700
                 outline-none
-                focus:border-[#FC9D03]
+                focus:border-[#ff3f34]
                 transition
               "
             />
@@ -330,7 +331,7 @@ function Brands() {
 
             <Tag
               size={14}
-              className="text-[#FC9D03]"
+              style={{ color: colorCode }}
             />
 
             <p
@@ -371,10 +372,10 @@ function Brands() {
                 h-8
                 border-4
                 border-orange-100
-                border-t-[#FC9D03]
+                
                 rounded-full
                 animate-spin
-              "
+              "style={{ borderColor: colorCode }}
             />
 
           </div>
@@ -465,7 +466,7 @@ function Brands() {
                       md:h-[165px]
                       rounded-lg
                       border
-                      border-[#FC9D03]
+                      
                       bg-white
                       flex
                       flex-col
@@ -476,7 +477,7 @@ function Brands() {
                       duration-300
                       hover:-translate-y-1
                       hover:shadow-md
-                    "
+                    "style={{ borderColor: colorCode }}
                   >
 
                     {/* LOGO */}
@@ -522,8 +523,8 @@ function Brands() {
                             flex
                             items-center
                             justify-center
-                            text-[#FC9D03]
-                          "
+                            
+                          "style={{ color: colorCode }}
                         >
                           <Tag
                             size={24}
@@ -547,7 +548,7 @@ function Brands() {
                         text-center
                         truncate
                         max-w-full
-                        group-hover:text-[#FC9D03]
+                        group-hover:text-[#ff3f34]
                         transition
                       "
                     >
@@ -594,9 +595,9 @@ function Brands() {
             className="
               text-[10px]
               uppercase
-              text-[#FC9D03]
+              
               font-medium
-            "
+            "style={{ color: colorCode }}
           >
             Test & Measurement Solutions
           </p>
@@ -611,7 +612,7 @@ function Brands() {
             "
           >
             Looking for a Specific{" "}
-            <span className="text-[#FC9D03]">
+            <span style={{ color: colorCode }}>
               Brand?
             </span>
           </h2>
@@ -643,7 +644,7 @@ function Brands() {
               px-6
               py-3
               rounded-md
-              bg-[#FC9D03]
+              bg-[#ff3f34]
               text-white
               text-xs
               font-medium

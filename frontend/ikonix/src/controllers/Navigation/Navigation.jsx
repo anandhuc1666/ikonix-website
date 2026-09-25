@@ -118,7 +118,7 @@ function Navigation() {
   };
 
   return (
-    <header className="w-full bg-[#FFA500] fixed z-30">
+    <header className="w-full bg-[#ff3f34] fixed z-30">
       {/* =====================================================
           MAIN NAVIGATION
       ===================================================== */}
@@ -178,6 +178,7 @@ function Navigation() {
 
         <div
           className="
+          
          hidden
     sm:flex
     relative

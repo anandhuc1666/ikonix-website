@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function IndustryBrands() {
+  const colorCode = "#ff3f34";
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -77,7 +78,7 @@ function IndustryBrands() {
               "
             >
               Explore Leading Test &{" "}
-              <span className="text-[#FC9D03]">Measurement Brands</span>
+              <span style={{ borderColor: colorCode }}>Measurement Brands</span>
             </h2>
 
             <p
@@ -134,8 +135,8 @@ function IndustryBrands() {
             className="
               text-[14px]
               font-bold
-              text-[#FC9D03]
-            "
+              
+            "style={{ color: colorCode }}
           >
             Our Services
           </p>
@@ -155,12 +156,12 @@ function IndustryBrands() {
 
             <div
               className="
-                bg-[#FC9D03]
+                
                 text-white
                 px-5
                 py-4
                 min-h-[95px]
-              "
+              "style={{ backgroundColor: colorCode }}
             >
               <div className="flex gap-3">
                 <span
@@ -195,12 +196,12 @@ function IndustryBrands() {
 
             <div
               className="
-                bg-[#FC9D03]
+                
                 text-white
                 px-5
                 py-4
                 min-h-[95px]
-              "
+              "style={{ backgroundColor: colorCode }}
             >
               <div className="flex gap-3">
                 <span
@@ -233,12 +234,12 @@ function IndustryBrands() {
 
             <div
               className="
-                bg-[#FC9D03]
+                
                 text-white
                 px-5
                 py-4
                 min-h-[95px]
-              "
+              "style={{ backgroundColor: colorCode }}
             >
               <div className="flex gap-3">
                 <span
@@ -273,12 +274,12 @@ function IndustryBrands() {
 
             <div
               className="
-                bg-[#FC9D03]
+                
                 text-white
                 px-5
                 py-4
                 min-h-[95px]
-              "
+              "style={{ backgroundColor: colorCode }}
             >
               <div className="flex gap-3">
                 <span
@@ -335,7 +336,7 @@ function IndustryBrands() {
               text-gray-900
             "
           >
-            <span className="text-[#FC9D03]">Browse Industry</span> Leading
+            <span style={{ color: colorCode }}>Browse Industry</span> Leading
             Brands
           </h2>
 
@@ -375,10 +376,10 @@ function IndustryBrands() {
                 h-8
                 border-4
                 border-orange-100
-                border-t-[#FC9D03]
+                
                 rounded-full
                 animate-spin
-              "
+              "style={{ color: colorCode }}
             />
           ) : brands.length === 0 ? (
             <p className="text-sm text-gray-400">No brands available.</p>

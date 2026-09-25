@@ -21,6 +21,7 @@ import {
 
 
 function ProductsPage() {
+  const colorCode = "#ff3f34";
 
   // ======================================================
   // URL SEARCH
@@ -388,7 +389,7 @@ function ProductsPage() {
           <Link
             to="/"
             className="
-              hover:text-[#FC9D03]
+              hover:text-[#ff3f34]
             "
           >
             Home
@@ -466,7 +467,7 @@ function ProductsPage() {
                 text-[12px]
                 text-gray-600
                 outline-none
-                focus:border-[#FC9D03]
+                focus:border-[#ff3f34]
               "
             >
 
@@ -543,7 +544,7 @@ function ProductsPage() {
                 border-gray-200
                 text-[11px]
                 outline-none
-                focus:border-[#FC9D03]
+                focus:border-[#ff3f34]
               "
             />
 
@@ -687,8 +688,8 @@ function ProductsPage() {
           <p
             className="
               text-[12px]
-              text-orange-500
-            "
+             
+            "style={{ color: colorCode }}
           >
 
             {filteredProducts.length}
@@ -701,9 +702,9 @@ function ProductsPage() {
           <SlidersHorizontal
             size={15}
             className="
-              text-orange-400
+             
               md:hidden
-            "
+            "style={{ color: colorCode }}
           />
 
         </div>
@@ -728,7 +729,7 @@ function ProductsPage() {
                 h-8
                 border-4
                 border-orange-100
-                border-t-[#FC9D03]
+                border-t-[#ff3f34]
                 rounded-full
                 animate-spin
               "
@@ -811,7 +812,7 @@ function ProductsPage() {
                       bg-[#FAFAFA]
                       rounded-lg
                       border
-                      border-[#FC9D03]/50
+                      border-[#ff3f34]/50
                       overflow-hidden
                       transition-all
                       duration-300
@@ -868,9 +869,9 @@ function ProductsPage() {
                           className="
                             text-[10px]
                             uppercase
-                            text-[#FC9D03]
+                            
                             font-bold
-                          "
+                          "style={{ color: colorCode }}
                         >
                           {product.brandName}
                         </p>
@@ -923,8 +924,8 @@ function ProductsPage() {
                           text-[12px]
                           sm:text-xs
                           font-semibold
-                          text-[#FC9D03]
-                        "
+                          
+                        "style={{ color: colorCode }}
                       >
                         {formatPrice(
                           product.price
@@ -978,11 +979,11 @@ function ProductsPage() {
                   flex
                   items-center
                   justify-center
-                  bg-[#FC9D03]
+                  
                   text-white
                   disabled:opacity-30
                   disabled:cursor-not-allowed
-                "
+                "style={{ backgroundColor: colorCode }}
               >
                 <ChevronLeft
                   size={14}
@@ -1002,8 +1003,8 @@ function ProductsPage() {
                   text-xs
                   font-medium
                   text-white
-                  bg-[#FC9D03]
-                "
+                  
+                "style={{ backgroundColor: colorCode }}
               >
                 {currentPage}
               </span>
@@ -1028,11 +1029,11 @@ function ProductsPage() {
                   flex
                   items-center
                   justify-center
-                  bg-[#FC9D03]
+             
                   text-white
                   disabled:opacity-30
                   disabled:cursor-not-allowed
-                "
+                "style={{ backgroundColor: colorCode }}
               >
                 <ChevronRight
                   size={14}
@@ -1089,7 +1090,7 @@ function ProductsPage() {
             >
               Product Catalogue{" "}
 
-              <span className="text-[#FC9D03]">
+              <span style={{ color: colorCode }}>
                 CTA
               </span>
             </h2>
@@ -1135,7 +1136,7 @@ function ProductsPage() {
               px-6
               py-3
               rounded-md
-              bg-[#FC9D03]
+              bg-[#ff3f34]
               text-white
               text-xs
               font-medium

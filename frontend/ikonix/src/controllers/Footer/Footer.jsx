@@ -8,8 +8,9 @@ import { RiMailUnreadFill } from "react-icons/ri";
 import { SlGlobe } from "react-icons/sl";
 
 function Footer() {
+  const colorCode = "#ff3f34";
   return (
-    <footer className="w-full bg-[#FFA500] text-black">
+    <footer className="w-full text-black" style={{ backgroundColor: colorCode }}>
       {/* =====================================================
           MAIN FOOTER
       ===================================================== */}

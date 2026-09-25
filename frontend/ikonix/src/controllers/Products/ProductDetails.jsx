@@ -7,6 +7,7 @@ import { Link, useParams } from "react-router-dom";
 import { ChevronRight, Download, MessageCircle, Package } from "lucide-react";
 
 function ProductDetails() {
+  const colorCode = "#ff3f34";
   const { id } = useParams();
 
   // ======================================================
@@ -281,7 +282,7 @@ function ProductDetails() {
             h-8
             border-4
             border-orange-100
-            border-t-[#FC9D03]
+            border-t-[#ff3f34]
             rounded-full
             animate-spin
           "
@@ -324,10 +325,11 @@ function ProductDetails() {
             px-5
             py-2
             rounded-md
-            bg-[#FC9D03]
+            
             text-white
             text-sm
           "
+          style={{ backgroundColor: colorCode }}
         >
           Back to Products
         </Link>
@@ -366,13 +368,13 @@ function ProductDetails() {
             text-gray-400
           "
         >
-          <Link to="/" className="hover:text-[#FC9D03]">
+          <Link to="/" className="hover:text-[#ff3f34]">
             Home
           </Link>
 
           <ChevronRight size={11} />
 
-          <Link to="/products/page" className="hover:text-[#FC9D03]">
+          <Link to="/products/page" className="hover:text-[#ff3f34]">
             Product All
           </Link>
 
@@ -483,7 +485,7 @@ function ProductDetails() {
                           bg-gray-200
                           ${
                             selectedImage === image
-                              ? "border-[#FC9D03]"
+                              ? "border-[#ff3f34]"
                               : "border-gray-200"
                           }
                         `}
@@ -516,8 +518,9 @@ function ProductDetails() {
                     text-sm
                     uppercase
                     font-bold
-                    text-[#FC9D03]
+                    
                   "
+                  style={{ color: colorCode }}
                 >
                   {product.brandName}
                 </p>
@@ -666,8 +669,8 @@ function ProductDetails() {
                     mt-1
                     text-2xl
                     font-semibold
-                    text-[#FC9D03]
                   "
+                  style={{ color: colorCode }}
                 >
                   {formatPrice(product.price)}
                 </p>
@@ -697,7 +700,7 @@ function ProductDetails() {
                     px-6
                     py-3
                     rounded-md
-                    bg-[#FC9D03]
+                    bg-[#ff3f34]
                     text-white
                     text-xs
                     font-medium
@@ -724,13 +727,12 @@ function ProductDetails() {
                       py-3
                       rounded-md
                       border
-                      border-[#FC9D03]
-                      text-[#FC9D03]
                       text-xs
                       font-medium
                       hover:bg-orange-50
                       transition
                     "
+                    style={{ color: colorCode, borderColor: colorCode }}
                   >
                     <Download size={16} />
                     Product PDF
@@ -757,8 +759,9 @@ function ProductDetails() {
                 text-xs
                 uppercase
                 font-semibold
-                text-[#FC9D03]
+                
               "
+              style={{ color: colorCode }}
             >
               Product Description
             </h2>
@@ -811,9 +814,10 @@ function ProductDetails() {
                 className="
                     text-[10px]
                     uppercase
-                    text-[#FC9D03]
+                
                     font-medium
                   "
+                style={{ color: colorCode }}
               >
                 Related Products
               </p>
@@ -827,7 +831,8 @@ function ProductDetails() {
                     text-gray-900
                   "
               >
-                More <span className="text-[#FC9D03]">{product.category}</span>
+                More{" "}
+                <span style={{ color: colorCode }}>{product.category}</span>
               </h2>
             </div>
 
@@ -839,9 +844,9 @@ function ProductDetails() {
                   hidden
                   sm:block
                   text-xs
-                  text-[#FC9D03]
                   hover:underline
                 "
+              style={{ color: colorCode }}
             >
               View All
             </Link>
@@ -900,9 +905,9 @@ function ProductDetails() {
                 className="
                     text-[10px]
                     uppercase
-                    text-[#FC9D03]
                     font-medium
                   "
+                style={{ color: colorCode }}
               >
                 Explore Brands
               </p>
@@ -917,7 +922,7 @@ function ProductDetails() {
                   "
               >
                 Other Brands in{" "}
-                <span className="text-[#FC9D03]">{product.category}</span>
+                <span style={{ color: colorCode }}>{product.category}</span>
               </h2>
 
               <p
@@ -967,8 +972,8 @@ function ProductDetails() {
                           bg-white
                           text-xs
                           text-gray-700
-                          hover:border-[#FC9D03]
-                          hover:text-[#FC9D03]
+                          hover:border-[#ff3f34]
+                          hover:text-[#ff3f34]
                           transition
                         "
                   >
@@ -1019,9 +1024,9 @@ function ProductDetails() {
                           className="
                                 text-[9px]
                                 uppercase
-                                text-[#FC9D03]
                                 font-medium
                               "
+                          style={{ color: colorCode }}
                         >
                           {product.category}
                         </p>
@@ -1046,9 +1051,9 @@ function ProductDetails() {
                         className="
                               text-[11px]
                               sm:text-xs
-                              text-[#FC9D03]
                               hover:underline
                             "
+                        style={{ color: colorCode }}
                       >
                         View All
                       </Link>
@@ -1112,9 +1117,9 @@ function ProductDetails() {
                 className="
                   text-[10px]
                   uppercase
-                  text-[#FC9D03]
                   font-medium
                 "
+                style={{ color: colorCode }}
               >
                 Explore More
               </p>
@@ -1165,8 +1170,8 @@ function ProductDetails() {
                       bg-white
                       text-xs
                       text-gray-700
-                      hover:border-[#FC9D03]
-                      hover:text-[#FC9D03]
+                      hover:border-[#ff3f34]
+                      hover:text-[#ff3f34]
                       transition
                     "
                 >
@@ -1217,9 +1222,9 @@ function ProductDetails() {
                         )}`}
                         className="
                               text-[12px]
-                              text-[#FC9D03]
                               hover:underline
                             "
+                        style={{ color: colorCode }}
                       >
                         View All
                       </Link>
@@ -1274,7 +1279,7 @@ function ProductDetails() {
             "
           >
             Need Help Choosing the{" "}
-            <span className="text-[#FC9D03]">Right Instrument?</span>
+            <span style={{ color: colorCode }}>Right Instrument?</span>
           </h2>
 
           <p
@@ -1300,11 +1305,11 @@ function ProductDetails() {
               px-6
               py-3
               rounded-md
-              bg-[#FC9D03]
               text-white
               text-xs
               font-medium
             "
+            style={{ backgroundColor: colorCode }}
           >
             <MessageCircle size={16} />
             Contact Us
@@ -1344,7 +1349,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
           bg-white
           rounded-lg
           border-2
-          border-[#FC9D03]
+          border-[#ff3f34]
           overflow-hidden
           relative
         "
@@ -1360,7 +1365,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             px-2.5
             py-1
             rounded-full
-            bg-[#FC9D03]
+            bg-[#ff3f34]
             text-white
             text-[8px]
             font-semibold
@@ -1402,7 +1407,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
               className="
                 text-[8px]
                 uppercase
-                text-[#FC9D03]
+                text-[#ff3f34]
                 font-medium
               "
             >
@@ -1444,7 +1449,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
               text-[10px]
               sm:text-xs
               font-semibold
-              text-[#FC9D03]
+              text-[#ff3f34]
             "
           >
             AED {Number(product.price || 0).toLocaleString("en-AE")}
@@ -1509,7 +1514,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             className="
               text-[8px]
               uppercase
-              text-[#FC9D03]
+              text-[#ff3f34]
               font-medium
             "
           >
@@ -1551,7 +1556,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             text-[10px]
             sm:text-xs
             font-semibold
-            text-[#FC9D03]
+            text-[#ff3f34]
           "
         >
           AED {Number(product.price || 0).toLocaleString("en-AE")}
