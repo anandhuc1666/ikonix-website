@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 function Brands() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
   // ======================================================
   // STATES
   // ======================================================
@@ -151,7 +151,7 @@ function Brands() {
           <Link
             to="/"
             className="
-              hover:text-[#ff3f34]
+              hover:text-[#e85d04]
               transition
             "
           >
@@ -289,7 +289,7 @@ function Brands() {
                 text-xs
                 text-gray-700
                 outline-none
-                focus:border-[#ff3f34]
+                focus:border-[#e85d04]
                 transition
               "
             />
@@ -548,7 +548,7 @@ function Brands() {
                         text-center
                         truncate
                         max-w-full
-                        group-hover:text-[#ff3f34]
+                        group-hover:text-[#e85d04]
                         transition
                       "
                     >
@@ -644,7 +644,7 @@ function Brands() {
               px-6
               py-3
               rounded-md
-              bg-[#ff3f34]
+              bg-[#e85d04]
               text-white
               text-xs
               font-medium

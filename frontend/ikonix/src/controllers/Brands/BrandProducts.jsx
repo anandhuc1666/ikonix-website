@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 function BrandProducts() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
   const { brandName } = useParams();
 
   const selectedBrand = decodeURIComponent(
@@ -257,7 +257,7 @@ function BrandProducts() {
 
           <Link
             to="/"
-            className="hover:text-[#ff3f34]"
+            className="hover:text-[#e85d04]"
           >
             Home
           </Link>
@@ -266,7 +266,7 @@ function BrandProducts() {
 
           <Link
             to="/brands/page"
-            className="hover:text-[#ff3f34]"
+            className="hover:text-[#e85d04]"
           >
             Brands
           </Link>
@@ -569,7 +569,7 @@ function BrandProducts() {
                 border-gray-200
                 text-xs
                 outline-none
-                focus:border-[#ff3f34]
+                focus:border-[#e85d04]
               "
             />
 
@@ -835,7 +835,7 @@ function BrandProducts() {
               px-6
               py-3
               rounded-md
-              bg-[#ff3f34]
+              bg-[#e85d04]
               text-white
               text-xs
               font-medium

@@ -7,7 +7,7 @@ import { Link, useParams } from "react-router-dom";
 import { ChevronRight, Download, MessageCircle, Package } from "lucide-react";
 
 function ProductDetails() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
   const { id } = useParams();
 
   // ======================================================
@@ -282,7 +282,7 @@ function ProductDetails() {
             h-8
             border-4
             border-orange-100
-            border-t-[#ff3f34]
+            border-t-[#e85d04]
             rounded-full
             animate-spin
           "
@@ -368,13 +368,13 @@ function ProductDetails() {
             text-gray-400
           "
         >
-          <Link to="/" className="hover:text-[#ff3f34]">
+          <Link to="/" className="hover:text-[#e85d04]">
             Home
           </Link>
 
           <ChevronRight size={11} />
 
-          <Link to="/products/page" className="hover:text-[#ff3f34]">
+          <Link to="/products/page" className="hover:text-[#e85d04]">
             Product All
           </Link>
 
@@ -401,7 +401,7 @@ function ProductDetails() {
         <div
           className="
             border
-            border-orange-100
+            border-[#e85d04]
             rounded-xl
             p-5
             md:p-7
@@ -485,7 +485,7 @@ function ProductDetails() {
                           bg-gray-200
                           ${
                             selectedImage === image
-                              ? "border-[#ff3f34]"
+                              ? "border-[#e85d04]"
                               : "border-gray-200"
                           }
                         `}
@@ -700,7 +700,7 @@ function ProductDetails() {
                     px-6
                     py-3
                     rounded-md
-                    bg-[#ff3f34]
+                    bg-[#e85d04]
                     text-white
                     text-xs
                     font-medium
@@ -972,8 +972,8 @@ function ProductDetails() {
                           bg-white
                           text-xs
                           text-gray-700
-                          hover:border-[#ff3f34]
-                          hover:text-[#ff3f34]
+                          hover:border-[#e85d04]
+                          hover:text-[#e85d04]
                           transition
                         "
                   >
@@ -1170,8 +1170,8 @@ function ProductDetails() {
                       bg-white
                       text-xs
                       text-gray-700
-                      hover:border-[#ff3f34]
-                      hover:text-[#ff3f34]
+                      hover:border-[#e85d04]
+                      hover:text-[#e85d04]
                       transition
                     "
                 >
@@ -1349,7 +1349,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
           bg-white
           rounded-lg
           border-2
-          border-[#ff3f34]
+          border-[#e85d04]
           overflow-hidden
           relative
         "
@@ -1365,7 +1365,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             px-2.5
             py-1
             rounded-full
-            bg-[#ff3f34]
+            bg-[#e85d04]
             text-white
             text-[8px]
             font-semibold
@@ -1407,7 +1407,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
               className="
                 text-[8px]
                 uppercase
-                text-[#ff3f34]
+                text-[#e85d04]
                 font-medium
               "
             >
@@ -1449,7 +1449,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
               text-[10px]
               sm:text-xs
               font-semibold
-              text-[#ff3f34]
+              text-[#e85d04]
             "
           >
             AED {Number(product.price || 0).toLocaleString("en-AE")}
@@ -1514,7 +1514,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             className="
               text-[8px]
               uppercase
-              text-[#ff3f34]
+              text-[#e85d04]
               font-medium
             "
           >
@@ -1556,7 +1556,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             text-[10px]
             sm:text-xs
             font-semibold
-            text-[#ff3f34]
+            text-[#e85d04]
           "
         >
           AED {Number(product.price || 0).toLocaleString("en-AE")}

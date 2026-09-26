@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function IndustryBrands() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
 

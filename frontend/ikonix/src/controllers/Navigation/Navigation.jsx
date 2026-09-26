@@ -118,7 +118,7 @@ function Navigation() {
   };
 
   return (
-    <header className="w-full bg-[#ff3f34] fixed z-30">
+    <header className="w-full bg-[#e85d04] fixed z-30">
       {/* =====================================================
           MAIN NAVIGATION
       ===================================================== */}
@@ -356,7 +356,7 @@ function Navigation() {
             md:hidden
             border-t
             border-black/10
-            bg-[#FFA500]
+            bg-[#e85d04]
             px-5
             pb-5
           "

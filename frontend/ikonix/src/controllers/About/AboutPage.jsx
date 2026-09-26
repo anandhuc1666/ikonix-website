@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 function AboutPage() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
   return (
     <div className="w-full bg-white text-black sm:mt-20 mt-16">
       {/* ==================================================
@@ -21,7 +21,7 @@ function AboutPage() {
           text-gray-400
         "
         >
-          <Link to="/" className="hover:text-[#ff3f34]">
+          <Link to="/" className="hover:text-[#e85d04]">
             Home
           </Link>
 
@@ -119,7 +119,7 @@ function AboutPage() {
                   px-5
                   py-3
                   rounded-md
-                  bg-[#ff3f34]
+                  bg-[#e85d04]
                   text-white
                   text-xs
                   font-medium
@@ -615,7 +615,7 @@ function InfoCard({ number, title, text }) {
       border-orange-100
       bg-white
       p-5
-      hover:border-[#ff3f34]
+      hover:border-[#e85d04]
       hover:-translate-y-1
       transition-all
       duration-300

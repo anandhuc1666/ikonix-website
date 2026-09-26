@@ -21,7 +21,7 @@ import {
 
 
 function ProductsPage() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
 
   // ======================================================
   // URL SEARCH
@@ -389,7 +389,7 @@ function ProductsPage() {
           <Link
             to="/"
             className="
-              hover:text-[#ff3f34]
+              hover:text-[#e85d04]
             "
           >
             Home
@@ -467,7 +467,7 @@ function ProductsPage() {
                 text-[12px]
                 text-gray-600
                 outline-none
-                focus:border-[#ff3f34]
+                focus:border-[#e85d04]
               "
             >
 
@@ -544,7 +544,7 @@ function ProductsPage() {
                 border-gray-200
                 text-[11px]
                 outline-none
-                focus:border-[#ff3f34]
+                focus:border-[#e85d04]
               "
             />
 
@@ -729,7 +729,7 @@ function ProductsPage() {
                 h-8
                 border-4
                 border-orange-100
-                border-t-[#ff3f34]
+                border-t-[#e85d04]
                 rounded-full
                 animate-spin
               "
@@ -812,7 +812,7 @@ function ProductsPage() {
                       bg-[#FAFAFA]
                       rounded-lg
                       border
-                      border-[#ff3f34]/50
+                      border-[#e85d04]/50
                       overflow-hidden
                       transition-all
                       duration-300
@@ -1136,7 +1136,7 @@ function ProductsPage() {
               px-6
               py-3
               rounded-md
-              bg-[#ff3f34]
+              bg-[#e85d04]
               text-white
               text-xs
               font-medium

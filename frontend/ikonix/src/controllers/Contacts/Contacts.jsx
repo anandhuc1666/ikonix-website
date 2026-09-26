@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 function Contacts() {
-  const colorCode = "#ff3f34";
+  const colorCode = "#e85d04";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -78,7 +78,7 @@ function Contacts() {
 
           <Link
             to="/"
-            className="hover:text-[#ff3f34] transition"
+            className="hover:text-[#e85d04] transition"
           >
             Home
           </Link>
@@ -251,7 +251,7 @@ function Contacts() {
 
               <iframe
                 title="IKONIX Location"
-                src="https://www.google.com/maps?q=India&output=embed"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.6434795109108!2d77.59989727794112!3d12.99464005463564!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae165c0c60c8f7%3A0x3e6b0217656f1984!2sGowramma%20fliuring%20mill%2C%2032%2F2%2C%20BM%20layout%20vinteshpur%2C%20beside%20North%20Mariyamma%20temple%2C%20Cantonment%20Railway%20Quarters%2C%20Shivaji%20Nagar%2C%20Bengaluru%2C%20Karnataka%20560046!5e0!3m2!1sen!2sin!4v1790433526363!5m2!1sen!2sin"
                 className="w-full h-full border-0"
                 loading="lazy"
               />
@@ -305,8 +305,7 @@ function Contacts() {
               Share your questions, feedback, and
               ideas with us.
             </p>
-
-
+            
             {/* FORM */}
 
             <form
@@ -340,7 +339,7 @@ function Contacts() {
                     bg-white
                     text-xs
                     outline-none
-                    focus:border-[#ff3f34]
+                    focus:border-[#e85d04]
                     transition
                   "
                 />
@@ -363,7 +362,7 @@ function Contacts() {
                     bg-white
                     text-xs
                     outline-none
-                    focus:border-[#ff3f34]
+                    focus:border-[#e85d04]
                     transition
                   "
                 />
@@ -390,7 +389,7 @@ function Contacts() {
                   bg-white
                   text-xs
                   outline-none
-                  focus:border-[#ff3f34]
+                  focus:border-[#e85d04]
                   transition
                 "
               />
@@ -417,7 +416,7 @@ function Contacts() {
                   text-xs
                   outline-none
                   resize-none
-                  focus:border-[#ff3f34]
+                  focus:border-[#e85d04]
                   transition
                 "
               />
@@ -452,7 +451,7 @@ function Contacts() {
                   w-full
                   h-10
                   rounded-md
-                  bg-[#ff3f34]
+                  bg-[#e85d04]
                   text-white
                   text-xs
                   font-medium
@@ -525,7 +524,7 @@ function Contacts() {
                   h-8
                   rounded-full
                   border
-                  border-[#ff3f34]
+                  border-[#e85d04]
                   flex
                   items-center
                   justify-center
