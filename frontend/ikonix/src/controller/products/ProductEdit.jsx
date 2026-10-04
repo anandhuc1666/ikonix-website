@@ -1163,7 +1163,7 @@ const ProductEdit = () => {
                     <div>
 
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Unit
+                        Warranty
                         <span className="text-red-500 ml-1">
                           *
                         </span>
@@ -1178,7 +1178,7 @@ const ProductEdit = () => {
                           )
                         }
                         disabled={saving}
-                        placeholder="e.g. Piece"
+                        placeholder="Company fixed warranty"
                         className="
                           w-full
                           h-11

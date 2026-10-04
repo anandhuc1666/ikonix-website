@@ -117,7 +117,7 @@ function Brands() {
         w-full
         min-h-screen
         bg-white
-        sm:mt-20 mt-16
+        sm:mt-25   mt-15
       "
     >
 

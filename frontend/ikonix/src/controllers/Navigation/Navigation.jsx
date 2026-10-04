@@ -18,12 +18,12 @@ function Navigation() {
 
   const navItems = [
     {
-      name: "HOME",
+      name: "PRODUCTS",
       path: "/",
     },
     {
-      name: "PRODUCTS",
-      path: "/products/page",
+      name: "BLOG",
+      path: "/home",
     },
     {
       name: "BRANDS",
@@ -46,8 +46,8 @@ function Navigation() {
   // =====================================================
 
   const handleSearchFocus = () => {
-    if (location.pathname !== "/products/page") {
-      navigate("/products/page");
+    if (location.pathname !== "/") {
+      navigate("/");
     }
   };
 
@@ -62,25 +62,16 @@ function Navigation() {
     setSearch(value);
 
     // If user is not already on Products page
-    if (location.pathname !== "/products/page") {
-      navigate(
-        value.trim()
-          ? `/products/page?search=${encodeURIComponent(value)}`
-          : "/products/page",
-      );
+    if (location.pathname !== "/") {
+      navigate(value.trim() ? `/?search=${encodeURIComponent(value)}` : "/");
 
       return;
     }
 
     // Already on Products page
-    navigate(
-      value.trim()
-        ? `/products/page?search=${encodeURIComponent(value)}`
-        : "/products/page",
-      {
-        replace: true,
-      },
-    );
+    navigate(value.trim() ? `/?search=${encodeURIComponent(value)}` : "/", {
+      replace: true,
+    });
   };
 
   // =====================================================
@@ -91,7 +82,7 @@ function Navigation() {
     setSearch("");
     setMobileMenu(false);
 
-    navigate("/products/page");
+    navigate("/");
   };
 
   // =====================================================
@@ -118,63 +109,23 @@ function Navigation() {
   };
 
   return (
-    <header className="w-full bg-[#e85d04] fixed z-30">
+    <header className="w-full sm:bg-[#FAFAFA] fixed z-30 sm:border-b sm:border-[#e85d04]">
       {/* =====================================================
           MAIN NAVIGATION
       ===================================================== */}
-
       <div
-        className="
-          max-w-[1400px]
-          mx-auto
-          min-h-[70px]
-          px-4
-          sm:px-6
-          md:px-8
-          lg:px-10
-          flex
-          items-center
-          gap-4
-        "
+        className=" max-w-full h-20 sm:flex hidden gap-5 items-center justify-center
+          mx-auto bg-white"
       >
-        {/* =====================================================
-            LOGO
-        ===================================================== */}
-
-        <Link
-          to="/"
-          onClick={handleLogoClick}
-          className="
-            shrink-0
-            flex
-            items-center
-            justify-center
-          "
-        >
+        <Link to="/" onClick={handleLogoClick}>
           <div
             className="
-              w-12
-              h-12
-              bg-white
-              sm:w-13
-              sm:h-13
-              md:w-14
-              p-1
-              md:h-14
-              rounded-full
-              overflow-hidden
-              flex
-              items-center
-              justify-center
+              w-[90px] h-[70px] text-[#e85d04] bg-[#FAFAFA] flex  items-center justify-center
             "
           >
-            <h1 className="font-bold text-[15px]">IKONIX</h1>
+            <h1 className="font-bold text-[19px]">IKONIX</h1>
           </div>
         </Link>
-
-        {/* =====================================================
-            DESKTOP SEARCH
-        ===================================================== */}
 
         <div
           className="
@@ -184,20 +135,20 @@ function Navigation() {
     relative
     items-center
     shrink-0
-    w-[240px]
-    md:w-[280px]
-    lg:w-[340px]
-    xl:w-[400px]
+    w-[800px]
+    md:w-[300px]
+    lg:w-[440px]
+    xl:w-[500px]
   "
         >
           {/* SEARCH ICON */}
 
           <Search
-            size={20}
-            strokeWidth={2}
+            size={22}
+            strokeWidth={3}
             className="
               absolute
-              left-3
+              left-4
               text-gray-500
               pointer-events-none
             "
@@ -212,25 +163,71 @@ function Navigation() {
             onChange={handleSearchChange}
             placeholder="What are you looking for?"
             className="
-              w-full
-              h-[45px]
+              w-[800px]
+              h-[50px]
               bg-white
-              rounded-full
-              pl-9
+             border-[#e85d04]
+              border
+              rounded-2xl
+              pl-20
               pr-4
-              text-[11px]
+              text-[13px]
               md:text-[11px]
               lg:text-xs
               text-gray-800
               placeholder:text-gray-400
               outline-none
-              border
-              border-transparent
               focus:border-black/20
               transition
             "
           />
         </div>
+
+        <Link
+          to="/admin/login"
+          className="
+            hidden
+            md:flex
+            items-center
+            gap-1.5
+            shrink-0
+            text-black
+            text-[11px]
+            lg:text-xs
+            xl:text-[13px]
+            font-medium
+            hover:text-[#e85d04]
+            transition
+          "
+        >
+          <UserCircle size={21} strokeWidth={2} />
+
+          <span>Login</span>
+        </Link>
+      </div>
+
+      <div
+        className="
+          max-w-[1400px]
+          mx-auto
+          min-h-auto
+          px-4
+          sm:px-6
+          md:px-9
+          py-1
+          lg:px-10
+          flex
+          items-center
+          gap-4
+        "
+      >
+        {/* =====================================================
+            LOGO
+        ===================================================== */}
+
+        {/* =====================================================
+            DESKTOP SEARCH
+        ===================================================== */}
 
         {/* =====================================================
             DESKTOP NAVIGATION
@@ -256,7 +253,7 @@ function Navigation() {
                 key={item.name}
                 to={item.path}
                 onClick={() => {
-                  if (item.path === "/products/page") {
+                  if (item.path === "/") {
                     handleProductsClick();
                   }
                 }}
@@ -270,7 +267,7 @@ function Navigation() {
                   font-medium
                   text-black
                   transition
-                  hover:text-white
+                  hover:text-[#e85d04]
 
                   ${active ? "font-semibold" : ""}
                 `}
@@ -300,28 +297,6 @@ function Navigation() {
         {/* =====================================================
             LOGIN
         ===================================================== */}
-
-        <Link
-          to="/admin/login"
-          className="
-            hidden
-            md:flex
-            items-center
-            gap-1.5
-            shrink-0
-            text-black
-            text-[11px]
-            lg:text-xs
-            xl:text-[13px]
-            font-medium
-            hover:text-white
-            transition
-          "
-        >
-          <UserCircle size={21} strokeWidth={2} />
-
-          <span>Login</span>
-        </Link>
 
         {/* =====================================================
             MOBILE MENU BUTTON
@@ -356,7 +331,7 @@ function Navigation() {
             md:hidden
             border-t
             border-black/10
-            bg-[#e85d04]
+            bg-[#FAFAFA]
             px-5
             pb-5
           "
@@ -421,7 +396,7 @@ function Navigation() {
                   key={item.name}
                   to={item.path}
                   onClick={() => {
-                    if (item.path === "/products/page") {
+                    if (item.path === "/") {
                       setSearch("");
                     }
 

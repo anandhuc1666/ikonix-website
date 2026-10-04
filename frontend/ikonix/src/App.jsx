@@ -44,9 +44,9 @@ function App() {
         ================================================== */}
 
         <Route element={<UserLayout />}>
-          <Route path="/" element={<Homes />} />
+          <Route path="/home" element={<Homes />} />
 
-          <Route path="/products/page" element={<ProductsPage />} />
+          <Route path="/" element={<ProductsPage />} />
 
           <Route path="/brands/page" element={<Brands />} />
 

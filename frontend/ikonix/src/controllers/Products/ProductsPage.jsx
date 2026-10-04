@@ -359,7 +359,7 @@ function ProductsPage() {
 
   return (
 
-    <div className="w-full bg-white sm:mt-20 mt-16">
+    <div className="w-full bg-white sm:mt-25 mt-15">
 
 
       {/* ==================================================
@@ -867,7 +867,7 @@ function ProductsPage() {
 
                         <p
                           className="
-                            text-[10px]
+                            text-[15px]
                             uppercase
                             
                             font-bold
@@ -884,8 +884,8 @@ function ProductsPage() {
                       <h3
                         className="
                           mt-1
-                          text-[11px]
-                          sm:text-xs
+                          text-[15px]
+                          sm:text-[12px]
                           font-medium
                           leading-4
                           text-gray-800
@@ -904,7 +904,7 @@ function ProductsPage() {
                         <p
                           className="
                             mt-1
-                            text-[10px]
+                            text-[11px]
                             text-gray-400
                             truncate
                           "
@@ -921,8 +921,8 @@ function ProductsPage() {
                       <p
                         className="
                           mt-2
-                          text-[12px]
-                          sm:text-xs
+                          text-[15px]
+                          sm:text-[18px]
                           font-semibold
                           
                         "style={{ color: colorCode }}

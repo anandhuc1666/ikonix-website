@@ -226,7 +226,7 @@ function BrandProducts() {
   }
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-white sm:mt-25 mt-16">
 
       {/* ==================================================
           BREADCRUMB
@@ -239,7 +239,7 @@ function BrandProducts() {
           px-5
           sm:px-8
           lg:px-10
-          pt-5
+          pt-8
         "
       >
 

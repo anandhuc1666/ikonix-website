@@ -10,7 +10,7 @@ function AboutPage() {
           BREADCRUMB
       ================================================== */}
 
-      <div className="max-w-6xl mx-auto px-5 pt-6">
+      <div className="max-w-6xl mx-auto px-5 pt-12">
         <div
           className="
           flex

@@ -319,7 +319,7 @@ function ProductDetails() {
         </h2>
 
         <Link
-          to="/products/page"
+          to="/"
           className="
             mt-4
             px-5
@@ -374,7 +374,7 @@ function ProductDetails() {
 
           <ChevronRight size={11} />
 
-          <Link to="/products/page" className="hover:text-[#e85d04]">
+          <Link to="/" className="hover:text-[#e85d04]">
             Product All
           </Link>
 
@@ -510,19 +510,36 @@ function ProductDetails() {
             ================================================= */}
 
             <div>
-              {/* BRAND */}
+              {/* SHORT DESCRIPTION */}
 
-              {product.brandName && (
+              {product.shortDescription && (
                 <p
                   className="
-                    text-sm
-                    uppercase
-                    font-bold
-                    
+                  mt-5
+                  sm:text-2xl
+                  md:text-2xl
+                  font-semibold
+                    leading-6
+                    text-black
                   "
-                  style={{ color: colorCode }}
                 >
-                  {product.brandName}
+                  {product.shortDescription}
+                </p>
+              )}
+
+              {/* MODEL */}
+
+              {product.modelNumber && (
+                <p
+                  className="
+                    mt-2
+                    text-[15px]
+                    text-black
+                    font-bold
+                  "
+                >
+                  Model Number:{" "}
+                  <span className="text-gray-400">{product.modelNumber}</span>
                 </p>
               )}
 
@@ -532,46 +549,12 @@ function ProductDetails() {
                 className="
                   mt-2
                   text-xl
-                  sm:text-3xl
-                  md:text-3xl
-                  font-semibold
-                  text-gray-900
+                  text-gray-500
                   leading-tight
                 "
               >
                 {product.productName}
               </h1>
-
-              {/* MODEL */}
-
-              {product.modelNumber && (
-                <p
-                  className="
-                    mt-2
-                    text-xs
-                    text-gray-500
-                  "
-                >
-                  Model Number:{" "}
-                  <span className="text-gray-800">{product.modelNumber}</span>
-                </p>
-              )}
-
-              {/* SHORT DESCRIPTION */}
-
-              {product.shortDescription && (
-                <p
-                  className="
-                    mt-5
-                    text-sm
-                    leading-6
-                    text-gray-600
-                  "
-                >
-                  {product.shortDescription}
-                </p>
-              )}
-
               {/* DETAILS */}
 
               <div
@@ -583,22 +566,40 @@ function ProductDetails() {
                   space-y-3
                 "
               >
+                {/* BRAND */}
+
+                {product.brandName && (
+                  <p
+                    className="
+                    text-sm
+                    uppercase
+                    font-bold
+                    
+                  "
+                    style={{ color: colorCode }}
+                  >
+                    {product.brandName}
+                  </p>
+                )}
+
                 {product.category && (
                   <div className="flex">
                     <span
                       className="
                         w-32
+                        sm:text-[15px]
                         text-xs
-                        text-gray-400
+                        font-bold
+                        text-black
                       "
                     >
-                      Category
+                      Category:
                     </span>
 
                     <span
                       className="
-                        text-xs
-                        text-gray-800
+                        text-[15px]
+                        text-gray-500
                         font-medium
                       "
                     >
@@ -612,14 +613,21 @@ function ProductDetails() {
                     <span
                       className="
                         w-32
+                        sm:text-[15px]
                         text-xs
-                        text-gray-400
+                        font-bold
+                        text-black
                       "
                     >
-                      Unit
+                      Warranty:
                     </span>
 
-                    <span className="text-xs">{product.unit}</span>
+                    <span
+                      className="text-[15px] text-gray-500
+                        font-medium"
+                    >
+                      {product.unit}
+                    </span>
                   </div>
                 )}
 
@@ -627,16 +635,18 @@ function ProductDetails() {
                   <span
                     className="
                       w-32
-                      text-xs
-                      text-gray-400
+                       sm:text-[15px]
+                        text-xs
+                        font-bold
+                        text-black
                     "
                   >
-                    Availability
+                    Availability:
                   </span>
 
                   <span
                     className={`
-                      text-xs
+                      text-[15px]
                       font-medium
                       ${
                         Number(product.stock) > 0
@@ -657,8 +667,10 @@ function ProductDetails() {
               <div className="mt-6">
                 <p
                   className="
-                    text-xs
-                    text-gray-400
+                     sm:text-[15px]
+                        text-xs
+                        font-bold
+                        text-gray-400
                   "
                 >
                   Current Price
@@ -1217,9 +1229,7 @@ function ProductDetails() {
                       </h3>
 
                       <Link
-                        to={`/products/page?category=${encodeURIComponent(
-                          category,
-                        )}`}
+                        to={`/?category=${encodeURIComponent(category)}`}
                         className="
                               text-[12px]
                               hover:underline
