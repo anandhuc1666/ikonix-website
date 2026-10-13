@@ -17,6 +17,7 @@ const brandSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    categoryIMAGE: { type: String, default: "" },
     brandAbout: {
       type: String,
       default: "",
