@@ -15,7 +15,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 
-const API_BASE_URL = "https://ikonix-backend.vercel.app";
+const API_BASE_URL =
+  "https://ikonix-backend.vercel.app/api";
 
 const emptyForm = {
   categoryName: "",
@@ -47,9 +48,9 @@ function Categoris() {
       setLoading(true);
       setError("");
 
-      const response = await axios.get(
-        `${API_BASE_URL}/categories/getAllCategories`
-      );
+  const response = await axios.get(
+  `${API_BASE_URL}/categories/getAllCategories`
+);
 
       const data = response.data.categories || [];
       setCategories(data);

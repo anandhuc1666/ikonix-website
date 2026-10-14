@@ -26,6 +26,7 @@ app.use(
   }),
 );
 
+
 // Routes
 app.use("/api/auth", authRouter);
 app.use("/api/brands", brandRouter);
