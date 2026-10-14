@@ -1,13 +1,13 @@
-import Category from "../model/Category.js"
+import Category from "../model/categorySchema.js";
 
-// ========================================
+// ==========================================
 // GET ALL CATEGORIES
-// ========================================
+// ==========================================
 
 export const getAllCategories = async (req, res) => {
   try {
     const categories = await Category.find().sort({
-      createdAt: -1,
+      categoryName: 1,
     });
 
     return res.status(200).json({
@@ -20,56 +20,18 @@ export const getAllCategories = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch categories",
+      message: error.message,
     });
   }
 };
 
-// ========================================
-// GET CATEGORY BY ID
-// ========================================
-
-export const getCategoryById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid category ID",
-      });
-    }
-
-    const category = await Category.findById(id);
-
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      category,
-    });
-  } catch (error) {
-    console.error("Get Category Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to fetch category",
-    });
-  }
-};
-
-// ========================================
+// ==========================================
 // CREATE CATEGORY
-// ========================================
+// ==========================================
 
 export const createCategory = async (req, res) => {
   try {
-    const { categoryName, categoryIMAGE, status } = req.body;
+    const { categoryName, categoryIMAGE } = req.body;
 
     if (!categoryName?.trim()) {
       return res.status(400).json({
@@ -78,9 +40,11 @@ export const createCategory = async (req, res) => {
       });
     }
 
+    const name = categoryName.trim();
+
     const existingCategory = await Category.findOne({
       categoryName: {
-        $regex: `^${categoryName.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+        $regex: `^${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
         $options: "i",
       },
     });
@@ -93,9 +57,8 @@ export const createCategory = async (req, res) => {
     }
 
     const category = await Category.create({
-      categoryName: categoryName.trim(),
-      categoryIMAGE: categoryIMAGE || "",
-      status: status || "Active",
+      categoryName: name,
+      categoryIMAGE: categoryIMAGE?.trim() || "",
     });
 
     return res.status(201).json({
@@ -108,26 +71,19 @@ export const createCategory = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to create category",
+      message: error.message,
     });
   }
 };
 
-// ========================================
+// ==========================================
 // UPDATE CATEGORY
-// ========================================
+// ==========================================
 
 export const updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { categoryName, categoryIMAGE, status } = req.body;
-
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid category ID",
-      });
-    }
+    const { categoryName, categoryIMAGE } = req.body;
 
     const category = await Category.findById(id);
 
@@ -159,7 +115,7 @@ export const updateCategory = async (req, res) => {
       if (duplicate) {
         return res.status(409).json({
           success: false,
-          message: "Category name already exists",
+          message: "Category already exists",
         });
       }
 
@@ -167,18 +123,10 @@ export const updateCategory = async (req, res) => {
     }
 
     if (categoryIMAGE !== undefined) {
-      category.categoryIMAGE = categoryIMAGE;
-    }
-
-    if (status !== undefined) {
-      if (!["Active", "Inactive"].includes(status)) {
-        return res.status(400).json({
-          success: false,
-          message: "Invalid category status",
-        });
-      }
-
-      category.status = status;
+      category.categoryIMAGE =
+        typeof categoryIMAGE === "string"
+          ? categoryIMAGE.trim()
+          : category.categoryIMAGE;
     }
 
     await category.save();
@@ -193,25 +141,18 @@ export const updateCategory = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to update category",
+      message: error.message,
     });
   }
 };
 
-// ========================================
+// ==========================================
 // DELETE CATEGORY
-// ========================================
+// ==========================================
 
 export const deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
-
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid category ID",
-      });
-    }
 
     const category = await Category.findByIdAndDelete(id);
 
@@ -225,13 +166,14 @@ export const deleteCategory = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Category deleted successfully",
+      category,
     });
   } catch (error) {
     console.error("Delete Category Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to delete category",
+      message: error.message,
     });
   }
 };
