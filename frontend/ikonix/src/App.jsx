@@ -111,7 +111,7 @@ function App() {
             FALLBACK
         ================================================== */}
 
-        <Route path="*" element={<ProductsPage/>} />
+        <Route path="*" element={<PageLess />} />
       </Routes>
     </BrowserRouter>
   );

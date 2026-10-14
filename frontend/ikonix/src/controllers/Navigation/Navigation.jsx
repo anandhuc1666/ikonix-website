@@ -120,10 +120,10 @@ function Navigation() {
         <Link to="/" onClick={handleLogoClick}>
           <div
             className="
-              w-[90px] h-[70px] text-[#e85d04] bg-[#FAFAFA] flex  items-center justify-center
+              w-[120px] h-[100px] text-[#e85d04] bg-[#FAFAFA] flex  items-center justify-center
             "
           >
-            <h1 className="font-bold text-[19px]">IKONIX</h1>
+            <h1 className="font-extrabold text-[25px]">IKONIX</h1>
           </div>
         </Link>
 

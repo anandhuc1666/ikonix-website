@@ -414,35 +414,60 @@ const Products = () => {
   // PAGE BUTTONS
   // --------------------------------------------------
 
-  const renderPagination = () => {
-    if (totalPages <= 1) {
-      return null;
+const renderPagination = () => {
+  if (totalPages <= 1) return null;
+
+  const pages = new Set([1, totalPages]);
+
+  for (
+    let page = currentPage - 1;
+    page <= currentPage + 1;
+    page++
+  ) {
+    if (page >= 1 && page <= totalPages) {
+      pages.add(page);
+    }
+  }
+
+  const sortedPages = [...pages].sort((a, b) => a - b);
+  const visiblePages = [];
+
+  sortedPages.forEach((page, index) => {
+    if (index > 0) {
+      const previous = sortedPages[index - 1];
+      const difference = page - previous;
+
+      if (difference === 2) {
+        visiblePages.push(previous + 1);
+      } else if (difference > 2) {
+        visiblePages.push(`ellipsis-${page}`);
+      }
     }
 
-    const pages = [];
+    visiblePages.push(page);
+  });
 
-    for (let i = 1; i <= totalPages; i++) {
-      pages.push(i);
-    }
-
-    return pages.map((page) => (
+  return visiblePages.map((page) =>
+    typeof page === "string" ? (
+      <span key={page} className="px-1 text-gray-400">
+        ...
+      </span>
+    ) : (
       <button
         key={page}
+        type="button"
         onClick={() => setCurrentPage(page)}
-        className={`
-          w-9 h-9 rounded-lg text-sm font-medium
-          transition
-          ${
-            currentPage === page
-              ? "bg-orange-500 text-white"
-              : "bg-white text-gray-600 border border-gray-200 hover:border-orange-400 hover:text-orange-500"
-          }
-        `}
+        className={
+          currentPage === page
+            ? "h-9 min-w-9 rounded-lg bg-orange-500 px-2 text-white"
+            : "h-9 min-w-9 rounded-lg border border-gray-200 bg-white px-2 text-gray-600"
+        }
       >
         {page}
       </button>
-    ));
-  };
+    )
+  );
+};
 
   // --------------------------------------------------
   // RENDER
