@@ -31,14 +31,12 @@ export const createBrand = async (req, res) => {
     const {
       brandName,
       category,
+      categoryIMAGE,
       status,
-       brandAbout
+      brandAbout,
     } = req.body;
 
-    // ------------------------------
-    // VALIDATION
-    // ------------------------------
-
+    // Validate brand name
     if (!brandName?.trim()) {
       return res.status(400).json({
         success: false,
@@ -46,10 +44,7 @@ export const createBrand = async (req, res) => {
       });
     }
 
-    // ------------------------------
-    // CHECK DUPLICATE BRAND
-    // ------------------------------
-
+    // Check duplicate brand
     const existingBrand = await Brand.findOne({
       brandName: brandName.trim(),
     });
@@ -61,13 +56,9 @@ export const createBrand = async (req, res) => {
       });
     }
 
-    // ------------------------------
-    // GET IMAGE
-    // ------------------------------
-
-    const imageFile = req.file;
-
+    // Upload main brand image
     let imageUrl = "";
+    const imageFile = req.file;
 
     if (imageFile) {
       const result = await uploadToCloudinary(
@@ -81,34 +72,31 @@ export const createBrand = async (req, res) => {
       imageUrl = result.secure_url;
     }
 
-    // ------------------------------
-    // CREATE BRAND
-    // ------------------------------
-
+    // Create brand
     const brand = new Brand({
       Image: imageUrl,
       brandName: brandName.trim(),
+
       category: Array.isArray(category)
         ? category
         : category
           ? [category]
           : [],
+
+      // Save category image URL
+      categoryIMAGE: categoryIMAGE?.trim() || "",
+
       status: status || "Active",
-       brandAbout
+      brandAbout: brandAbout || "",
     });
 
     const savedBrand = await brand.save();
-
-    // ------------------------------
-    // RESPONSE
-    // ------------------------------
 
     return res.status(201).json({
       success: true,
       message: "Brand created successfully",
       brand: savedBrand,
     });
-
   } catch (error) {
     console.error("Create Brand Error:", error);
 
@@ -125,15 +113,15 @@ export const createBrand = async (req, res) => {
 
 export const getAllBrands = async (req, res) => {
   try {
-    const brands = await Brand.find()
-      .sort({ createdAt: -1 });
+    const brands = await Brand.find().sort({
+      createdAt: -1,
+    });
 
     return res.status(200).json({
       success: true,
       count: brands.length,
       brands,
     });
-
   } catch (error) {
     console.error("Get Brands Error:", error);
 
@@ -163,7 +151,6 @@ export const getBrandById = async (req, res) => {
       success: true,
       brand,
     });
-
   } catch (error) {
     console.error("Get Brand Error:", error);
 
@@ -185,14 +172,12 @@ export const updateBrand = async (req, res) => {
     const {
       brandName,
       category,
+      categoryIMAGE,
       status,
       brandAbout,
     } = req.body;
 
-    // ------------------------------
-    // FIND BRAND
-    // ------------------------------
-
+    // Find brand
     const existingBrand = await Brand.findById(id);
 
     if (!existingBrand) {
@@ -202,11 +187,18 @@ export const updateBrand = async (req, res) => {
       });
     }
 
-    // ------------------------------
-    // CHECK DUPLICATE BRAND NAME
-    // ------------------------------
+    // ----------------------------------------------
+    // UPDATE BRAND NAME
+    // ----------------------------------------------
 
     if (brandName !== undefined) {
+      if (!brandName.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Brand name cannot be empty",
+        });
+      }
+
       const trimmedBrandName = brandName.trim();
 
       const duplicateBrand = await Brand.findOne({
@@ -224,17 +216,17 @@ export const updateBrand = async (req, res) => {
       existingBrand.brandName = trimmedBrandName;
     }
 
-    // ------------------------------
-    // UPDATE BRAND ABOUT
-    // ------------------------------
+    // ----------------------------------------------
+    // UPDATE BRAND DESCRIPTION
+    // ----------------------------------------------
 
     if (brandAbout !== undefined) {
       existingBrand.brandAbout = brandAbout.trim();
     }
 
-    // ------------------------------
-    // UPDATE CATEGORY
-    // ------------------------------
+    // ----------------------------------------------
+    // UPDATE CATEGORIES
+    // ----------------------------------------------
 
     if (category !== undefined) {
       existingBrand.category = Array.isArray(category)
@@ -244,17 +236,35 @@ export const updateBrand = async (req, res) => {
           : [];
     }
 
-    // ------------------------------
+    // ----------------------------------------------
+    // UPDATE CATEGORY IMAGE URL
+    // ----------------------------------------------
+
+    if (categoryIMAGE !== undefined) {
+      existingBrand.categoryIMAGE =
+        typeof categoryIMAGE === "string"
+          ? categoryIMAGE.trim()
+          : existingBrand.categoryIMAGE;
+    }
+
+    // ----------------------------------------------
     // UPDATE STATUS
-    // ------------------------------
+    // ----------------------------------------------
 
     if (status !== undefined) {
+      if (!["Active", "Inactive"].includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: "Status must be Active or Inactive",
+        });
+      }
+
       existingBrand.status = status;
     }
 
-    // ------------------------------
-    // UPDATE IMAGE
-    // ------------------------------
+    // ----------------------------------------------
+    // UPDATE MAIN BRAND IMAGE
+    // ----------------------------------------------
 
     const imageFile = req.file;
 
@@ -270,22 +280,17 @@ export const updateBrand = async (req, res) => {
       existingBrand.Image = result.secure_url;
     }
 
-    // ------------------------------
-    // SAVE
-    // ------------------------------
+    // ----------------------------------------------
+    // SAVE BRAND
+    // ----------------------------------------------
 
     const updatedBrand = await existingBrand.save();
-
-    // ------------------------------
-    // RESPONSE
-    // ------------------------------
 
     return res.status(200).json({
       success: true,
       message: "Brand updated successfully",
       brand: updatedBrand,
     });
-
   } catch (error) {
     console.error("Update Brand Error:", error);
 
@@ -319,7 +324,6 @@ export const deleteBrand = async (req, res) => {
       success: true,
       message: "Brand deleted successfully",
     });
-
   } catch (error) {
     console.error("Delete Brand Error:", error);
 
