@@ -1,5 +1,3 @@
-
-import mongoose from "mongoose";
 import Brand from "../model/brandSchema.js";
 import cloudinary from "../config/cloudinary.js";
 
@@ -25,89 +23,6 @@ const uploadToCloudinary = (buffer, options = {}) => {
 };
 
 // ======================================================
-// NORMALIZE CATEGORY INPUT
-// Supports JSON arrays and legacy string categories.
-// ======================================================
-
-const parseCategories = (value, legacyImage = "") => {
-  if (value === undefined || value === null || value === "") {
-    return [];
-  }
-
-  let categories = value;
-
-  // FormData sends JSON values as strings.
-  if (typeof categories === "string") {
-    try {
-      categories = JSON.parse(categories);
-    } catch {
-      // Support a single legacy category string.
-      categories = [categories];
-    }
-  }
-
-  if (!Array.isArray(categories)) {
-    throw new Error("Categories must be an array.");
-  }
-
-  const normalized = categories.map((item) => {
-    // Legacy format: ["Air Flow Meters", "Battery Testers"]
-    if (typeof item === "string") {
-      const categoryName = item.trim();
-
-      if (!categoryName) {
-        throw new Error("Category name cannot be empty.");
-      }
-
-      return {
-        categoryName,
-        categoryIMAGE: legacyImage,
-      };
-    }
-
-    // New format:
-    // [{ categoryName, categoryIMAGE }]
-    if (item && typeof item === "object") {
-      const categoryName = String(item.categoryName || "").trim();
-      const categoryIMAGE =
-        typeof item.categoryIMAGE === "string"
-          ? item.categoryIMAGE.trim()
-          : "";
-
-      if (!categoryName) {
-        throw new Error("Category name cannot be empty.");
-      }
-
-      if (item.categoryIMAGE !== undefined &&
-          typeof item.categoryIMAGE !== "string") {
-        throw new Error("Category image must be a string.");
-      }
-
-      return {
-        ...(item._id && mongoose.isValidObjectId(item._id)
-          ? { _id: item._id }
-          : {}),
-        categoryName,
-        categoryIMAGE,
-      };
-    }
-
-    throw new Error("Invalid category format.");
-  });
-
-  // Reject duplicate names within this brand.
-  const names = normalized.map((item) =>
-    item.categoryName.toLowerCase()
-  );
-
-  if (new Set(names).size !== names.length) {
-    throw new Error("Duplicate category names are not allowed.");
-  }
-
-  return normalized;
-};
-
-// ======================================================
 // CREATE BRAND
 // ======================================================
 
@@ -121,72 +36,65 @@ export const createBrand = async (req, res) => {
       brandAbout,
     } = req.body;
 
-    if (typeof brandName !== "string" || !brandName.trim()) {
+    // Validate brand name
+    if (!brandName?.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Brand name is required.",
+        message: "Brand name is required",
       });
     }
 
-    const trimmedBrandName = brandName.trim();
-
+    // Check duplicate brand
     const existingBrand = await Brand.findOne({
-      brandName: trimmedBrandName,
+      brandName: brandName.trim(),
     });
 
     if (existingBrand) {
-      return res.status(409).json({
-        success: false,
-        message: "Brand already exists.",
-      });
-    }
-
-    if (
-      status !== undefined &&
-      !["Active", "Inactive"].includes(status)
-    ) {
       return res.status(400).json({
         success: false,
-        message: "Status must be Active or Inactive.",
+        message: "Brand already exists",
       });
     }
 
-    let categories;
-
-    try {
-      categories = parseCategories(category, categoryIMAGE || "");
-    } catch (error) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-      });
-    }
-
+    // Upload main brand image
     let imageUrl = "";
+    const imageFile = req.file;
 
-    if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, {
-        folder: "ikonix/brands",
-        resource_type: "image",
-      });
+    if (imageFile) {
+      const result = await uploadToCloudinary(
+        imageFile.buffer,
+        {
+          folder: "ikonix/brands",
+          resource_type: "image",
+        }
+      );
 
       imageUrl = result.secure_url;
     }
 
+    // Create brand
     const brand = new Brand({
       Image: imageUrl,
-      brandName: trimmedBrandName,
-      category: categories,
+      brandName: brandName.trim(),
+
+      category: Array.isArray(category)
+        ? category
+        : category
+          ? [category]
+          : [],
+
+      // Save category image URL
+      categoryIMAGE: categoryIMAGE?.trim() || "",
+
       status: status || "Active",
-      brandAbout:
-        typeof brandAbout === "string" ? brandAbout.trim() : "",
+      brandAbout: brandAbout || "",
     });
 
     const savedBrand = await brand.save();
 
     return res.status(201).json({
       success: true,
-      message: "Brand created successfully.",
+      message: "Brand created successfully",
       brand: savedBrand,
     });
   } catch (error) {
@@ -194,7 +102,7 @@ export const createBrand = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to create brand.",
+      message: error.message,
     });
   }
 };
@@ -205,7 +113,9 @@ export const createBrand = async (req, res) => {
 
 export const getAllBrands = async (req, res) => {
   try {
-    const brands = await Brand.find().sort({ createdAt: -1 });
+    const brands = await Brand.find().sort({
+      createdAt: -1,
+    });
 
     return res.status(200).json({
       success: true,
@@ -217,7 +127,7 @@ export const getAllBrands = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch brands.",
+      message: error.message,
     });
   }
 };
@@ -228,19 +138,12 @@ export const getAllBrands = async (req, res) => {
 
 export const getBrandById = async (req, res) => {
   try {
-    if (!mongoose.isValidObjectId(req.params.id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid brand ID.",
-      });
-    }
-
     const brand = await Brand.findById(req.params.id);
 
     if (!brand) {
       return res.status(404).json({
         success: false,
-        message: "Brand not found.",
+        message: "Brand not found",
       });
     }
 
@@ -253,7 +156,7 @@ export const getBrandById = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch brand.",
+      message: error.message,
     });
   }
 };
@@ -266,13 +169,6 @@ export const updateBrand = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid brand ID.",
-      });
-    }
-
     const {
       brandName,
       category,
@@ -281,21 +177,25 @@ export const updateBrand = async (req, res) => {
       brandAbout,
     } = req.body;
 
+    // Find brand
     const existingBrand = await Brand.findById(id);
 
     if (!existingBrand) {
       return res.status(404).json({
         success: false,
-        message: "Brand not found.",
+        message: "Brand not found",
       });
     }
 
-    // Update brand name.
+    // ----------------------------------------------
+    // UPDATE BRAND NAME
+    // ----------------------------------------------
+
     if (brandName !== undefined) {
-      if (typeof brandName !== "string" || !brandName.trim()) {
+      if (!brandName.trim()) {
         return res.status(400).json({
           success: false,
-          message: "Brand name cannot be empty.",
+          message: "Brand name cannot be empty",
         });
       }
 
@@ -307,76 +207,88 @@ export const updateBrand = async (req, res) => {
       });
 
       if (duplicateBrand) {
-        return res.status(409).json({
+        return res.status(400).json({
           success: false,
-          message: "Brand already exists.",
+          message: "Brand already exists",
         });
       }
 
       existingBrand.brandName = trimmedBrandName;
     }
 
-    // Update brand description.
-    if (brandAbout !== undefined) {
-      if (typeof brandAbout !== "string") {
-        return res.status(400).json({
-          success: false,
-          message: "Brand description must be a string.",
-        });
-      }
+    // ----------------------------------------------
+    // UPDATE BRAND DESCRIPTION
+    // ----------------------------------------------
 
+    if (brandAbout !== undefined) {
       existingBrand.brandAbout = brandAbout.trim();
     }
 
-    // Update category objects without changing other brand fields.
+    // ----------------------------------------------
+    // UPDATE CATEGORIES
+    // ----------------------------------------------
+
     if (category !== undefined) {
-      let categories;
-
-      try {
-        // Keep existing legacy image support only for legacy input.
-        categories = parseCategories(
-          category,
-          typeof categoryIMAGE === "string"
-            ? categoryIMAGE.trim()
-            : ""
-        );
-      } catch (error) {
-        return res.status(400).json({
-          success: false,
-          message: error.message,
-        });
-      }
-
-      existingBrand.category = categories;
+      existingBrand.category = Array.isArray(category)
+        ? category
+        : category
+          ? [category]
+          : [];
     }
 
-    // Validate status.
+    // ----------------------------------------------
+    // UPDATE CATEGORY IMAGE URL
+    // ----------------------------------------------
+
+    if (categoryIMAGE !== undefined) {
+      existingBrand.categoryIMAGE =
+        typeof categoryIMAGE === "string"
+          ? categoryIMAGE.trim()
+          : existingBrand.categoryIMAGE;
+    }
+
+    // ----------------------------------------------
+    // UPDATE STATUS
+    // ----------------------------------------------
+
     if (status !== undefined) {
       if (!["Active", "Inactive"].includes(status)) {
         return res.status(400).json({
           success: false,
-          message: "Status must be Active or Inactive.",
+          message: "Status must be Active or Inactive",
         });
       }
 
       existingBrand.status = status;
     }
 
-    // Update main brand image.
-    if (req.file) {
-      const result = await uploadToCloudinary(req.file.buffer, {
-        folder: "ikonix/brands",
-        resource_type: "image",
-      });
+    // ----------------------------------------------
+    // UPDATE MAIN BRAND IMAGE
+    // ----------------------------------------------
+
+    const imageFile = req.file;
+
+    if (imageFile) {
+      const result = await uploadToCloudinary(
+        imageFile.buffer,
+        {
+          folder: "ikonix/brands",
+          resource_type: "image",
+        }
+      );
 
       existingBrand.Image = result.secure_url;
     }
+
+    // ----------------------------------------------
+    // SAVE BRAND
+    // ----------------------------------------------
 
     const updatedBrand = await existingBrand.save();
 
     return res.status(200).json({
       success: true,
-      message: "Brand updated successfully.",
+      message: "Brand updated successfully",
       brand: updatedBrand,
     });
   } catch (error) {
@@ -384,7 +296,7 @@ export const updateBrand = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to update brand.",
+      message: error.message,
     });
   }
 };
@@ -397,19 +309,12 @@ export const deleteBrand = async (req, res) => {
   try {
     const { id } = req.params;
 
-    if (!mongoose.isValidObjectId(id)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid brand ID.",
-      });
-    }
-
     const brand = await Brand.findById(id);
 
     if (!brand) {
       return res.status(404).json({
         success: false,
-        message: "Brand not found.",
+        message: "Brand not found",
       });
     }
 
@@ -417,14 +322,14 @@ export const deleteBrand = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Brand deleted successfully.",
+      message: "Brand deleted successfully",
     });
   } catch (error) {
     console.error("Delete Brand Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to delete brand.",
+      message: error.message,
     });
   }
 };

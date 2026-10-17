@@ -1,10 +1,9 @@
-
 import Product from "../model/productSchema.js";
 import Brand from "../model/brandSchema.js";
 import cloudinary from "../config/cloudinary.js";
 
 // ======================================================
-// CLOUDINARY BUFFER UPLOAD
+// CLOUDINARY BUFFER UPLOAD FUNCTION
 // ======================================================
 
 const uploadToCloudinary = (buffer, options = {}) => {
@@ -12,40 +11,16 @@ const uploadToCloudinary = (buffer, options = {}) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       options,
       (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
+        if (error) {
+          reject(error);
+        } else {
+          resolve(result);
+        }
       },
     );
 
     uploadStream.end(buffer);
   });
-};
-
-// ======================================================
-// CATEGORY HELPERS
-// Supports old string categories and nested category objects
-// ======================================================
-
-const getCategoryNames = (brand) => {
-  if (!Array.isArray(brand?.category)) return [];
-
-  return brand.category
-    .map((item) =>
-      typeof item === "string"
-        ? item.trim()
-        : item?.categoryName?.trim(),
-    )
-    .filter(Boolean);
-};
-
-const validateBrandCategory = (brand, category) => {
-  if (typeof category !== "string" || !category.trim()) {
-    return false;
-  }
-
-  return getCategoryNames(brand).some(
-    (name) => name.toLowerCase() === category.trim().toLowerCase(),
-  );
 };
 
 // ======================================================
@@ -66,26 +41,27 @@ export const createProduct = async (req, res) => {
       stock,
     } = req.body;
 
+    // --------------------------------------------------
+    // REQUIRED FIELD VALIDATION
+    // --------------------------------------------------
+
     if (!brandName?.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Brand name is required.",
+        message: "Brand name is required",
       });
     }
 
     if (!productName?.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Product name is required.",
+        message: "Product name is required",
       });
     }
 
-    if (!category?.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "Please select a category.",
-      });
-    }
+    // --------------------------------------------------
+    // CHECK BRAND
+    // --------------------------------------------------
 
     const brand = await Brand.findOne({
       brandName: brandName.trim(),
@@ -94,83 +70,116 @@ export const createProduct = async (req, res) => {
     if (!brand) {
       return res.status(404).json({
         success: false,
-        message: "Brand not found.",
+        message: "Brand not found",
       });
     }
 
-    // Make sure the category belongs to the selected brand.
-    if (!validateBrandCategory(brand, category)) {
-      return res.status(400).json({
-        success: false,
-        message: "Please select a valid category for the selected brand.",
-        categories: getCategoryNames(brand),
-      });
-    }
+    // --------------------------------------------------
+    // GET FILES FROM MULTER
+    // --------------------------------------------------
 
     const images = req.files?.Image || [];
+
     const pdfFiles = req.files?.pdfFile || [];
+
+    // --------------------------------------------------
+    // IMAGE LIMIT
+    // --------------------------------------------------
 
     if (images.length > 5) {
       return res.status(400).json({
         success: false,
-        message: "Maximum 5 product images are allowed.",
+        message: "Maximum 5 product images are allowed",
       });
     }
 
-    if (
-      pdfFiles.length > 0 &&
-      pdfFiles[0].mimetype !== "application/pdf"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Only PDF files are allowed.",
-      });
-    }
+    // --------------------------------------------------
+    // UPLOAD PRODUCT IMAGES
+    // --------------------------------------------------
 
-    // Upload product images.
     const imageUrls = [];
 
     for (const image of images) {
       const result = await uploadToCloudinary(image.buffer, {
         folder: "ikonix/products/images",
+
         resource_type: "image",
       });
 
       imageUrls.push(result.secure_url);
     }
 
-    // Upload product PDF, if provided.
+    // --------------------------------------------------
+    // UPLOAD PRODUCT PDF
+    // --------------------------------------------------
+
     let pdfUrl = "";
 
     if (pdfFiles.length > 0) {
-      const result = await uploadToCloudinary(pdfFiles[0].buffer, {
+      const pdf = pdfFiles[0];
+
+      // Check PDF
+      if (pdf.mimetype !== "application/pdf") {
+        return res.status(400).json({
+          success: false,
+          message: "Only PDF files are allowed",
+        });
+      }
+
+      const result = await uploadToCloudinary(pdf.buffer, {
         folder: "ikonix/products/pdf",
+
         resource_type: "raw",
+
         public_id: `product-${Date.now()}`,
       });
 
       pdfUrl = result.secure_url;
     }
 
+    // --------------------------------------------------
+    // CREATE PRODUCT
+    // --------------------------------------------------
+
     const product = new Product({
       Image: imageUrls,
-      brandName: brand.brandName,
+
+      brandName: brandName.trim(),
+
       productName: productName.trim(),
+
       modelNumber: modelNumber?.trim() || "",
+
       shortDescription: shortDescription || "",
+
       productDescription: productDescription || "",
-      category: category.trim(),
-      unit: unit?.trim() || "",
+
+      category,
+
+      unit: unit || "",
+
       price: Number(price) || 0,
+
       stock: Number(stock) || 0,
+
       pdfFile: pdfUrl,
     });
 
+    // --------------------------------------------------
+    // SAVE
+    // --------------------------------------------------
+
     await product.save();
+
+    // --------------------------------------------------
+    // RESPONSE
+    // --------------------------------------------------
 
     return res.status(201).json({
       success: true,
-      message: "Product created successfully.",
+
+      message: "Product created successfully",
+
       product,
     });
   } catch (error) {
@@ -178,7 +187,7 @@ export const createProduct = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to create product.",
+      message: error.message,
     });
   }
 };
@@ -195,7 +204,9 @@ export const getAllProducts = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+
       count: products.length,
+
       products,
     });
   } catch (error) {
@@ -203,7 +214,7 @@ export const getAllProducts = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to fetch products.",
+      message: error.message,
     });
   }
 };
@@ -221,12 +232,13 @@ export const getProductById = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: "Product not found.",
+        message: "Product not found",
       });
     }
 
     return res.status(200).json({
       success: true,
+
       product,
     });
   } catch (error) {
@@ -234,7 +246,7 @@ export const getProductById = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to fetch product.",
+      message: error.message,
     });
   }
 };
@@ -242,7 +254,6 @@ export const getProductById = async (req, res) => {
 // ======================================================
 // UPDATE PRODUCT
 // ======================================================
-
 export const updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -260,108 +271,152 @@ export const updateProduct = async (req, res) => {
       status,
     } = req.body;
 
+    // ==================================================
+    // FIND EXISTING PRODUCT
+    // ==================================================
+
     const existingProduct = await Product.findById(id);
 
     if (!existingProduct) {
       return res.status(404).json({
         success: false,
-        message: "Product not found.",
+        message: "Product not found",
       });
     }
 
-    // Resolve the brand and category to validate.
-    const selectedBrandName =
-      brandName !== undefined && brandName.trim()
-        ? brandName.trim()
-        : existingProduct.brandName;
+    // ==================================================
+    // CHECK BRAND
+    // ==================================================
 
-    const selectedBrand = await Brand.findOne({
-      brandName: selectedBrandName,
-    });
-
-    if (!selectedBrand) {
-      return res.status(404).json({
-        success: false,
-        message: "Brand not found.",
+    if (brandName !== undefined) {
+      const brand = await Brand.findOne({
+        brandName: brandName.trim(),
       });
+
+      if (!brand) {
+        return res.status(404).json({
+          success: false,
+          message: "Brand not found",
+        });
+      }
     }
 
-    const selectedCategory =
-      category !== undefined ? category : existingProduct.category;
+    // ==================================================
+    // EXISTING IMAGES
+    // ==================================================
+    //
+    // ProductEdit.jsx sends the images that should
+    // remain in the product.
+    //
+    // Example:
+    //
+    // existingImages:
+    // image1
+    // image3
+    //
+    // ==================================================
 
-    if (!validateBrandCategory(selectedBrand, selectedCategory)) {
-      return res.status(400).json({
-        success: false,
-        message: "Please select a valid category for the selected brand.",
-        categories: getCategoryNames(selectedBrand),
-      });
+    let existingImageUrls = [];
+
+    if (Array.isArray(req.body.existingImages)) {
+      existingImageUrls = req.body.existingImages;
+    } else if (req.body.existingImages) {
+      existingImageUrls = [req.body.existingImages];
     }
 
-    // Existing images to keep.
-    let existingImageUrls = req.body.existingImages ?? [];
+    // ==================================================
+    // NEW IMAGES
+    // ==================================================
 
-    if (!Array.isArray(existingImageUrls)) {
-      existingImageUrls = [existingImageUrls];
-    }
-
-    existingImageUrls = existingImageUrls.filter(
-      (url) => typeof url === "string" && url.trim(),
-    );
-
-    // New images.
     const images = req.files?.Image || [];
+
+    // ==================================================
+    // CHECK TOTAL IMAGE LIMIT
+    // ==================================================
+
     const totalImages = existingImageUrls.length + images.length;
 
     if (totalImages > 5) {
       return res.status(400).json({
         success: false,
-        message: "Maximum 5 product images are allowed.",
+        message: "Maximum 5 product images are allowed",
       });
     }
 
+    // ==================================================
+    // FINAL IMAGE ARRAY
+    // ==================================================
+
     const imageUrls = [...existingImageUrls];
+
+    // ==================================================
+    // UPLOAD NEW IMAGES
+    // ==================================================
 
     for (const image of images) {
       const result = await uploadToCloudinary(image.buffer, {
         folder: "ikonix/products/images",
+
         resource_type: "image",
       });
 
       imageUrls.push(result.secure_url);
     }
 
-    // Keep the existing PDF unless the form explicitly changes it.
-    let pdfUrl =
-      req.body.existingPdf !== undefined
-        ? req.body.existingPdf
-        : existingProduct.pdfFile || "";
+    // ==================================================
+    // PDF
+    // ==================================================
+    //
+    // If ProductEdit sends existingPdf:
+    // keep that PDF.
+    //
+    // If existingPdf is empty/missing:
+    // remove the old PDF.
+    //
+    // If new pdfFile exists:
+    // upload and replace the old PDF.
+    //
+    // ==================================================
+
+    let pdfUrl = req.body.existingPdf || "";
+
+    // ==================================================
+    // NEW PDF
+    // ==================================================
 
     const pdfFiles = req.files?.pdfFile || [];
 
-    if (
-      pdfFiles.length > 0 &&
-      pdfFiles[0].mimetype !== "application/pdf"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Only PDF files are allowed.",
-      });
-    }
-
     if (pdfFiles.length > 0) {
-      const result = await uploadToCloudinary(pdfFiles[0].buffer, {
+      const pdf = pdfFiles[0];
+
+      // Check PDF type
+      if (pdf.mimetype !== "application/pdf") {
+        return res.status(400).json({
+          success: false,
+          message: "Only PDF files are allowed",
+        });
+      }
+
+      const result = await uploadToCloudinary(pdf.buffer, {
         folder: "ikonix/products/pdf",
+
         resource_type: "raw",
+
         public_id: `product-${Date.now()}`,
       });
 
       pdfUrl = result.secure_url;
     }
 
-    // Update product fields.
+    // ==================================================
+    // UPDATE PRODUCT FIELDS
+    // ==================================================
+
     existingProduct.Image = imageUrls;
-    existingProduct.brandName = selectedBrand.brandName;
-    existingProduct.category = selectedCategory.trim();
+
+    if (brandName !== undefined) {
+      existingProduct.brandName = brandName.trim();
+    }
 
     if (productName !== undefined) {
       existingProduct.productName = productName.trim();
@@ -377,6 +432,10 @@ export const updateProduct = async (req, res) => {
 
     if (productDescription !== undefined) {
       existingProduct.productDescription = productDescription;
+    }
+
+    if (category !== undefined) {
+      existingProduct.category = category;
     }
 
     if (unit !== undefined) {
@@ -395,13 +454,25 @@ export const updateProduct = async (req, res) => {
       existingProduct.status = status;
     }
 
+    // ==================================================
+    // UPDATE PDF
+    // ==================================================
+
     existingProduct.pdfFile = pdfUrl;
+
+    // ==================================================
+    // SAVE
+    // ==================================================
 
     const updatedProduct = await existingProduct.save();
 
+    // ==================================================
+    // RESPONSE
+    // ==================================================
+
     return res.status(200).json({
       success: true,
-      message: "Product updated successfully.",
+      message: "Product updated successfully",
       product: updatedProduct,
     });
   } catch (error) {
@@ -409,11 +480,10 @@ export const updateProduct = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to update product.",
+      message: error.message,
     });
   }
 };
-
 // ======================================================
 // DELETE PRODUCT
 // ======================================================
@@ -427,7 +497,7 @@ export const deleteProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        message: "Product not found.",
+        message: "Product not found",
       });
     }
 
@@ -435,7 +505,9 @@ export const deleteProduct = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "Product deleted successfully.",
+
+      message: "Product deleted successfully",
+
       product,
     });
   } catch (error) {
@@ -443,7 +515,7 @@ export const deleteProduct = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: error.message || "Failed to delete product.",
+      message: error.message,
     });
   }
 };

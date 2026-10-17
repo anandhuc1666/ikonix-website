@@ -1,60 +1,26 @@
 
-import mongoose from "mongoose";
 import Brand from "../model/brandSchema.js";
 
 // ======================================================
-// HELPER: NORMALIZE CATEGORIES
-// Supports legacy string categories and category objects.
+// HELPER: NORMALIZE BRAND CATEGORIES
 // ======================================================
 
-const normalizeCategories = (brand) => {
-  if (!Array.isArray(brand.category)) {
-    return [];
+const getBrandCategories = (brand) => {
+  if (Array.isArray(brand.category)) {
+    return brand.category.filter(
+      (item) => typeof item === "string" && item.trim()
+    );
   }
 
-  return brand.category
-    .map((item) => {
-      if (typeof item === "string") {
-        const categoryName = item.trim();
+  if (typeof brand.category === "string" && brand.category.trim()) {
+    return [brand.category.trim()];
+  }
 
-        if (!categoryName) return null;
-
-        return {
-          categoryName,
-          categoryIMAGE: brand.categoryIMAGE || "",
-        };
-      }
-
-      if (item && typeof item === "object") {
-        const categoryName = String(item.categoryName || "").trim();
-
-        if (!categoryName) return null;
-
-        return {
-          _id: item._id ? String(item._id) : undefined,
-          categoryName,
-          categoryIMAGE: item.categoryIMAGE || "",
-        };
-      }
-
-      return null;
-    })
-    .filter(Boolean);
-};
-
-const normalizeName = (name) =>
-  String(name || "").trim().toLowerCase();
-
-const saveCategories = (brand, categories) => {
-  brand.category = categories.map((item) => ({
-    ...(item._id ? { _id: item._id } : {}),
-    categoryName: item.categoryName,
-    categoryIMAGE: item.categoryIMAGE || "",
-  }));
+  return [];
 };
 
 // ======================================================
-// GET ALL CATEGORIES
+// GET ALL UNIQUE CATEGORIES
 // GET /api/categories/getAllCategories
 // ======================================================
 
@@ -62,26 +28,42 @@ export const getAllCategories = async (req, res) => {
   try {
     const brands = await Brand.find().sort({ createdAt: -1 });
 
-    const categories = [];
+    const categoryMap = new Map();
 
     for (const brand of brands) {
-      const brandCategories = normalizeCategories(brand);
+      const brandCategories = getBrandCategories(brand);
 
-      for (const item of brandCategories) {
-        categories.push({
-          _id:
-            item._id ||
-            `${brand._id}-${normalizeName(item.categoryName)}`,
-          brandId: String(brand._id),
-          brandName: brand.brandName || "",
-          categoryName: item.categoryName,
-          categoryIMAGE: item.categoryIMAGE || "",
-        });
+      for (const categoryName of brandCategories) {
+        const name = categoryName.trim();
+        const key = name.toLowerCase();
+
+        if (!categoryMap.has(key)) {
+          categoryMap.set(key, {
+            _id: key,
+            categoryName: name,
+            categoryIMAGE: brand.categoryIMAGE || "",
+            brandIds: [],
+            brandNames: [],
+          });
+        }
+
+        const item = categoryMap.get(key);
+
+        if (!item.categoryIMAGE && brand.categoryIMAGE) {
+          item.categoryIMAGE = brand.categoryIMAGE;
+        }
+
+        if (
+          !item.brandIds.includes(String(brand._id))
+        ) {
+          item.brandIds.push(String(brand._id));
+          item.brandNames.push(brand.brandName || "");
+        }
       }
     }
 
-    categories.sort((a, b) =>
-      a.categoryName.localeCompare(b.categoryName)
+    const categories = Array.from(categoryMap.values()).sort(
+      (a, b) => a.categoryName.localeCompare(b.categoryName)
     );
 
     return res.status(200).json({
@@ -94,18 +76,18 @@ export const getAllCategories = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to fetch categories.",
+      message: error.message,
     });
   }
 };
 
 // ======================================================
-// CREATE CATEGORY
+// CREATE CATEGORY FOR A BRAND
 // POST /api/categories/createCategory
 //
 // Body:
 // {
-//   "brandId": "BRAND_ID",
+//   "brandId": "...",
 //   "category": "Air Flow Meters",
 //   "categoryIMAGE": "https://example.com/image.jpg"
 // }
@@ -113,12 +95,12 @@ export const getAllCategories = async (req, res) => {
 
 export const createCategory = async (req, res) => {
   try {
-    const { brandId, category, categoryIMAGE = "" } = req.body;
+    const { brandId, category, categoryIMAGE } = req.body;
 
-    if (!brandId || !mongoose.isValidObjectId(brandId)) {
+    if (!brandId) {
       return res.status(400).json({
         success: false,
-        message: "A valid brandId is required.",
+        message: "Brand ID is required.",
       });
     }
 
@@ -129,14 +111,23 @@ export const createCategory = async (req, res) => {
       });
     }
 
-    if (typeof categoryIMAGE !== "string") {
-      return res.status(400).json({
+    const name = category.trim();
+
+    // Category names must be unique across all brands.
+    const brands = await Brand.find();
+
+    const alreadyExists = brands.some((brand) =>
+      getBrandCategories(brand).some(
+        (item) => item.toLowerCase() === name.toLowerCase()
+      )
+    );
+
+    if (alreadyExists) {
+      return res.status(409).json({
         success: false,
-        message: "Category image must be a string.",
+        message: "Category already exists.",
       });
     }
-
-    const name = category.trim();
 
     const brand = await Brand.findById(brandId);
 
@@ -147,40 +138,25 @@ export const createCategory = async (req, res) => {
       });
     }
 
-    // Category names are unique across all brands.
-    const brands = await Brand.find();
+    const updatedCategories = getBrandCategories(brand);
+    updatedCategories.push(name);
 
-    const duplicateExists = brands.some((existingBrand) =>
-      normalizeCategories(existingBrand).some(
-        (item) => normalizeName(item.categoryName) === normalizeName(name)
-      )
-    );
+    brand.category = updatedCategories;
 
-    if (duplicateExists) {
-      return res.status(409).json({
-        success: false,
-        message: "Category already exists.",
-      });
+    if (typeof categoryIMAGE === "string") {
+      brand.categoryIMAGE = categoryIMAGE.trim();
     }
 
-    const categories = normalizeCategories(brand);
-
-    categories.push({
-      categoryName: name,
-      categoryIMAGE: categoryIMAGE.trim(),
-    });
-
-    saveCategories(brand, categories);
     await brand.save();
 
     return res.status(201).json({
       success: true,
-      message: "Category created successfully.",
+      message: "Category added successfully.",
       category: {
+        categoryName: name,
+        categoryIMAGE: brand.categoryIMAGE,
         brandId: String(brand._id),
         brandName: brand.brandName,
-        categoryName: name,
-        categoryIMAGE: categoryIMAGE.trim(),
       },
     });
   } catch (error) {
@@ -188,39 +164,26 @@ export const createCategory = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to create category.",
+      message: error.message,
     });
   }
 };
 
 // ======================================================
-// UPDATE CATEGORY
+// UPDATE CATEGORY NAME AND IMAGE
 // PUT /api/categories/updateCategory
 //
 // Body:
 // {
-//   "brandId": "BRAND_ID",
 //   "oldCategory": "Air Flow Meters",
-//   "category": "Air Flow Instruments",
+//   "category": "Air Flow Measuring Instruments",
 //   "categoryIMAGE": "https://example.com/new-image.jpg"
 // }
 // ======================================================
 
 export const updateCategory = async (req, res) => {
   try {
-    const {
-      brandId,
-      oldCategory,
-      category,
-      categoryIMAGE,
-    } = req.body;
-
-    if (!brandId || !mongoose.isValidObjectId(brandId)) {
-      return res.status(400).json({
-        success: false,
-        message: "A valid brandId is required.",
-      });
-    }
+    const { oldCategory, category, categoryIMAGE } = req.body;
 
     if (typeof oldCategory !== "string" || !oldCategory.trim()) {
       return res.status(400).json({
@@ -236,56 +199,31 @@ export const updateCategory = async (req, res) => {
       });
     }
 
-    if (
-      categoryIMAGE !== undefined &&
-      typeof categoryIMAGE !== "string"
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Category image must be a string.",
-      });
-    }
-
     const oldName = oldCategory.trim();
     const newName = category.trim();
 
-    const brand = await Brand.findById(brandId);
+    const brands = await Brand.find();
 
-    if (!brand) {
-      return res.status(404).json({
-        success: false,
-        message: "Brand not found.",
-      });
-    }
-
-    const categories = normalizeCategories(brand);
-
-    const categoryIndex = categories.findIndex(
-      (item) => normalizeName(item.categoryName) === normalizeName(oldName)
+    // Find brands containing the old category.
+    const affectedBrands = brands.filter((brand) =>
+      getBrandCategories(brand).some(
+        (item) => item.toLowerCase() === oldName.toLowerCase()
+      )
     );
 
-    if (categoryIndex === -1) {
+    if (affectedBrands.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Category not found in the selected brand.",
+        message: "Category not found.",
       });
     }
 
-    // Prevent duplicate category names across brands.
-    if (normalizeName(oldName) !== normalizeName(newName)) {
-      const otherBrands = await Brand.find({
-        _id: { $ne: brand._id },
-      });
-
-      const otherBrandCategories = otherBrands.flatMap((item) =>
-        normalizeCategories(item)
-      );
-
-      const duplicateExists = [
-        ...categories.filter((_, index) => index !== categoryIndex),
-        ...otherBrandCategories,
-      ].some(
-        (item) => normalizeName(item.categoryName) === normalizeName(newName)
+    // Prevent renaming to an existing category.
+    if (oldName.toLowerCase() !== newName.toLowerCase()) {
+      const duplicateExists = brands.some((brand) =>
+        getBrandCategories(brand).some(
+          (item) => item.toLowerCase() === newName.toLowerCase()
+        )
       );
 
       if (duplicateExists) {
@@ -296,24 +234,34 @@ export const updateCategory = async (req, res) => {
       }
     }
 
-    categories[categoryIndex].categoryName = newName;
+    // Update only category names and category image.
+    for (const brand of affectedBrands) {
+      brand.category = getBrandCategories(brand).map((item) =>
+        item.toLowerCase() === oldName.toLowerCase()
+          ? newName
+          : item
+      );
 
-    // Preserve the image if the frontend doesn't send a new one.
-    if (categoryIMAGE !== undefined) {
-      categories[categoryIndex].categoryIMAGE = categoryIMAGE.trim();
+      // Update category image only when supplied.
+      if (typeof categoryIMAGE === "string") {
+        brand.categoryIMAGE = categoryIMAGE.trim();
+      }
+
+      // Do not modify brandName, Image, brandAbout, or status.
+      await brand.save();
     }
-
-    saveCategories(brand, categories);
-    await brand.save();
 
     return res.status(200).json({
       success: true,
       message: "Category updated successfully.",
+      updatedBrands: affectedBrands.length,
       category: {
-        brandId: String(brand._id),
-        brandName: brand.brandName,
-        categoryName: categories[categoryIndex].categoryName,
-        categoryIMAGE: categories[categoryIndex].categoryIMAGE,
+        oldName,
+        categoryName: newName,
+        categoryIMAGE:
+          typeof categoryIMAGE === "string"
+            ? categoryIMAGE.trim()
+            : undefined,
       },
     });
   } catch (error) {
@@ -321,32 +269,24 @@ export const updateCategory = async (req, res) => {
 
     return res.status(500).json({
       success: false,
-      message: "Failed to update category.",
+      message: error.message,
     });
   }
 };
 
 // ======================================================
-// DELETE CATEGORY
+// DELETE CATEGORY FROM ASSOCIATED BRANDS
 // DELETE /api/categories/deleteCategory
 //
 // Body:
 // {
-//   "brandId": "BRAND_ID",
 //   "category": "Air Flow Meters"
 // }
 // ======================================================
 
 export const deleteCategory = async (req, res) => {
   try {
-    const { brandId, category } = req.body;
-
-    if (!brandId || !mongoose.isValidObjectId(brandId)) {
-      return res.status(400).json({
-        success: false,
-        message: "A valid brandId is required.",
-      });
-    }
+    const { category } = req.body;
 
     if (typeof category !== "string" || !category.trim()) {
       return res.status(400).json({
@@ -355,43 +295,43 @@ export const deleteCategory = async (req, res) => {
       });
     }
 
-    const brand = await Brand.findById(brandId);
+    const name = category.trim();
+    const brands = await Brand.find();
 
-    if (!brand) {
-      return res.status(404).json({
-        success: false,
-        message: "Brand not found.",
-      });
-    }
-
-    const categories = normalizeCategories(brand);
-
-    const updatedCategories = categories.filter(
-      (item) => normalizeName(item.categoryName) !== normalizeName(category)
+    const affectedBrands = brands.filter((brand) =>
+      getBrandCategories(brand).some(
+        (item) => item.toLowerCase() === name.toLowerCase()
+      )
     );
 
-    if (updatedCategories.length === categories.length) {
+    if (affectedBrands.length === 0) {
       return res.status(404).json({
         success: false,
-        message: "Category not found in the selected brand.",
+        message: "Category not found.",
       });
     }
 
-    saveCategories(brand, updatedCategories);
-    await brand.save();
+    for (const brand of affectedBrands) {
+      brand.category = getBrandCategories(brand).filter(
+        (item) => item.toLowerCase() !== name.toLowerCase()
+      );
+
+      // Preserve brand image, description, and status.
+      await brand.save();
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Category deleted successfully.",
-      deletedCategory: category.trim(),
-      brandId: String(brand._id),
+      message: "Category removed successfully.",
+      deletedCategory: name,
+      updatedBrands: affectedBrands.length,
     });
   } catch (error) {
     console.error("Delete Category Error:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to delete category.",
+      message: error.message,
     });
   }
 };
