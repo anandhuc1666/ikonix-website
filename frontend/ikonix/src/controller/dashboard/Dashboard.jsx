@@ -267,28 +267,42 @@ function Dashboard() {
 const categoryCounts = {};
 
 brands.forEach((brand) => {
-  if (Array.isArray(brand.category)) {
-    brand.category.forEach((category) => {
-      const categoryName =
-        typeof category === "string"
-          ? category.trim()
-          : category?.categoryName?.trim();
+  if (!Array.isArray(brand.category)) return;
 
-      if (categoryName) {
-        categoryCounts[categoryName] =
-          (categoryCounts[categoryName] || 0) + 1;
+  // Count each category only once per brand, even if duplicate entries exist.
+  const categoriesInThisBrand = new Map();
+
+  brand.category.forEach((category) => {
+    const categoryName =
+      typeof category === "string"
+        ? category.trim()
+        : category?.categoryName?.trim();
+
+    if (categoryName) {
+      const normalizedName = categoryName.toLowerCase();
+
+      if (!categoriesInThisBrand.has(normalizedName)) {
+        categoriesInThisBrand.set(normalizedName, categoryName);
       }
-    });
-  }
+    }
+  });
+
+  categoriesInThisBrand.forEach((categoryName, normalizedName) => {
+    if (!categoryCounts[normalizedName]) {
+      categoryCounts[normalizedName] = {
+        name: categoryName,
+        count: 0,
+      };
+    }
+
+    categoryCounts[normalizedName].count += 1;
+  });
 });
 
-// Convert object to array
-const categoryList = Object.entries(categoryCounts)
-  .map(([name, count]) => ({
-    name,
-    count,
-  }))
-  .sort((a, b) => b.count - a.count);
+// Convert object to array and sort by number of brands using each category.
+const categoryList = Object.values(categoryCounts).sort(
+  (a, b) => b.count - a.count,
+);
 
 const totalCategories = categoryList.length;
 
@@ -297,9 +311,7 @@ const totalCategories = categoryList.length;
 // ==========================================
 
 const getCategoryPercentage = (count) => {
-  if (totalBrands === 0) {
-    return 0;
-  }
+  if (totalBrands === 0) return 0;
 
   return Math.round((count / totalBrands) * 100);
 };
