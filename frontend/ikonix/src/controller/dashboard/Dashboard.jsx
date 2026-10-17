@@ -264,42 +264,45 @@ function Dashboard() {
   // Categories are stored inside Brand.category[]
   // ==========================================
 
-  const categoryCounts = {};
+const categoryCounts = {};
 
-  brands.forEach((brand) => {
-    if (Array.isArray(brand.category)) {
-      brand.category.forEach((category) => {
-        if (category) {
-          categoryCounts[category] =
-            (categoryCounts[category] || 0) + 1;
-        }
-      });
-    }
-  });
+brands.forEach((brand) => {
+  if (Array.isArray(brand.category)) {
+    brand.category.forEach((category) => {
+      const categoryName =
+        typeof category === "string"
+          ? category.trim()
+          : category?.categoryName?.trim();
 
-  // Convert object to array
-  const categoryList = Object.entries(categoryCounts)
-    .map(([name, count]) => ({
-      name,
-      count,
-    }))
-    .sort((a, b) => b.count - a.count);
+      if (categoryName) {
+        categoryCounts[categoryName] =
+          (categoryCounts[categoryName] || 0) + 1;
+      }
+    });
+  }
+});
 
-  const totalCategories = categoryList.length;
+// Convert object to array
+const categoryList = Object.entries(categoryCounts)
+  .map(([name, count]) => ({
+    name,
+    count,
+  }))
+  .sort((a, b) => b.count - a.count);
 
-  // ==========================================
-  // CATEGORY PERCENTAGE
-  // ==========================================
+const totalCategories = categoryList.length;
 
-  const getCategoryPercentage = (count) => {
-    if (totalBrands === 0) {
-      return 0;
-    }
+// ==========================================
+// CATEGORY PERCENTAGE
+// ==========================================
 
-    return Math.round(
-      (count / totalBrands) * 100
-    );
-  };
+const getCategoryPercentage = (count) => {
+  if (totalBrands === 0) {
+    return 0;
+  }
+
+  return Math.round((count / totalBrands) * 100);
+};
 
   // ==========================================
   // RETURN
