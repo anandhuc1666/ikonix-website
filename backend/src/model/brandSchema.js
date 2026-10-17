@@ -12,17 +12,28 @@ const brandSchema = new mongoose.Schema(
       unique: true,
     },
 
+    // Each category has its own image
     category: [
       {
-        type: String,
+        categoryName: {
+          type: String,
+          required: true,
+          trim: true,
+        },
+
+        categoryIMAGE: {
+          type: String,
+          default: "",
+        },
       },
     ],
-    categoryIMAGE: { type: String, default: "" },
+
     brandAbout: {
       type: String,
       default: "",
       trim: true,
     },
+
     status: {
       type: String,
       enum: ["Active", "Inactive"],
@@ -31,8 +42,9 @@ const brandSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 const Brand = mongoose.model("Brand", brandSchema);
+
 export default Brand;
