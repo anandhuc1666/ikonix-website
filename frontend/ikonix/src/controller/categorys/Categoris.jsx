@@ -14,8 +14,8 @@ import {
   Image as ImageIcon,
   Filter,
 } from "lucide-react";
-// const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+// const API_BASE_URL = "http://localhost:5000/api";
 
 const SECTIONS = [
   "Main Categories",
