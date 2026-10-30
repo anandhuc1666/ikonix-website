@@ -393,8 +393,8 @@ function ProductDetails() {
           max-w-[1500px]
           mx-auto
           px-5
-          sm:px-8
-          lg:px-10
+          sm:px-10
+          lg:px-12
           py-6
         "
       >
@@ -535,7 +535,7 @@ function ProductDetails() {
                   className="
                     mt-2
                     text-[15px]
-                    text-black
+                    text-black/80
                     font-bold
                   "
                 >
@@ -579,7 +579,8 @@ function ProductDetails() {
                   "
                     style={{ color: colorCode }}
                   >
-                   <span className="font-bold text-black">Brand:</span> {product.brandName}
+                    <span className="font-bold text-black">Brand:</span>{" "}
+                    {product.brandName}
                   </p>
                 )}
 
@@ -656,9 +657,7 @@ function ProductDetails() {
                       }
                     `}
                   >
-                    {Number(product.stock) > 0
-                      ? `In Stock`
-                      : "Out of Stock"}
+                    {Number(product.stock) > 0 ? `In Stock` : "Out of Stock"}
                   </span>
                 </div>
               </div>
@@ -673,9 +672,7 @@ function ProductDetails() {
                         font-bold
                         text-gray-400
                   "
-                >
-                  
-                </p>
+                ></p>
 
                 <p
                   className="
@@ -825,7 +822,7 @@ function ProductDetails() {
             <div>
               <p
                 className="
-                    text-[10px]
+                    text-[15px]
                     uppercase
                 
                     font-medium
@@ -916,7 +913,7 @@ function ProductDetails() {
             <div className="text-center">
               <p
                 className="
-                    text-[10px]
+                    text-[13px]
                     uppercase
                     font-medium
                   "
@@ -1035,7 +1032,7 @@ function ProductDetails() {
                       <div>
                         <p
                           className="
-                                text-[9px]
+                                text-[13px]
                                 uppercase
                                 font-medium
                               "
@@ -1062,8 +1059,8 @@ function ProductDetails() {
                           product.category,
                         )}&brand=${encodeURIComponent(brand)}`}
                         className="
-                              text-[11px]
-                              sm:text-xs
+                              text-[13px]
+                              sm:text-sm
                               hover:underline
                             "
                         style={{ color: colorCode }}
@@ -1128,7 +1125,7 @@ function ProductDetails() {
             <div className="text-center">
               <p
                 className="
-                  text-[10px]
+                  text-[13px]
                   uppercase
                   font-medium
                 "
@@ -1232,7 +1229,7 @@ function ProductDetails() {
                       <Link
                         to={`/?category=${encodeURIComponent(category)}`}
                         className="
-                              text-[12px]
+                              text-[13px]
                               hover:underline
                             "
                         style={{ color: colorCode }}
@@ -1378,7 +1375,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
             rounded-full
             bg-[#e85d04]
             text-white
-            text-[8px]
+            text-[12px]
             font-semibold
             uppercase
           "
@@ -1416,7 +1413,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
           {product.brandName && (
             <p
               className="
-                text-[8px]
+                text-[13px]
                 uppercase
                 text-[#e85d04]
                 font-medium
@@ -1429,8 +1426,8 @@ function ProductCard({ product, isCurrentProduct = false }) {
           <h4
             className="
               mt-1
-              text-[10px]
-              sm:text-xs
+              text-[13px]
+              sm:text-[14px]
               font-medium
               text-gray-800
               line-clamp-2
@@ -1445,8 +1442,8 @@ function ProductCard({ product, isCurrentProduct = false }) {
             <p
               className="
                 mt-1
-                text-[8px]
-                text-gray-400
+                text-[13px]
+                text-gray-800
                 truncate
               "
             >
@@ -1457,13 +1454,13 @@ function ProductCard({ product, isCurrentProduct = false }) {
           <p
             className="
               mt-2
-              text-[10px]
-              sm:text-xs
+              text-[13px]
+              sm:text-[14px]
               font-semibold
               text-[#e85d04]
             "
           >
-            AED {Number(product.price || 0).toLocaleString("en-AE")}
+            ₹ {Number(product.price || 0).toLocaleString("IND")}
           </p>
         </div>
       </div>
@@ -1523,7 +1520,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
         {product.brandName && (
           <p
             className="
-              text-[8px]
+              text-[13px]
               uppercase
               text-[#e85d04]
               font-medium
@@ -1536,8 +1533,8 @@ function ProductCard({ product, isCurrentProduct = false }) {
         <h4
           className="
             mt-1
-            text-[10px]
-            sm:text-xs
+            text-[13px]
+            sm:text-[14px]
             font-medium
             text-gray-800
             line-clamp-2
@@ -1552,8 +1549,8 @@ function ProductCard({ product, isCurrentProduct = false }) {
           <p
             className="
               mt-1
-              text-[8px]
-              text-gray-400
+              text-[13px]
+              text-gray-800
               truncate
             "
           >
@@ -1564,13 +1561,13 @@ function ProductCard({ product, isCurrentProduct = false }) {
         <p
           className="
             mt-2
-            text-[10px]
-            sm:text-xs
+            text-[13px]
+            sm:text-[14px]
             font-semibold
             text-[#e85d04]
           "
         >
-          AED {Number(product.price || 0).toLocaleString("en-AE")}
+          ₹ {Number(product.price || 0).toLocaleString("en-AE")}
         </p>
       </div>
     </Link>
