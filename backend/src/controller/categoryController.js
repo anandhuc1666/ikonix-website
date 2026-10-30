@@ -1,336 +1,235 @@
-
+import Category from "../model/category.js";
 import Brand from "../model/brandSchema.js";
+import cloudinary from "../config/cloudinary.js";
+import mongoose from "mongoose";
 
-// ======================================================
-// HELPER: NORMALIZE BRAND CATEGORIES
-// ======================================================
-
-const getBrandCategories = (brand) => {
-  if (Array.isArray(brand.category)) {
-    return brand.category.filter(
-      (item) => typeof item === "string" && item.trim()
-    );
-  }
-
-  if (typeof brand.category === "string" && brand.category.trim()) {
-    return [brand.category.trim()];
-  }
-
-  return [];
-};
-
-// ======================================================
-// GET ALL UNIQUE CATEGORIES
-// GET /api/categories/getAllCategories
-// ======================================================
-
-export const getAllCategories = async (req, res) => {
-  try {
-    const brands = await Brand.find().sort({ createdAt: -1 });
-
-    const categoryMap = new Map();
-
-    for (const brand of brands) {
-      const brandCategories = getBrandCategories(brand);
-
-      for (const categoryName of brandCategories) {
-        const name = categoryName.trim();
-        const key = name.toLowerCase();
-
-        if (!categoryMap.has(key)) {
-          categoryMap.set(key, {
-            _id: key,
-            categoryName: name,
-            categoryIMAGE: brand.categoryIMAGE || "",
-            brandIds: [],
-            brandNames: [],
-          });
-        }
-
-        const item = categoryMap.get(key);
-
-        if (!item.categoryIMAGE && brand.categoryIMAGE) {
-          item.categoryIMAGE = brand.categoryIMAGE;
-        }
-
-        if (
-          !item.brandIds.includes(String(brand._id))
-        ) {
-          item.brandIds.push(String(brand._id));
-          item.brandNames.push(brand.brandName || "");
-        }
+// Upload image to Cloudinary
+const uploadToCloudinary = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "ikonix/categories",
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
       }
-    }
-
-    const categories = Array.from(categoryMap.values()).sort(
-      (a, b) => a.categoryName.localeCompare(b.categoryName)
     );
 
-    return res.status(200).json({
-      success: true,
-      count: categories.length,
-      categories,
-    });
-  } catch (error) {
-    console.error("Get Categories Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+    stream.end(fileBuffer);
+  });
 };
 
-// ======================================================
-// CREATE CATEGORY FOR A BRAND
-// POST /api/categories/createCategory
-//
-// Body:
-// {
-//   "brandId": "...",
-//   "category": "Air Flow Meters",
-//   "categoryIMAGE": "https://example.com/image.jpg"
-// }
-// ======================================================
-
+// CREATE CATEGORY
 export const createCategory = async (req, res) => {
+  const { categoryName, brandName, section } = req.body;
+
   try {
-    const { brandId, category, categoryIMAGE } = req.body;
-
-    if (!brandId) {
+    if (!categoryName?.trim() || !brandName || !section) {
       return res.status(400).json({
-        success: false,
-        message: "Brand ID is required.",
+        message: "Category name, brand and section are required",
       });
     }
 
-    if (typeof category !== "string" || !category.trim()) {
+    if (!req.file) {
       return res.status(400).json({
-        success: false,
-        message: "Category name is required.",
+        message: "Please upload a category image",
       });
     }
 
-    const name = category.trim();
-
-    // Category names must be unique across all brands.
-    const brands = await Brand.find();
-
-    const alreadyExists = brands.some((brand) =>
-      getBrandCategories(brand).some(
-        (item) => item.toLowerCase() === name.toLowerCase()
-      )
-    );
-
-    if (alreadyExists) {
-      return res.status(409).json({
-        success: false,
-        message: "Category already exists.",
-      });
-    }
-
-    const brand = await Brand.findById(brandId);
+    const brand = await Brand.findOne({ brandName });
 
     if (!brand) {
       return res.status(404).json({
-        success: false,
-        message: "Brand not found.",
+        message: "Brand not found",
       });
     }
 
-    const updatedCategories = getBrandCategories(brand);
-    updatedCategories.push(name);
+    const existingCategory = await Category.findOne({
+      categoryName: categoryName.trim(),
+      brand: brand._id,
+    });
 
-    brand.category = updatedCategories;
-
-    if (typeof categoryIMAGE === "string") {
-      brand.categoryIMAGE = categoryIMAGE.trim();
+    if (existingCategory) {
+      return res.status(409).json({
+        message: "This category already exists for this brand",
+      });
     }
 
-    await brand.save();
+    const uploadedImage = await uploadToCloudinary(req.file.buffer);
+
+    const newCategory = await Category.create({
+      categoryName: categoryName.trim(),
+      categoryImage: uploadedImage.secure_url,
+      brand: brand._id,
+      brandName: brand.brandName,
+      section,
+    });
 
     return res.status(201).json({
-      success: true,
-      message: "Category added successfully.",
-      category: {
-        categoryName: name,
-        categoryIMAGE: brand.categoryIMAGE,
-        brandId: String(brand._id),
-        brandName: brand.brandName,
-      },
+      message: "Category created successfully",
+      category: newCategory,
     });
   } catch (error) {
-    console.error("Create Category Error:", error);
+    console.error("Create category error:", error);
 
     return res.status(500).json({
-      success: false,
       message: error.message,
     });
   }
 };
 
-// ======================================================
-// UPDATE CATEGORY NAME AND IMAGE
-// PUT /api/categories/updateCategory
-//
-// Body:
-// {
-//   "oldCategory": "Air Flow Meters",
-//   "category": "Air Flow Measuring Instruments",
-//   "categoryIMAGE": "https://example.com/new-image.jpg"
-// }
-// ======================================================
-
-export const updateCategory = async (req, res) => {
+// GET ALL CATEGORIES
+export const getAllCategories = async (req, res) => {
   try {
-    const { oldCategory, category, categoryIMAGE } = req.body;
+    const categories = await Category.find()
+      .populate("brand", "brandName")
+      .sort({ createdAt: -1 });
 
-    if (typeof oldCategory !== "string" || !oldCategory.trim()) {
+    return res.status(200).json({
+      message: "Categories retrieved successfully",
+      categories,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// UPDATE CATEGORY
+export const updateCategory = async (req, res) => {
+  const { id } = req.params;
+  const { categoryName, brandName, section } = req.body;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        success: false,
-        message: "Existing category name is required.",
+        message: "Invalid category ID",
       });
     }
 
-    if (typeof category !== "string" || !category.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "New category name is required.",
-      });
-    }
+    const category = await Category.findById(id);
 
-    const oldName = oldCategory.trim();
-    const newName = category.trim();
-
-    const brands = await Brand.find();
-
-    // Find brands containing the old category.
-    const affectedBrands = brands.filter((brand) =>
-      getBrandCategories(brand).some(
-        (item) => item.toLowerCase() === oldName.toLowerCase()
-      )
-    );
-
-    if (affectedBrands.length === 0) {
+    if (!category) {
       return res.status(404).json({
-        success: false,
-        message: "Category not found.",
+        message: "Category not found",
       });
     }
 
-    // Prevent renaming to an existing category.
-    if (oldName.toLowerCase() !== newName.toLowerCase()) {
-      const duplicateExists = brands.some((brand) =>
-        getBrandCategories(brand).some(
-          (item) => item.toLowerCase() === newName.toLowerCase()
-        )
-      );
+    let brand = null;
 
-      if (duplicateExists) {
-        return res.status(409).json({
-          success: false,
-          message: "The new category name already exists.",
+    if (brandName) {
+      brand = await Brand.findOne({ brandName });
+
+      if (!brand) {
+        return res.status(404).json({
+          message: "Brand not found",
         });
       }
     }
 
-    // Update only category names and category image.
-    for (const brand of affectedBrands) {
-      brand.category = getBrandCategories(brand).map((item) =>
-        item.toLowerCase() === oldName.toLowerCase()
-          ? newName
-          : item
-      );
+    const updatedName = categoryName?.trim() || category.categoryName;
+    const updatedBrand = brand || await Brand.findById(category.brand);
 
-      // Update category image only when supplied.
-      if (typeof categoryIMAGE === "string") {
-        brand.categoryIMAGE = categoryIMAGE.trim();
-      }
-
-      // Do not modify brandName, Image, brandAbout, or status.
-      await brand.save();
+    if (!updatedBrand) {
+      return res.status(404).json({
+        message: "Associated brand not found",
+      });
     }
 
+    const duplicate = await Category.findOne({
+      _id: { $ne: id },
+      categoryName: updatedName,
+      brand: updatedBrand._id,
+    });
+
+    if (duplicate) {
+      return res.status(409).json({
+        message: "This category already exists for this brand",
+      });
+    }
+
+    const updateData = {
+      categoryName: updatedName,
+      brand: updatedBrand._id,
+      brandName: updatedBrand.brandName,
+    };
+
+    if (section !== undefined) {
+      updateData.section = section;
+    }
+
+    // Upload a new image only when one is selected
+    if (req.file) {
+      const uploadedImage = await uploadToCloudinary(req.file.buffer);
+      updateData.categoryImage = uploadedImage.secure_url;
+    }
+
+    const updatedCategory = await Category.findByIdAndUpdate(
+      id,
+      updateData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).populate("brand", "brandName");
+
     return res.status(200).json({
-      success: true,
-      message: "Category updated successfully.",
-      updatedBrands: affectedBrands.length,
-      category: {
-        oldName,
-        categoryName: newName,
-        categoryIMAGE:
-          typeof categoryIMAGE === "string"
-            ? categoryIMAGE.trim()
-            : undefined,
-      },
+      message: "Category updated successfully",
+      category: updatedCategory,
     });
   } catch (error) {
-    console.error("Update Category Error:", error);
+    console.error("Update category error:", error);
 
     return res.status(500).json({
-      success: false,
       message: error.message,
     });
   }
 };
 
-// ======================================================
-// DELETE CATEGORY FROM ASSOCIATED BRANDS
-// DELETE /api/categories/deleteCategory
-//
-// Body:
-// {
-//   "category": "Air Flow Meters"
-// }
-// ======================================================
-
+// DELETE CATEGORY
 export const deleteCategory = async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { category } = req.body;
-
-    if (typeof category !== "string" || !category.trim()) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        success: false,
-        message: "Category name is required.",
+        message: "Invalid category ID",
       });
     }
 
-    const name = category.trim();
-    const brands = await Brand.find();
+    const category = await Category.findById(id);
 
-    const affectedBrands = brands.filter((brand) =>
-      getBrandCategories(brand).some(
-        (item) => item.toLowerCase() === name.toLowerCase()
-      )
-    );
-
-    if (affectedBrands.length === 0) {
+    if (!category) {
       return res.status(404).json({
-        success: false,
-        message: "Category not found.",
+        message: "Category not found",
       });
     }
 
-    for (const brand of affectedBrands) {
-      brand.category = getBrandCategories(brand).filter(
-        (item) => item.toLowerCase() !== name.toLowerCase()
-      );
+    // Delete the Cloudinary image
+    if (category.categoryImage) {
+      try {
+        const urlParts = category.categoryImage.split("/");
+        const fileName = urlParts[urlParts.length - 1];
+        const publicId = `ikonix/categories/${fileName.split(".")[0]}`;
 
-      // Preserve brand image, description, and status.
-      await brand.save();
+        await cloudinary.uploader.destroy(publicId);
+      } catch (imageError) {
+        console.error("Cloudinary image deletion error:", imageError);
+      }
     }
+
+    await Category.findByIdAndDelete(id);
 
     return res.status(200).json({
-      success: true,
-      message: "Category removed successfully.",
-      deletedCategory: name,
-      updatedBrands: affectedBrands.length,
+      message: "Category deleted successfully",
     });
   } catch (error) {
-    console.error("Delete Category Error:", error);
+    console.error("Delete category error:", error);
 
     return res.status(500).json({
-      success: false,
       message: error.message,
     });
   }

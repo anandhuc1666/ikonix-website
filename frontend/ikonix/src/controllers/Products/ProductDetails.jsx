@@ -191,7 +191,7 @@ function ProductDetails() {
   const formatPrice = (price) => {
     const value = Number(price) || 0;
 
-    return `AED ${value.toLocaleString("en-AE", {
+    return `₹ ${value.toLocaleString("en-AE", {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     })}`;
@@ -342,7 +342,7 @@ function ProductDetails() {
   // ======================================================
 
   return (
-    <div className="w-full bg-white sm:mt-20 mt-16">
+    <div className="w-full bg-white sm:mt-28 mt-16">
       {/* ==================================================
           BREADCRUMB
       ================================================== */}
@@ -390,7 +390,7 @@ function ProductDetails() {
 
       <section
         className="
-          max-w-[1400px]
+          max-w-[1500px]
           mx-auto
           px-5
           sm:px-8
@@ -401,9 +401,9 @@ function ProductDetails() {
         <div
           className="
             border
-            border-[#e85d04]
+            border-[#e85d04]/20
             rounded-xl
-            p-5
+            p-1
             md:p-7
           "
         >
@@ -429,8 +429,9 @@ function ProductDetails() {
                   rounded-lg
                   flex
                   items-center
+                  
                   justify-center
-                  p-8
+                  p-1
                 "
               >
                 {selectedImage ? (
@@ -539,7 +540,7 @@ function ProductDetails() {
                   "
                 >
                   Model Number:{" "}
-                  <span className="text-gray-400">{product.modelNumber}</span>
+                  <span className="text-gray-800">{product.modelNumber}</span>
                 </p>
               )}
 
@@ -549,7 +550,7 @@ function ProductDetails() {
                 className="
                   mt-2
                   text-xl
-                  text-gray-500
+                  text-gray-800
                   leading-tight
                 "
               >
@@ -578,7 +579,7 @@ function ProductDetails() {
                   "
                     style={{ color: colorCode }}
                   >
-                    {product.brandName}
+                   <span className="font-bold text-black">Brand:</span> {product.brandName}
                   </p>
                 )}
 
@@ -599,7 +600,7 @@ function ProductDetails() {
                     <span
                       className="
                         text-[15px]
-                        text-gray-500
+                        text-gray-800
                         font-medium
                       "
                     >
@@ -623,7 +624,7 @@ function ProductDetails() {
                     </span>
 
                     <span
-                      className="text-[15px] text-gray-500
+                      className="text-[15px] text-gray-800
                         font-medium"
                     >
                       {product.unit}
@@ -656,7 +657,7 @@ function ProductDetails() {
                     `}
                   >
                     {Number(product.stock) > 0
-                      ? `In Stock (${product.stock})`
+                      ? `In Stock`
                       : "Out of Stock"}
                   </span>
                 </div>
@@ -673,7 +674,7 @@ function ProductDetails() {
                         text-gray-400
                   "
                 >
-                  Current Price
+                  
                 </p>
 
                 <p
@@ -782,7 +783,7 @@ function ProductDetails() {
               className="
                 mt-3
                 text-xs
-                sm:text-sm
+                sm:text-lg
                 leading-6
                 text-gray-600
                 whitespace-pre-line

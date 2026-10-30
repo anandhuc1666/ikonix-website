@@ -10,10 +10,10 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import IndustryBrands from "./IndustryBrands.jsx";
-import Footer from "../Footer/Footer.jsx";
 import { IoLogoWhatsapp } from "react-icons/io";
 
 function Home() {
+  const local_host = " http://localhost:5173/"
   const colorCode = "#e85d04";
   const image_homepage =
     "https://res.cloudinary.com/dkxluyjyz/image/upload/v1789222467/Untitled_design_11_u70gbw.png";

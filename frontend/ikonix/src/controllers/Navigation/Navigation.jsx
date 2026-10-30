@@ -18,6 +18,10 @@ function Navigation() {
 
   const navItems = [
     {
+      name: "CATEGORIES",
+      path: "/categories/page",
+    },
+    {
       name: "PRODUCTS",
       path: "/",
     },
@@ -109,21 +113,21 @@ function Navigation() {
   };
 
   return (
-    <header className="w-full sm:bg-[#FAFAFA] fixed z-30 sm:border-b sm:border-[#e85d04]">
+    <header className="w-full sm:bg-[#FAFAFA] fixed flex-col z-30 sm:border-b sm:border-[#e85d04]">
       {/* =====================================================
           MAIN NAVIGATION
       ===================================================== */}
       <div
-        className=" max-w-full h-20 sm:flex hidden gap-5 items-center justify-center
-          mx-auto bg-white"
+        className=" w-full h-20 sm:flex hidden gap-5 items-center justify-evenly px-4
+          mx-auto"
       >
         <Link to="/" onClick={handleLogoClick}>
           <div
             className="
-              w-[120px] h-[100px] text-[#e85d04] bg-[#FAFAFA] flex  items-center justify-center
+            h-[100px] text-[#e85d04] bg-[#FAFAFA] flex p-1 items-center justify-center
             "
           >
-            <h1 className="font-extrabold text-[25px]">IKONIX</h1>
+            <h1 className="font-extrabold text-[55px]">IKONIX</h1>
           </div>
         </Link>
 
@@ -135,10 +139,10 @@ function Navigation() {
     relative
     items-center
     shrink-0
-    w-[800px]
+    w-[1000px]
     md:w-[300px]
     lg:w-[440px]
-    xl:w-[500px]
+    xl:w-[800px]
   "
         >
           {/* SEARCH ICON */}

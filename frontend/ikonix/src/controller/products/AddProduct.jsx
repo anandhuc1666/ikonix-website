@@ -13,6 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+// const API_BASE_URL = "http://localhost:5000/api";
 
 const AddProduct = () => {
   const navigate = useNavigate();

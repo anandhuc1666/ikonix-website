@@ -1,17 +1,30 @@
 import express from "express";
 
 import {
-  getAllCategories,
   createCategory,
+  getAllCategories,
   updateCategory,
   deleteCategory,
 } from "../controller/categoryController.js";
 
+import categoryUpload from "../middleware/categoryUpload.js";
+
 const router = express.Router();
 
-router.get("/getAllCategories", getAllCategories);
-router.post("/createCategory", createCategory);
-router.put("/updateCategory", updateCategory);
-router.delete("/deleteCategory", deleteCategory);
+router.post(
+  "/create",
+  categoryUpload.single("categoryImage"),
+  createCategory
+);
+
+router.get("/", getAllCategories);
+
+router.put(
+  "/:id",
+  categoryUpload.single("categoryImage"),
+  updateCategory
+);
+
+router.delete("/:id", deleteCategory);
 
 export default router;

@@ -34,7 +34,7 @@ import AboutPage from "./controllers/About/AboutPage.jsx";
 import PageLess from "./controllers/pageless/PageLess.jsx";
 import ProductDetails from "./controllers/Products/ProductDetails.jsx";
 import BrandProducts from "./controllers/Brands/BrandProducts.jsx";
-
+import Categories from "./controllers/Categories/Categories.jsx";
 function App() {
   return (
     <BrowserRouter>
@@ -57,6 +57,8 @@ function App() {
           <Route path="/products/page/:id" element={<ProductDetails />} />
 
           <Route path="/brands/page/:brandName" element={<BrandProducts />} />
+
+          <Route path="/categories/page" element={<Categories />} />
         </Route>
 
         {/* ==================================================
