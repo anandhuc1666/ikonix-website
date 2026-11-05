@@ -1,45 +1,28 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import axios from "axios";
 
-import {
-  Link,
-  useParams,
-} from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-import {
-  ChevronRight,
-  Search,
-  Tag,
-} from "lucide-react";
+import { ChevronRight, Search, Tag } from "lucide-react";
 
 function BrandProducts() {
   const colorCode = "#e85d04";
   const { brandName } = useParams();
 
-  const selectedBrand = decodeURIComponent(
-    brandName || ""
-  );
+  const selectedBrand = decodeURIComponent(brandName || "");
 
   // ======================================================
   // STATES
   // ======================================================
 
-  const [products, setProducts] =
-    useState([]);
+  const [products, setProducts] = useState([]);
 
-  const [brand, setBrand] =
-    useState(null);
+  const [brand, setBrand] = useState(null);
 
-  const [search, setSearch] =
-    useState("");
+  const [search, setSearch] = useState("");
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
 
   // ======================================================
   // FETCH BRAND + PRODUCTS
@@ -50,16 +33,13 @@ function BrandProducts() {
       try {
         setLoading(true);
 
-        const [
-          brandResponse,
-          productResponse,
-        ] = await Promise.all([
+        const [brandResponse, productResponse] = await Promise.all([
           axios.get(
-            "https://ikonix-backend.vercel.app/api/brands/getAllBrands"
+            "https://ikonix-backend.vercel.app/api/brands/getAllBrands",
           ),
 
           axios.get(
-            "https://ikonix-backend.vercel.app/api/products/getAllProducts"
+            "https://ikonix-backend.vercel.app/api/products/getAllProducts",
           ),
         ]);
 
@@ -67,57 +47,35 @@ function BrandProducts() {
         // FIND BRAND
         // -----------------------------------------------
 
-        const brands =
-          brandResponse.data.brands ||
-          [];
+        const brands = brandResponse.data.brands || [];
 
-        const selectedBrandData =
-          brands.find(
-            (item) =>
-              item.brandName
-                ?.toLowerCase()
-                .trim() ===
-              selectedBrand
-                .toLowerCase()
-                .trim()
-          );
-
-        setBrand(
-          selectedBrandData || null
+        const selectedBrandData = brands.find(
+          (item) =>
+            item.brandName?.toLowerCase().trim() ===
+            selectedBrand.toLowerCase().trim(),
         );
+
+        setBrand(selectedBrandData || null);
 
         // -----------------------------------------------
         // ALL PRODUCTS
         // -----------------------------------------------
 
-        const allProducts =
-          productResponse.data
-            .products || [];
+        const allProducts = productResponse.data.products || [];
 
         // -----------------------------------------------
         // FILTER BY BRAND
         // -----------------------------------------------
 
-        const brandProducts =
-          allProducts.filter(
-            (product) =>
-              product.brandName
-                ?.toLowerCase()
-                .trim() ===
-              selectedBrand
-                .toLowerCase()
-                .trim()
-          );
-
-        setProducts(
-          brandProducts
+        const brandProducts = allProducts.filter(
+          (product) =>
+            product.brandName?.toLowerCase().trim() ===
+            selectedBrand.toLowerCase().trim(),
         );
 
+        setProducts(brandProducts);
       } catch (error) {
-        console.error(
-          "Brand Products Error:",
-          error
-        );
+        console.error("Brand Products Error:", error);
       } finally {
         setLoading(false);
       }
@@ -130,53 +88,31 @@ function BrandProducts() {
   // SEARCH PRODUCTS
   // ======================================================
 
-  const filteredProducts =
-    useMemo(() => {
-      const value =
-        search
-          .toLowerCase()
-          .trim();
+  const filteredProducts = useMemo(() => {
+    const value = search.toLowerCase().trim();
 
-      if (!value) {
-        return products;
-      }
+    if (!value) {
+      return products;
+    }
 
-      return products.filter(
-        (product) =>
-          product.productName
-            ?.toLowerCase()
-            .includes(value) ||
-          product.modelNumber
-            ?.toLowerCase()
-            .includes(value) ||
-          product.category
-            ?.toLowerCase()
-            .includes(value)
-      );
-    }, [
-      products,
-      search,
-    ]);
+    return products.filter(
+      (product) =>
+        product.productName?.toLowerCase().includes(value) ||
+        product.modelNumber?.toLowerCase().includes(value) ||
+        product.category?.toLowerCase().includes(value),
+    );
+  }, [products, search]);
 
   // ======================================================
   // PRODUCT IMAGE
   // ======================================================
 
-  const getProductImage = (
-    product
-  ) => {
-    if (
-      Array.isArray(product.Image) &&
-      product.Image.length > 0
-    ) {
+  const getProductImage = (product) => {
+    if (Array.isArray(product.Image) && product.Image.length > 0) {
       return product.Image[0];
     }
 
-    if (
-      typeof product.Image ===
-        "string" &&
-      product.Image
-    ) {
+    if (typeof product.Image === "string" && product.Image) {
       return product.Image;
     }
 
@@ -187,12 +123,8 @@ function BrandProducts() {
   // PRICE
   // ======================================================
 
-  const formatPrice = (
-    price
-  ) => {
-    return `AED ${Number(
-      price || 0
-    ).toLocaleString("en-AE")}`;
+  const formatPrice = (price) => {
+    return `AED ${Number(price || 0).toLocaleString("en-AE")}`;
   };
 
   // ======================================================
@@ -219,7 +151,8 @@ function BrandProducts() {
             
             rounded-full
             animate-spin
-          "style={{ borderColor: colorCode }}
+          "
+          style={{ borderColor: colorCode }}
         />
       </div>
     );
@@ -227,7 +160,6 @@ function BrandProducts() {
 
   return (
     <div className="w-full bg-white sm:mt-25 mt-16">
-
       {/* ==================================================
           BREADCRUMB
       ================================================== */}
@@ -242,7 +174,6 @@ function BrandProducts() {
           pt-8
         "
       >
-
         <div
           className="
             flex
@@ -254,33 +185,21 @@ function BrandProducts() {
             text-gray-400
           "
         >
-
-          <Link
-            to="/"
-            className="hover:text-[#e85d04]"
-          >
+          <Link to="/" className="hover:text-[#e85d04]">
             Home
           </Link>
 
           <ChevronRight size={11} />
 
-          <Link
-            to="/brands/page"
-            className="hover:text-[#e85d04]"
-          >
+          <Link to="/brands/page" className="hover:text-[#e85d04]">
             Brands
           </Link>
 
           <ChevronRight size={11} />
 
-          <span className="text-gray-700">
-            {selectedBrand}
-          </span>
-
+          <span className="text-gray-700">{selectedBrand}</span>
         </div>
-
       </div>
-
 
       {/* ==================================================
           BRAND INFORMATION
@@ -296,7 +215,6 @@ function BrandProducts() {
           py-7
         "
       >
-
         <div
           className="
             border
@@ -306,7 +224,6 @@ function BrandProducts() {
             md:p-8
           "
         >
-
           <div
             className="
               flex
@@ -316,7 +233,6 @@ function BrandProducts() {
               gap-8
             "
           >
-
             {/* BRAND LOGO */}
 
             <div
@@ -325,7 +241,6 @@ function BrandProducts() {
                 md:w-[220px]
                 h-[140px]
                 rounded-lg
-                bg-[#fafafa]
                 flex
                 items-center
                 justify-center
@@ -333,9 +248,7 @@ function BrandProducts() {
                 shrink-0
               "
             >
-
               {brand?.Image ? (
-
                 <img
                   src={brand.Image}
                   alt={selectedBrand}
@@ -345,23 +258,14 @@ function BrandProducts() {
                     object-contain
                   "
                 />
-
               ) : (
-
-                <Tag
-                  size={45}
-                  style={{ color: colorCode }}
-                />
-
+                <Tag size={45} style={{ color: colorCode }} />
               )}
-
             </div>
-
 
             {/* BRAND CONTENT */}
 
             <div className="flex-1">
-
               <p
                 className="
                   text-[10px]
@@ -369,7 +273,8 @@ function BrandProducts() {
                   tracking-wide
                   
                   font-medium
-                "style={{ color: colorCode }}
+                "
+                style={{ color: colorCode }}
               >
                 Brand
               </p>
@@ -395,23 +300,15 @@ function BrandProducts() {
                   text-gray-600
                 "
               >
-                Explore our range of{" "}
-                {selectedBrand} test and
-                measurement instruments.
-                Browse products available
-                from this brand and find
-                the right solution for your
-                application.
+                Explore our range of {selectedBrand} test and measurement
+                instruments. Browse products available from this brand and find
+                the right solution for your application.
               </p>
-
 
               {/* CATEGORIES */}
 
-              {brand?.category?.length >
-                0 && (
-
+              {brand?.category?.length > 0 && (
                 <div className="mt-5">
-
                   <p
                     className="
                       text-xs
@@ -430,40 +327,28 @@ function BrandProducts() {
                       mt-3
                     "
                   >
-
-                    {brand.category.map(
-                      (category) => (
-
-                        <span
-                          key={category}
-                          className="
+                    {brand.category.map((category) => (
+                      <span
+                        key={category}
+                        className="
                             px-3
                             py-1.5
                             rounded-full
                             bg-orange-50
                             text-[10px] 
-                          "style={{ color: colorCode }}
-                        >
-                          {category}
-                        </span>
-
-                      )
-                    )}
-
+                          "
+                        style={{ color: colorCode }}
+                      >
+                        {category}
+                      </span>
+                    ))}
                   </div>
-
                 </div>
-
               )}
-
             </div>
-
           </div>
-
         </div>
-
       </section>
-
 
       {/* ==================================================
           PRODUCT HEADER
@@ -479,7 +364,6 @@ function BrandProducts() {
           pb-4
         "
       >
-
         <div
           className="
             flex
@@ -490,15 +374,14 @@ function BrandProducts() {
             gap-4
           "
         >
-
           <div>
-
             <p
               className="
                 text-[10px]
                 uppercase
                 font-medium
-              "style={{ color: colorCode }}
+              "
+              style={{ color: colorCode }}
             >
               {selectedBrand}
             </p>
@@ -522,12 +405,9 @@ function BrandProducts() {
                 text-gray-500
               "
             >
-              {filteredProducts.length}{" "}
-              products available
+              {filteredProducts.length} products available
             </p>
-
           </div>
-
 
           {/* SEARCH */}
 
@@ -538,7 +418,6 @@ function BrandProducts() {
               sm:w-[260px]
             "
           >
-
             <Search
               size={15}
               className="
@@ -553,11 +432,7 @@ function BrandProducts() {
             <input
               type="text"
               value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
               className="
                 w-full
@@ -572,13 +447,9 @@ function BrandProducts() {
                 focus:border-[#e85d04]
               "
             />
-
           </div>
-
         </div>
-
       </section>
-
 
       {/* ==================================================
           PRODUCTS
@@ -594,10 +465,7 @@ function BrandProducts() {
           pb-14
         "
       >
-
-        {filteredProducts.length ===
-        0 ? (
-
+        {filteredProducts.length === 0 ? (
           <div
             className="
               min-h-[300px]
@@ -608,11 +476,7 @@ function BrandProducts() {
               text-center
             "
           >
-
-            <Tag
-              size={40}
-              className="text-gray-200"
-            />
+            <Tag size={40} className="text-gray-200" />
 
             <h3
               className="
@@ -632,15 +496,10 @@ function BrandProducts() {
                 text-gray-400
               "
             >
-              There are currently no
-              products available for{" "}
-              {selectedBrand}.
+              There are currently no products available for {selectedBrand}.
             </p>
-
           </div>
-
         ) : (
-
           <div
             className="
               grid
@@ -650,14 +509,11 @@ function BrandProducts() {
               gap-5
             "
           >
-
-            {filteredProducts.map(
-              (product) => (
-
-                <Link
-                  key={product._id}
-                  to={`/products/page/${product._id}`}
-                  className="
+            {filteredProducts.map((product) => (
+              <Link
+                key={product._id}
+                to={`/products/page/${product._id}`}
+                className="
                     group
                     bg-white
                     rounded-lg
@@ -668,31 +524,24 @@ function BrandProducts() {
                     duration-300
                     hover:-translate-y-1
                     hover:shadow-md
+                    hover:border-[#e85d04]/60
                   "
-                >
-
-                  {/* IMAGE */}
-
-                  <div
-                    className="
+              >
+                {/* IMAGE */}
+                <div
+                  className="
                       h-[170px]
                       sm:h-[190px]
-                      bg-[#fafafa]
                       flex
                       items-center
                       justify-center
                       p-5
                     "
-                  >
-
-                    <img
-                      src={getProductImage(
-                        product
-                      )}
-                      alt={
-                        product.productName
-                      }
-                      className="
+                >
+                  <img
+                    src={getProductImage(product)}
+                    alt={product.productName}
+                    className="
                         w-full
                         h-full
                         object-contain
@@ -700,27 +549,25 @@ function BrandProducts() {
                         duration-300
                         group-hover:scale-105
                       "
-                    />
+                  />
+                </div>
 
-                  </div>
+                {/* DETAILS */}
 
-
-                  {/* DETAILS */}
-
-                  <div className="p-3">
-
-                    <p
-                      className="
+                <div className="p-3 bg-[#fafafa]">
+                  <p
+                    className="
                         text-[8px]
                         uppercase
                         font-medium
-                      "style={{ color: colorCode }}
-                    >
-                      {product.brandName}
-                    </p>
+                      "
+                    style={{ color: colorCode }}
+                  >
+                    {product.brandName}
+                  </p>
 
-                    <h3
-                      className="
+                  <h3
+                    className="
                         mt-1
                         text-[10px]
                         sm:text-xs
@@ -730,52 +577,40 @@ function BrandProducts() {
                         line-clamp-2
                         min-h-[32px]
                       "
-                    >
-                      {product.productName}
-                    </h3>
+                  >
+                    {product.productName}
+                  </h3>
 
-                    {product.modelNumber && (
-
-                      <p
-                        className="
+                  {product.modelNumber && (
+                    <p
+                      className="
                           mt-1
                           text-[8px]
                           text-gray-400
                           truncate
                         "
-                      >
-                        Model:{" "}
-                        {product.modelNumber}
-                      </p>
+                    >
+                      Model: {product.modelNumber}
+                    </p>
+                  )}
 
-                    )}
-
-                    <p
-                      className="
+                  <p
+                    className="
                         mt-2
                         text-[10px]
                         sm:text-xs
                         font-semibold
-                      "style={{ color: colorCode }}
-                    >
-                      {formatPrice(
-                        product.price
-                      )}
-                    </p>
-
-                  </div>
-
-                </Link>
-
-              )
-            )}
-
+                      "
+                    style={{ color: colorCode }}
+                  >
+                    {formatPrice(product.price)}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
-
         )}
-
       </section>
-
 
       {/* ==================================================
           CTA
@@ -788,7 +623,6 @@ function BrandProducts() {
           border-gray-100
         "
       >
-
         <div
           className="
             max-w-7xl
@@ -800,7 +634,6 @@ function BrandProducts() {
             text-center
           "
         >
-
           <h2
             className="
               text-xl
@@ -809,10 +642,7 @@ function BrandProducts() {
             "
           >
             Looking for a{" "}
-            <span style={{ color: colorCode }}>
-              {selectedBrand}
-            </span>{" "}
-            Product?
+            <span style={{ color: colorCode }}>{selectedBrand}</span> Product?
           </h2>
 
           <p
@@ -822,9 +652,8 @@ function BrandProducts() {
               text-gray-500
             "
           >
-            Contact our team for product
-            availability, specifications
-            and quotations.
+            Contact our team for product availability, specifications and
+            quotations.
           </p>
 
           <Link
@@ -845,11 +674,8 @@ function BrandProducts() {
           >
             Contact Us
           </Link>
-
         </div>
-
       </section>
-
     </div>
   );
 }

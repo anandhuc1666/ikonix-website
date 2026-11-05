@@ -1,8 +1,9 @@
+
 import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema(
   {
-    categoryName: {
+    category: {
       type: String,
       required: true,
       trim: true,
@@ -40,8 +41,9 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Unique category name per brand
 categorySchema.index(
-  { categoryName: 1, brand: 1 },
+  { category: 1, brand: 1 },
   { unique: true }
 );
 

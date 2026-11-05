@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 
@@ -14,8 +13,12 @@ import {
   Image as ImageIcon,
   Filter,
 } from "lucide-react";
+
+
+// Authentication
 const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
 // const API_BASE_URL = "http://localhost:5000/api";
+
 
 const SECTIONS = [
   "Main Categories",
@@ -25,7 +28,7 @@ const SECTIONS = [
 ];
 
 const initialForm = {
-  categoryName: "",
+  category: "",
   brandName: "",
   section: "Main Categories",
 };
@@ -48,7 +51,14 @@ const Categoris = () => {
   const [imageFile, setImageFile] = useState(null);
   const [preview, setPreview] = useState("");
 
-  // Authentication
+  const selectedBrand = brands.find(
+    (brand) => brand.brandName === form.brandName,
+  );
+
+  const brandCategories = (selectedBrand?.category || [])
+    .map((item) => (typeof item === "string" ? item : item.category))
+    .filter(Boolean);
+
   const getAuthConfig = () => {
     const token = localStorage.getItem("adminToken");
 
@@ -67,13 +77,10 @@ const Categoris = () => {
   const fetchBrands = useCallback(async () => {
     const response = await axios.get(
       `${API_BASE_URL}/brands/getAllBrands`,
-      getAuthConfig()
+      getAuthConfig(),
     );
 
-    const data =
-      response.data?.brands ??
-      response.data?.data ??
-      response.data;
+    const data = response.data?.brands ?? response.data?.data ?? response.data;
 
     if (!Array.isArray(data)) {
       throw new Error("Invalid brand data received.");
@@ -86,13 +93,11 @@ const Categoris = () => {
   const fetchCategories = useCallback(async () => {
     const response = await axios.get(
       `${API_BASE_URL}/categories`,
-      getAuthConfig()
+      getAuthConfig(),
     );
 
     const data =
-      response.data?.categories ??
-      response.data?.data ??
-      response.data;
+      response.data?.categories ?? response.data?.data ?? response.data;
 
     if (!Array.isArray(data)) {
       throw new Error("Invalid category data received.");
@@ -106,17 +111,14 @@ const Categoris = () => {
     try {
       setLoading(true);
 
-      await Promise.all([
-        fetchBrands(),
-        fetchCategories(),
-      ]);
+      await Promise.all([fetchBrands(), fetchCategories()]);
     } catch (error) {
       console.error("Loading error:", error);
 
       alert(
         error.response?.data?.message ||
-        error.message ||
-        "Unable to load data."
+          error.message ||
+          "Unable to load data.",
       );
     } finally {
       setLoading(false);
@@ -134,12 +136,11 @@ const Categoris = () => {
     return categories.filter((category) => {
       const matchesSearch =
         !query ||
-        category.categoryName?.toLowerCase().includes(query) ||
+        category.category?.toLowerCase().includes(query) ||
         category.brandName?.toLowerCase().includes(query);
 
       const matchesSection =
-        sectionFilter === "All" ||
-        category.section === sectionFilter;
+        sectionFilter === "All" || category.section === sectionFilter;
 
       return matchesSearch && matchesSection;
     });
@@ -149,7 +150,7 @@ const Categoris = () => {
   const totalCategories = categories.length;
 
   const categoriesWithImages = categories.filter(
-    (category) => category.categoryImage
+    (category) => category.categoryImage,
   ).length;
 
   // Form input handler
@@ -210,13 +211,14 @@ const Categoris = () => {
     setEditCategory(category);
 
     setForm({
-      categoryName: category.categoryName || "",
-      brandName: category.brandName || "",
+      category: category.CategoryName || category.category || "",
+      brandName: category.BrandName || category.brandName || "",
       section: category.section || "Main Categories",
     });
 
     setImageFile(null);
-    setPreview(category.categoryImage || "");
+    setPreview(category.CategoryImage || category.categoryImage || "");
+
     setShowForm(true);
   };
 
@@ -224,12 +226,17 @@ const Categoris = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !form.categoryName.trim() ||
-      !form.brandName ||
-      !form.section
-    ) {
+    if (!form.category.trim() || !form.brandName || !form.section) {
       alert("Please fill all required fields.");
+      return;
+    }
+
+    const selectedBrand = brands.find(
+      (brand) => brand.brandName === form.brandName,
+    );
+
+    if (!selectedBrand) {
+      alert("Please select a valid brand.");
       return;
     }
 
@@ -243,12 +250,8 @@ const Categoris = () => {
 
       const formData = new FormData();
 
-      formData.append(
-        "categoryName",
-        form.categoryName.trim()
-      );
-
-      formData.append("brandName", form.brandName);
+      formData.append("category", form.category.trim());
+      formData.append("brandName", selectedBrand.brandName);
       formData.append("section", form.section);
 
       if (imageFile) {
@@ -261,16 +264,12 @@ const Categoris = () => {
         await axios.put(
           `${API_BASE_URL}/categories/${editCategory._id}`,
           formData,
-          config
+          config,
         );
 
         alert("Category updated successfully.");
       } else {
-        await axios.post(
-          `${API_BASE_URL}/categories/create`,
-          formData,
-          config
-        );
+        await axios.post(`${API_BASE_URL}/categories/create`, formData, config);
 
         alert("Category created successfully.");
       }
@@ -278,12 +277,12 @@ const Categoris = () => {
       resetForm();
       await fetchCategories();
     } catch (error) {
-      console.error("Category save error:", error);
+      console.error("Category save error:", error.response?.data || error);
 
       alert(
         error.response?.data?.message ||
-        error.message ||
-        "Failed to save category."
+          error.message ||
+          "Failed to save category.",
       );
     } finally {
       setSaving(false);
@@ -293,7 +292,7 @@ const Categoris = () => {
   // Delete category
   const handleDelete = async (category) => {
     const confirmed = window.confirm(
-      `Are you sure you want to delete "${category.categoryName}"?`
+      `Are you sure you want to delete "${category.category}"?`,
     );
 
     if (!confirmed) return;
@@ -303,7 +302,7 @@ const Categoris = () => {
 
       await axios.delete(
         `${API_BASE_URL}/categories/${category._id}`,
-        getAuthConfig()
+        getAuthConfig(),
       );
 
       alert("Category deleted successfully.");
@@ -312,10 +311,7 @@ const Categoris = () => {
     } catch (error) {
       console.error("Delete category error:", error);
 
-      alert(
-        error.response?.data?.message ||
-        "Failed to delete category."
-      );
+      alert(error.response?.data?.message || "Failed to delete category.");
     } finally {
       setSaving(false);
     }
@@ -328,9 +324,7 @@ const Categoris = () => {
         <div className="text-center">
           <RefreshCw className="mx-auto mb-3 h-8 w-8 animate-spin text-orange-500" />
 
-          <p className="text-sm text-gray-500">
-            Loading categories...
-          </p>
+          <p className="text-sm text-gray-500">Loading categories...</p>
         </div>
       </div>
     );
@@ -339,7 +333,6 @@ const Categoris = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="mx-auto max-w-7xl space-y-6">
-
         {/* HEADER */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -381,9 +374,7 @@ const Categoris = () => {
               </div>
 
               <div>
-                <p className="text-sm text-gray-500">
-                  Total Categories
-                </p>
+                <p className="text-sm text-gray-500">Total Categories</p>
 
                 <h2 className="text-2xl font-bold text-gray-900">
                   {totalCategories}
@@ -399,9 +390,7 @@ const Categoris = () => {
               </div>
 
               <div>
-                <p className="text-sm text-gray-500">
-                  Categories With Images
-                </p>
+                <p className="text-sm text-gray-500">Categories With Images</p>
 
                 <h2 className="text-2xl font-bold text-gray-900">
                   {categoriesWithImages}
@@ -453,7 +442,6 @@ const Categoris = () => {
         {/* CATEGORY CARDS */}
         {filteredCategories.length > 0 ? (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
             {filteredCategories.map((category) => (
               <div
                 key={category._id}
@@ -464,7 +452,7 @@ const Categoris = () => {
                   {category.categoryImage ? (
                     <img
                       src={category.categoryImage}
-                      alt={category.categoryName}
+                      alt={category.category}
                       loading="lazy"
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
@@ -482,7 +470,7 @@ const Categoris = () => {
                 {/* DETAILS */}
                 <div className="p-4">
                   <h3 className="truncate text-lg font-bold text-gray-900">
-                    {category.categoryName}
+                    {category.category}
                   </h3>
 
                   <p className="mt-1 text-sm text-gray-500">
@@ -529,15 +517,12 @@ const Categoris = () => {
                 </div>
               </div>
             ))}
-
           </div>
         ) : (
           <div className="rounded-xl border border-gray-200 bg-white py-16 text-center">
             <Layers className="mx-auto mb-3 text-gray-300" size={45} />
 
-            <h3 className="font-semibold text-gray-800">
-              No categories found
-            </h3>
+            <h3 className="font-semibold text-gray-800">No categories found</h3>
 
             <p className="mt-1 text-sm text-gray-500">
               {search || sectionFilter !== "All"
@@ -559,7 +544,6 @@ const Categoris = () => {
           }}
         >
           <div className="my-auto w-full max-w-xl rounded-2xl bg-white shadow-xl">
-
             {/* MODAL HEADER */}
             <div className="flex items-center justify-between border-b border-gray-100 p-5 sm:p-6">
               <div>
@@ -582,29 +566,7 @@ const Categoris = () => {
             </div>
 
             {/* FORM */}
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-5 p-5 sm:p-6"
-            >
-
-              {/* CATEGORY NAME */}
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-gray-700">
-                  Category Name *
-                </label>
-
-                <input
-                  type="text"
-                  name="categoryName"
-                  value={form.categoryName}
-                  onChange={handleChange}
-                  placeholder="Enter category name"
-                  required
-                  maxLength={100}
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-                />
-              </div>
-
+            <form onSubmit={handleSubmit} className="space-y-5 p-5 sm:p-6">
               {/* BRAND */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
@@ -621,11 +583,32 @@ const Categoris = () => {
                   <option value="">Choose a brand</option>
 
                   {brands.map((brand) => (
-                    <option
-                      key={brand._id}
-                      value={brand.brandName}
-                    >
+                    <option key={brand._id} value={brand.brandName}>
                       {brand.brandName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* CATEGORY NAME */}
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Category Name *
+                </label>
+
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  required
+                  disabled={!form.brandName}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 outline-none focus:border-orange-500"
+                >
+                  <option value="">Choose a category</option>
+
+                  {brandCategories.map((category, index) => (
+                    <option key={`${category}-${index}`} value={category}>
+                      {category}
                     </option>
                   ))}
                 </select>
@@ -659,7 +642,6 @@ const Categoris = () => {
                 </label>
 
                 <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-5 transition hover:border-orange-400 hover:bg-orange-50/30">
-
                   {preview ? (
                     <img
                       src={preview}
@@ -668,10 +650,7 @@ const Categoris = () => {
                     />
                   ) : (
                     <div className="mb-3 rounded-full bg-orange-100 p-4">
-                      <ImagePlus
-                        className="text-orange-600"
-                        size={28}
-                      />
+                      <ImagePlus className="text-orange-600" size={28} />
                     </div>
                   )}
 
@@ -714,21 +693,14 @@ const Categoris = () => {
                 >
                   {saving ? (
                     <>
-                      <RefreshCw
-                        size={17}
-                        className="animate-spin"
-                      />
+                      <RefreshCw size={17} className="animate-spin" />
                       Saving...
                     </>
                   ) : (
                     <>
-                      {editCategory
-                        ? <Pencil size={17} />
-                        : <Plus size={18} />}
+                      {editCategory ? <Pencil size={17} /> : <Plus size={18} />}
 
-                      {editCategory
-                        ? "Update Category"
-                        : "Create Category"}
+                      {editCategory ? "Update Category" : "Create Category"}
                     </>
                   )}
                 </button>

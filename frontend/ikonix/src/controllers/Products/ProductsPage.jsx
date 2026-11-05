@@ -239,8 +239,9 @@ export default function ProductsPage() {
     </label>
   );
 
+
   const sidebar = (
-    <aside className="h-fit rounded-xl border border-gray-200 bg-white p-4">
+    <aside className="max-h-[calc(100vh-7rem)] overflow-y-auto rounded-xl border border-gray-200 bg-white p-4">
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-sm font-semibold">Filter Products</h2>
         <button
@@ -394,7 +395,7 @@ export default function ProductsPage() {
         </div>
 
         <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
-          <div className="hidden lg:block">{sidebar}</div>
+          <div className="hidden lg:sticky lg:top-24 lg:block lg:self-start">{sidebar}</div>
           <section>
             {error && !loading && (
               <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
@@ -431,7 +432,7 @@ export default function ProductsPage() {
                       to={`/products/page/${product._id}`}
                       className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-[#e85d04]/60 hover:shadow-lg"
                     >
-                      <div className="flex h-[150px] items-center justify-center overflow-hidden bg-white p-4 sm:h-[190px]">
+                      <div className="flex h-[160px] items-center justify-center overflow-hidden bg-white p-2 sm:h-[190px]">
                         <img
                           src={getImage(product)}
                           alt={product.productName || "Product"}
@@ -450,7 +451,7 @@ export default function ProductsPage() {
                               "scale-105",
                             );
                           }}
-                          className="h-full w-full scale-105 object-contain blur-md transition-all duration-500 group-hover:scale-100"
+                          className="h-full w-full  scale-105 object-contain blur-md transition-all duration-500 group-hover:scale-100"
                         />
                       </div>
                       <div className="p-3">

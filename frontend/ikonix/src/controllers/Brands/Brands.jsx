@@ -1,20 +1,10 @@
-import React, {
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import axios from "axios";
 
-import {
-  Link,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import {
-  Search,
-  ChevronRight,
-  Tag,
-} from "lucide-react";
+import { Search, ChevronRight, Tag } from "lucide-react";
 
 function Brands() {
   const colorCode = "#e85d04";
@@ -37,31 +27,21 @@ function Brands() {
       setLoading(true);
 
       const response = await axios.get(
-        "https://ikonix-backend.vercel.app/api/brands/getAllBrands"
+        "https://ikonix-backend.vercel.app/api/brands/getAllBrands",
       );
 
-      console.log(
-        "Brands Response:",
-        response.data
-      );
+      console.log("Brands Response:", response.data);
 
-      const allBrands =
-        response.data.brands || [];
+      const allBrands = response.data.brands || [];
 
       // Only show active brands
-      const activeBrands =
-        allBrands.filter(
-          (brand) =>
-            brand.status === "Active"
-        );
+      const activeBrands = allBrands.filter(
+        (brand) => brand.status === "Active",
+      );
 
       setBrands(activeBrands);
-
     } catch (error) {
-      console.error(
-        "Fetch Brands Error:",
-        error
-      );
+      console.error("Fetch Brands Error:", error);
     } finally {
       setLoading(false);
     }
@@ -80,36 +60,22 @@ function Brands() {
   // ======================================================
 
   const filteredBrands = useMemo(() => {
-    const value =
-      search.toLowerCase().trim();
+    const value = search.toLowerCase().trim();
 
     if (!value) {
       return brands;
     }
 
     return brands.filter((brand) => {
-      const brandName =
-        brand.brandName
-          ?.toLowerCase() || "";
+      const brandName = brand.brandName?.toLowerCase() || "";
 
-      const categories =
-        Array.isArray(brand.category)
-          ? brand.category
-              .join(" ")
-              .toLowerCase()
-          : String(
-              brand.category || ""
-            ).toLowerCase();
+      const categories = Array.isArray(brand.category)
+        ? brand.category.join(" ").toLowerCase()
+        : String(brand.category || "").toLowerCase();
 
-      return (
-        brandName.includes(value) ||
-        categories.includes(value)
-      );
+      return brandName.includes(value) || categories.includes(value);
     });
-  }, [
-    brands,
-    search,
-  ]);
+  }, [brands, search]);
 
   return (
     <div
@@ -120,7 +86,6 @@ function Brands() {
         sm:mt-25   mt-15
       "
     >
-
       {/* ==================================================
           BREADCRUMB
       ================================================== */}
@@ -135,7 +100,6 @@ function Brands() {
           pt-6
         "
       >
-
         <div
           className="
             flex
@@ -147,7 +111,6 @@ function Brands() {
             text-gray-400
           "
         >
-
           <Link
             to="/"
             className="
@@ -160,14 +123,9 @@ function Brands() {
 
           <ChevronRight size={11} />
 
-          <span className="text-gray-700">
-            Brands
-          </span>
-
+          <span className="text-gray-700">Brands</span>
         </div>
-
       </div>
-
 
       {/* ==================================================
           PAGE HEADER
@@ -184,7 +142,6 @@ function Brands() {
           pb-6
         "
       >
-
         <div
           className="
             flex
@@ -195,11 +152,9 @@ function Brands() {
             gap-5
           "
         >
-
           {/* TITLE */}
 
           <div>
-
             <p
               className="
                 text-[10px]
@@ -207,7 +162,8 @@ function Brands() {
                 tracking-wide
                 
                 font-medium
-              "style={{ color: colorCode }}
+              "
+              style={{ color: colorCode }}
             >
               Our Partners
             </p>
@@ -222,10 +178,7 @@ function Brands() {
                 text-gray-900
               "
             >
-              Leading{" "}
-              <span style={{ color: colorCode }}>
-                Brands
-              </span>
+              Leading <span style={{ color: colorCode }}>Brands</span>
             </h1>
 
             <p
@@ -238,15 +191,11 @@ function Brands() {
                 text-gray-500
               "
             >
-              Explore trusted test and measurement
-              brands available through IKONIX.
-              Discover reliable instruments and
-              professional measurement solutions
-              from leading manufacturers.
+              Explore trusted test and measurement brands available through
+              IKONIX. Discover reliable instruments and professional measurement
+              solutions from leading manufacturers.
             </p>
-
           </div>
-
 
           {/* SEARCH */}
 
@@ -257,7 +206,6 @@ function Brands() {
               md:w-[250px]
             "
           >
-
             <Search
               size={15}
               className="
@@ -272,11 +220,7 @@ function Brands() {
             <input
               type="text"
               value={search}
-              onChange={(e) =>
-                setSearch(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search brands..."
               className="
                 w-full
@@ -293,13 +237,9 @@ function Brands() {
                 transition
               "
             />
-
           </div>
-
         </div>
-
       </section>
-
 
       {/* ==================================================
           BRAND SECTION
@@ -315,7 +255,6 @@ function Brands() {
           pb-14
         "
       >
-
         {/* BRAND COUNT */}
 
         <div
@@ -326,13 +265,8 @@ function Brands() {
             mb-5
           "
         >
-
           <div className="flex items-center gap-2">
-
-            <Tag
-              size={14}
-              style={{ color: colorCode }}
-            />
+            <Tag size={14} style={{ color: colorCode }} />
 
             <p
               className="
@@ -341,22 +275,16 @@ function Brands() {
               "
             >
               {filteredBrands.length}{" "}
-              {filteredBrands.length === 1
-                ? "Brand"
-                : "Brands"}
+              {filteredBrands.length === 1 ? "Brand" : "Brands"}
             </p>
-
           </div>
-
         </div>
-
 
         {/* ==================================================
             LOADING
         ================================================== */}
 
         {loading && (
-
           <div
             className="
               min-h-[400px]
@@ -365,7 +293,6 @@ function Brands() {
               justify-center
             "
           >
-
             <div
               className="
                 w-8
@@ -375,23 +302,19 @@ function Brands() {
                 
                 rounded-full
                 animate-spin
-              "style={{ borderColor: colorCode }}
+              "
+              style={{ borderColor: colorCode }}
             />
-
           </div>
-
         )}
-
 
         {/* ==================================================
             NO BRANDS
         ================================================== */}
 
-        {!loading &&
-          filteredBrands.length === 0 && (
-
-            <div
-              className="
+        {!loading && filteredBrands.length === 0 && (
+          <div
+            className="
                 min-h-[350px]
                 flex
                 flex-col
@@ -399,49 +322,39 @@ function Brands() {
                 justify-center
                 text-center
               "
-            >
+          >
+            <Tag size={40} className="text-gray-200" />
 
-              <Tag
-                size={40}
-                className="text-gray-200"
-              />
-
-              <h2
-                className="
+            <h2
+              className="
                   mt-4
                   text-base
                   font-medium
                   text-gray-700
                 "
-              >
-                No brands found
-              </h2>
+            >
+              No brands found
+            </h2>
 
-              <p
-                className="
+            <p
+              className="
                   mt-1
                   text-xs
                   text-gray-400
                 "
-              >
-                Try searching for another
-                brand.
-              </p>
-
-            </div>
-
-          )}
-
+            >
+              Try searching for another brand.
+            </p>
+          </div>
+        )}
 
         {/* ==================================================
             BRAND GRID
         ================================================== */}
 
-        {!loading &&
-          filteredBrands.length > 0 && (
-
-            <div
-              className="
+        {!loading && filteredBrands.length > 0 && (
+          <div
+            className="
                 grid
                 grid-cols-2
                 sm:grid-cols-3
@@ -449,17 +362,12 @@ function Brands() {
                 gap-5
                 md:gap-6
               "
-            >
-
-              {filteredBrands.map(
-                (brand) => (
-
-                  <Link
-                    key={brand._id}
-                    to={`/brands/page/${encodeURIComponent(
-                      brand.brandName
-                    )}`}
-                    className="
+          >
+            {filteredBrands.map((brand) => (
+              <Link
+                key={brand._id}
+                to={`/brands/page/${encodeURIComponent(brand.brandName)}`}
+                className="
                       group
                       h-[145px]
                       sm:h-[155px]
@@ -477,30 +385,25 @@ function Brands() {
                       duration-300
                       hover:-translate-y-1
                       hover:shadow-md
-                    "style={{ borderColor: colorCode }}
-                  >
+                    "
+                style={{ borderColor: colorCode }}
+              >
+                {/* LOGO */}
 
-                    {/* LOGO */}
-
-                    <div
-                      className="
+                <div
+                  className="
                         w-full
                         h-[85px]
                         flex
                         items-center
                         justify-center
                       "
-                    >
-
-                      {brand.Image ? (
-
-                        <img
-                          src={brand.Image}
-                          alt={
-                            brand.brandName ||
-                            "Brand"
-                          }
-                          className="
+                >
+                  {brand.Image ? (
+                    <img
+                      src={brand.Image}
+                      alt={brand.brandName || "Brand"}
+                      className="
                             max-w-[150px]
                             max-h-[75px]
                             w-auto
@@ -510,12 +413,10 @@ function Brands() {
                             duration-300
                             group-hover:scale-105
                           "
-                        />
-
-                      ) : (
-
-                        <div
-                          className="
+                    />
+                  ) : (
+                    <div
+                      className="
                             w-14
                             h-14
                             rounded-full
@@ -524,22 +425,18 @@ function Brands() {
                             items-center
                             justify-center
                             
-                          "style={{ color: colorCode }}
-                        >
-                          <Tag
-                            size={24}
-                          />
-                        </div>
-
-                      )}
-
+                          "
+                      style={{ color: colorCode }}
+                    >
+                      <Tag size={24} />
                     </div>
+                  )}
+                </div>
 
+                {/* BRAND NAME */}
 
-                    {/* BRAND NAME */}
-
-                    <h2
-                      className="
+                <h2
+                  className="
                         mt-3
                         text-xs
                         sm:text-sm
@@ -551,21 +448,14 @@ function Brands() {
                         group-hover:text-[#e85d04]
                         transition
                       "
-                    >
-                      {brand.brandName}
-                    </h2>
-
-                  </Link>
-
-                )
-              )}
-
-            </div>
-
-          )}
-
+                >
+                  {brand.brandName}
+                </h2>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
-
 
       {/* ==================================================
           BRAND CTA
@@ -578,7 +468,6 @@ function Brands() {
           border-gray-100
         "
       >
-
         <div
           className="
             max-w-7xl
@@ -590,14 +479,14 @@ function Brands() {
             text-center
           "
         >
-
           <p
             className="
               text-[10px]
               uppercase
               
               font-medium
-            "style={{ color: colorCode }}
+            "
+            style={{ color: colorCode }}
           >
             Test & Measurement Solutions
           </p>
@@ -612,9 +501,7 @@ function Brands() {
             "
           >
             Looking for a Specific{" "}
-            <span style={{ color: colorCode }}>
-              Brand?
-            </span>
+            <span style={{ color: colorCode }}>Brand?</span>
           </h2>
 
           <p
@@ -628,10 +515,8 @@ function Brands() {
               text-gray-500
             "
           >
-            Contact our team for product
-            availability, specifications,
-            technical assistance and
-            quotations.
+            Contact our team for product availability, specifications, technical
+            assistance and quotations.
           </p>
 
           <Link
@@ -654,11 +539,8 @@ function Brands() {
           >
             Contact Us
           </Link>
-
         </div>
-
       </section>
-
     </div>
   );
 }

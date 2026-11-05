@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { UserCircle, Menu, X, Search } from "lucide-react";
-
-// import logo from "../../../public/imageone.png";
+import { IoIosMailUnread } from "react-icons/io";
+import { MdPhoneCallback } from "react-icons/md";
 
 function Navigation() {
   const location = useLocation();
@@ -26,12 +26,12 @@ function Navigation() {
       path: "/",
     },
     {
-      name: "BLOG",
-      path: "/home",
-    },
-    {
       name: "BRANDS",
       path: "/brands/page",
+    },
+    {
+      name: "BLOG",
+      path: "/home",
     },
     {
       name: "ABOUT US",
@@ -296,6 +296,31 @@ function Navigation() {
               </Link>
             );
           })}
+<div className="w-auto h-5 flex gap-3">
+
+  {/* Email */}
+  <a
+    href="mailto:info@ikonixinstruments.com"
+    className="flex gap-2 items-center justify-center "
+  >
+    <IoIosMailUnread className="text-[20px] text-[#e85d04] transition" />
+    <p className="text-[11px] hover:text-[#e85d04] transition">
+      info@ikonixinstruments.com
+    </p>
+  </a>
+
+  {/* Phone */}
+  <a
+    href="tel:+918118156618"
+    className="flex gap-2 items-center justify-center"
+  >
+    <MdPhoneCallback className="text-[20px] text-[#e85d04] transition" />
+    <p className="text-[11px] hover:text-[#e85d04] transition">
+      +91 81181 56618
+    </p>
+  </a>
+
+</div>
         </nav>
 
         {/* =====================================================
