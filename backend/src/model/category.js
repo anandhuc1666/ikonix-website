@@ -41,10 +41,10 @@ const categorySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Unique category name per brand
+// Prevent duplicate category names within the same brand
 categorySchema.index(
   { category: 1, brand: 1 },
-  { unique: true }
+  { unique: true, name: "category_brand_unique" }
 );
 
 const Category = mongoose.model("Category", categorySchema);

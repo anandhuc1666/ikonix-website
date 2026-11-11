@@ -1,7 +1,7 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Search, ArrowRight, Layers } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 // const API_BASE_URL = "http://localhost:5000/api";
 const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
@@ -11,20 +11,30 @@ const sections = [
   "New Arrivals",
   "Popular Categories",
 ];
-
+import { IoLogoWhatsapp } from "react-icons/io";
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeSection, setActiveSection] = useState("All");
-
+  const [Brand, setBrand] = useState([]);
+  const navigate = useNavigate();
+  const process = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/brands/getAllBrands`);
+      setBrand(response.data?.brands || []);
+    } catch (err) {
+      console.error("Fetch brands error:", err.response?.data || err.message);
+    }
+  };
+  useEffect(() => {
+    process();
+  }, []);
   // Fetch categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(
-          `${API_BASE_URL}/categories`
-        );
+        const response = await axios.get(`${API_BASE_URL}/categories`);
 
         setCategories(response.data.categories || []);
       } catch (error) {
@@ -45,8 +55,7 @@ function Categories() {
         category.brandName?.toLowerCase().includes(search.toLowerCase());
 
       const matchesSection =
-        activeSection === "All" ||
-        category.section === activeSection;
+        activeSection === "All" || category.section === activeSection;
 
       return matchesSearch && matchesSection;
     });
@@ -58,7 +67,7 @@ function Categories() {
       .map((section) => ({
         section,
         items: filteredCategories.filter(
-          (category) => category.section === section
+          (category) => category.section === section,
         ),
       }))
       .filter((group) => group.items.length > 0);
@@ -66,17 +75,22 @@ function Categories() {
 
   const handleCategoryClick = (category) => {
     console.log("Selected category:", category);
-
+    navigate(`/category-products/${category._id}`);
     // Connect your product listing page here.
   };
 
   return (
     <main className="min-h-screen bg-white mt-15">
-
+      <a
+        href="https://wa.me/918111856618"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <IoLogoWhatsapp className="sm:text-6xl text-5xl animate-bounce text-green-600 fixed bottom-10 right-10" />
+      </a>
       {/* Hero Section */}
-      <section className="bg-orange-50 px-4 py-16 sm:py-20">
+      <section className="bg-orange-50 px-4 pt-16 sm:mt-20">
         <div className="mx-auto max-w-7xl text-center">
-
           <span className="text-sm font-bold uppercase tracking-widest text-orange-600">
             Explore IKONIX
           </span>
@@ -86,8 +100,8 @@ function Categories() {
           </h1>
 
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-gray-600 sm:text-base">
-            Discover precision instruments and measurement
-            solutions for every application.
+            Discover precision instruments and measurement solutions for every
+            application.
           </p>
 
           {/* Search */}
@@ -103,11 +117,78 @@ function Categories() {
             />
           </div>
         </div>
+
+        {/* animation loop for the brand section */}
+        <div className="w-full items-center justify-center h-15 py-2 flex box-content">
+          <div className="w-full h-20 py-2 overflow-hidden">
+            <div className="flex w-max animate-brand-scroll hover:[animation-play-state:paused]">
+              {/* First set */}
+              <div className="flex shrink-0">
+                {Brand.map((brand) => (
+                  <div
+                    key={brand._id}
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                  >
+                    <img
+                      src={brand.Image}
+                      alt={brand.brandName}
+                      className="max-h-[90%] max-w-[90%] object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* dublication of the first set to make the loop smooth */}
+
+              <div className="flex shrink-0">
+                {Brand.map((brand) => (
+                  <div
+                    key={brand._id}
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                  >
+                    <img
+                      src={brand.Image}
+                      alt={brand.brandName}
+                      className="max-h-[90%] max-w-[90%] object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex shrink-0">
+                {Brand.map((brand) => (
+                  <div
+                    key={brand._id}
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                  >
+                    <img
+                      src={brand.Image}
+                      alt={brand.brandName}
+                      className="max-h-[90%] max-w-[90%] object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex shrink-0">
+                {Brand.map((brand) => (
+                  <div
+                    key={brand._id}
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                  >
+                    <img
+                      src={brand.Image}
+                      alt={brand.brandName}
+                      className="max-h-[90%] max-w-[90%] object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Categories Section */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
         {/* Section Filters */}
         <div className="mb-10 flex gap-3 overflow-x-auto pb-2">
           {["All", ...sections].map((section) => (
@@ -130,9 +211,7 @@ function Categories() {
           <div className="py-24 text-center">
             <div className="mx-auto h-9 w-9 animate-spin rounded-full border-4 border-orange-100 border-t-orange-500" />
 
-            <p className="mt-4 text-sm text-gray-500">
-              Loading categories...
-            </p>
+            <p className="mt-4 text-sm text-gray-500">Loading categories...</p>
           </div>
         ) : filteredCategories.length === 0 ? (
           <div className="py-24 text-center">
@@ -148,10 +227,8 @@ function Categories() {
           </div>
         ) : (
           <div className="space-y-14">
-
             {groupedCategories.map((group) => (
               <div key={group.section}>
-
                 {/* Section Heading */}
                 <div className="mb-6">
                   <span className="text-xs font-bold uppercase tracking-widest text-orange-500">
@@ -169,7 +246,6 @@ function Categories() {
 
                 {/* Category Cards */}
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-
                   {group.items.map((category) => (
                     <button
                       key={category._id}
@@ -211,11 +287,9 @@ function Categories() {
                       </div>
                     </button>
                   ))}
-
                 </div>
               </div>
             ))}
-
           </div>
         )}
       </section>
@@ -223,19 +297,16 @@ function Categories() {
       {/* Bottom Banner */}
       <section className="bg-gray-900 px-4 py-14 text-center">
         <div className="mx-auto max-w-3xl">
-
           <h2 className="text-2xl font-bold text-white sm:text-3xl">
             Find the Right Instrument for Your Needs
           </h2>
 
           <p className="mt-3 text-sm leading-7 text-gray-300">
-            Explore our range of measurement and calibration
-            instruments for reliable results.
+            Explore our range of measurement and calibration instruments for
+            reliable results.
           </p>
-
         </div>
       </section>
-
     </main>
   );
 }

@@ -90,10 +90,9 @@ export const createCategory = async (req, res) => {
       req.body.brandName ??
       req.body.BrandName;
 
-    const section =
-      req.body.section || "Main Categories";
+    const section = req.body.section || "Main Categories";
 
-    // Validate fields
+    // Validate category and brand
     if (
       typeof categoryName !== "string" ||
       !categoryName.trim() ||
@@ -101,30 +100,49 @@ export const createCategory = async (req, res) => {
       !brandName.trim()
     ) {
       return res.status(400).json({
+        success: false,
         message: "Category name and brand are required",
       });
     }
 
     if (!req.file) {
       return res.status(400).json({
+        success: false,
         message: "Please upload a category image",
+      });
+    }
+
+    const cleanCategory = categoryName.trim();
+    const cleanBrand = brandName.trim();
+
+    // Validate section
+    const allowedSections = [
+      "Featured Categories",
+      "Main Categories",
+      "New Arrivals",
+      "Popular Categories",
+    ];
+
+    if (!allowedSections.includes(section)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid category section",
       });
     }
 
     // Find brand
     const brand = await Brand.findOne({
-      brandName: brandName.trim(),
+      brandName: cleanBrand,
     });
 
     if (!brand) {
       return res.status(404).json({
+        success: false,
         message: "Brand not found",
       });
     }
 
-    const cleanCategory = categoryName.trim();
-
-    // Check whether category belongs to this brand
+    // Check category belongs to selected brand
     const brandCategories = getBrandCategoryNames(brand);
 
     const categoryExists = brandCategories.some(
@@ -134,27 +152,31 @@ export const createCategory = async (req, res) => {
 
     if (!categoryExists) {
       return res.status(400).json({
+        success: false,
         message: "Selected category does not belong to this brand",
       });
     }
 
-    // Check existing category
+    // Check duplicate category for this brand
     const existingCategory = await Category.findOne({
-      category: cleanCategory,
+      category: {
+        $regex: `^${cleanCategory.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}$`,
+        $options: "i",
+      },
       brand: brand._id,
     });
 
     if (existingCategory) {
       return res.status(409).json({
+        success: false,
         message: "This category already exists for this brand",
-        category: existingCategory,
       });
     }
 
-    // Upload image
+    // Upload image to Cloudinary
     uploadedImage = await uploadToCloudinary(req.file.buffer);
 
-    // Save separate category document
+    // Create category document
     const newCategory = await Category.create({
       category: cleanCategory,
       categoryImage: uploadedImage.secure_url,
@@ -170,37 +192,46 @@ export const createCategory = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Create category error:", error);
+  console.error("Create category error:", {
+    message: error.message,
+    code: error.code,
+    index: error.index,
+    keyPattern: error.keyPattern,
+    keyValue: error.keyValue,
+  });
 
-    // Remove uploaded image if database save fails
-    if (uploadedImage?.public_id) {
-      try {
-        await cloudinary.uploader.destroy(
-          uploadedImage.public_id
-        );
-      } catch (cleanupError) {
-        console.error("Image cleanup error:", cleanupError);
-      }
+  if (uploadedImage?.public_id) {
+    try {
+      await cloudinary.uploader.destroy(uploadedImage.public_id);
+    } catch (cleanupError) {
+      console.error("Image cleanup error:", cleanupError);
     }
-
-    if (error.code === 11000) {
-      console.error("Duplicate index:", {
-        keyPattern: error.keyPattern,
-        keyValue: error.keyValue,
-      });
-
-      return res.status(409).json({
-        message: "Duplicate category detected in MongoDB",
-        keyPattern: error.keyPattern,
-        keyValue: error.keyValue,
-      });
-    }
-
-    return res.status(500).json({
-      message: error.message,
-    });
   }
+
+  return res.status(error.code === 11000 ? 409 : 500).json({
+    success: false,
+    message: error.message,
+    index: error.index,
+    keyPattern: error.keyPattern,
+    keyValue: error.keyValue,
+  });
+}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ==========================================
 // GET ALL CATEGORIES
@@ -227,6 +258,22 @@ export const getAllCategories = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ==========================================
 // GET CATEGORIES BY BRAND

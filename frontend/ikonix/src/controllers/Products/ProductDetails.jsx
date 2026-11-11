@@ -5,9 +5,16 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 
 import { ChevronRight, Download, MessageCircle, Package } from "lucide-react";
+import { FaWhatsapp } from "react-icons/fa";
+
+
 
 function ProductDetails() {
   const colorCode = "#e85d04";
+
+  // const API_BASE_URL = "http://localhost:5000/api";
+  const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+
   const { id } = useParams();
 
   // ======================================================
@@ -22,6 +29,19 @@ function ProductDetails() {
 
   const [selectedImage, setSelectedImage] = useState("");
 
+  const [Brand, setBrand] = useState([]);
+
+  const process = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/brands/getAllBrands`);
+      setBrand(response.data?.brands || []);
+    } catch (err) {
+      console.error("Fetch brands error:", err.response?.data || err.message);
+    }
+  };
+  useEffect(() => {
+    process();
+  }, []);
   // ======================================================
   // FETCH SELECTED PRODUCT
   // ======================================================
@@ -340,7 +360,6 @@ function ProductDetails() {
   // ======================================================
   // MAIN
   // ======================================================
-
   return (
     <div className="w-full bg-white sm:mt-28 mt-16">
       {/* ==================================================
@@ -568,20 +587,36 @@ function ProductDetails() {
                 "
               >
                 {/* BRAND */}
-
                 {product.brandName && (
-                  <p
-                    className="
-                    text-sm
-                    uppercase
-                    font-bold
-                    
-                  "
-                    style={{ color: colorCode }}
-                  >
-                    <span className="font-bold text-black">Brand:</span>{" "}
-                    {product.brandName}
-                  </p>
+                  <div className="flex items-center gap-3 text-sm">
+                    <span className="font-bold text-black">Brand:</span>
+
+                    {(() => {
+                      const matchedBrand = Brand.find(
+                        (brand) =>
+                          brand.brandName?.trim().toLowerCase() ===
+                          product.brandName?.trim().toLowerCase(),
+                      );
+
+                      return matchedBrand ? (
+                        <div className="flex items-center gap-8">
+                          <span
+                            className="font-bold uppercase"
+                            style={{ color: colorCode }}
+                          >
+                            {matchedBrand.brandName}
+                          </span>
+                          <img
+                            src={matchedBrand.Image}
+                            alt={matchedBrand.brandName}
+                            className="h-10 w-20 object-contain border border-gray-200 rounded-md p-1"
+                          />
+                        </div>
+                      ) : (
+                        <span className="text-red-500">Brand not found</span>
+                      );
+                    })()}
+                  </div>
                 )}
 
                 {product.category && (
@@ -718,7 +753,7 @@ function ProductDetails() {
                     transition
                   "
                 >
-                  <MessageCircle size={16} />
+                  <FaWhatsapp size={16}  className="text-2xl"/>
                   Enquiry Now
                 </a>
 
@@ -780,7 +815,7 @@ function ProductDetails() {
               className="
                 mt-3
                 text-xs
-                sm:text-lg
+                sm:text-[15px]
                 leading-6
                 text-gray-600
                 whitespace-pre-line
@@ -808,6 +843,7 @@ function ProductDetails() {
               sm:px-8
               lg:px-10
               py-10
+              
             "
         >
           {/* HEADER */}
@@ -873,11 +909,13 @@ function ProductDetails() {
                 md:grid-cols-4
                 lg:grid-cols-5
                 gap-4
+                
               "
           >
             {relatedProducts.map((item) => (
               <ProductCard
                 key={item._id}
+               
                 product={item}
                 isCurrentProduct={item._id === product._id}
               />
@@ -896,6 +934,7 @@ function ProductDetails() {
               bg-[#fafafa]
               border-t
               border-gray-100
+              
             "
         >
           <div
@@ -1062,6 +1101,7 @@ function ProductDetails() {
                               text-[13px]
                               sm:text-sm
                               hover:underline
+                              hover:border-[#e85d04]
                             "
                         style={{ color: colorCode }}
                       >
@@ -1170,7 +1210,7 @@ function ProductDetails() {
               {otherCategories.map((category) => (
                 <Link
                   key={category}
-                  to={`/products/page?category=${encodeURIComponent(category)}`}
+                  to={`/products/page/category=${encodeURIComponent(category)}`}
                   className="
                       px-5
                       py-2.5
@@ -1482,7 +1522,7 @@ function ProductCard({ product, isCurrentProduct = false }) {
         border-gray-100
         overflow-hidden
         hover:-translate-y-1
-        hover:shadow-md
+        hover:border-[#e85d04]
         transition-all
         duration-300
       "

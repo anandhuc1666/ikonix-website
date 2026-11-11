@@ -124,7 +124,7 @@ function BrandProducts() {
   // ======================================================
 
   const formatPrice = (price) => {
-    return `AED ${Number(price || 0).toLocaleString("en-AE")}`;
+    return `₹ ${Number(price || 0).toLocaleString("INR")}`;
   };
 
   // ======================================================
@@ -229,7 +229,7 @@ function BrandProducts() {
               flex
               flex-col
               md:flex-row
-              items-start
+              items-start 
               gap-8
             "
           >
@@ -242,6 +242,7 @@ function BrandProducts() {
                 h-[140px]
                 rounded-lg
                 flex
+                
                 items-center
                 justify-center
                 p-5
@@ -304,47 +305,6 @@ function BrandProducts() {
                 instruments. Browse products available from this brand and find
                 the right solution for your application.
               </p>
-
-              {/* CATEGORIES */}
-
-              {brand?.category?.length > 0 && (
-                <div className="mt-5">
-                  <p
-                    className="
-                      text-xs
-                      font-medium
-                      text-gray-700
-                    "
-                  >
-                    Product Categories
-                  </p>
-
-                  <div
-                    className="
-                      flex
-                      flex-wrap
-                      gap-2
-                      mt-3
-                    "
-                  >
-                    {brand.category.map((category) => (
-                      <span
-                        key={category}
-                        className="
-                            px-3
-                            py-1.5
-                            rounded-full
-                            bg-orange-50
-                            text-[10px] 
-                          "
-                        style={{ color: colorCode }}
-                      >
-                        {category}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -554,10 +514,10 @@ function BrandProducts() {
 
                 {/* DETAILS */}
 
-                <div className="p-3 bg-[#fafafa]">
+                <div className="p-3 bg-[#fafafa] flex flex-col gap-1">
                   <p
                     className="
-                        text-[8px]
+                        text-[12px]
                         uppercase
                         font-medium
                       "
@@ -569,8 +529,8 @@ function BrandProducts() {
                   <h3
                     className="
                         mt-1
-                        text-[10px]
-                        sm:text-xs
+                        text-[12px]
+                        sm:text-[14px]
                         font-medium
                         leading-4
                         text-gray-800
@@ -585,8 +545,9 @@ function BrandProducts() {
                     <p
                       className="
                           mt-1
-                          text-[8px]
-                          text-gray-400
+                          text-[13px]
+                          sm:text-[15px]
+                          text-gray-800
                           truncate
                         "
                     >
@@ -597,8 +558,8 @@ function BrandProducts() {
                   <p
                     className="
                         mt-2
-                        text-[10px]
-                        sm:text-xs
+                        text-[13px]
+                        sm:text-[15px]
                         font-semibold
                       "
                     style={{ color: colorCode }}

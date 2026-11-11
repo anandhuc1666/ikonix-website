@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UserCircle, Menu, X, Search } from "lucide-react";
 import { IoIosMailUnread } from "react-icons/io";
 import { MdPhoneCallback } from "react-icons/md";
+import { FaWhatsapp } from "react-icons/fa";
 
 function Navigation() {
   const location = useLocation();
@@ -18,12 +19,12 @@ function Navigation() {
 
   const navItems = [
     {
-      name: "CATEGORIES",
-      path: "/categories/page",
-    },
-    {
       name: "PRODUCTS",
       path: "/",
+    },
+    {
+      name: "CATEGORIES",
+      path: "/categories/page",
     },
     {
       name: "BRANDS",
@@ -124,10 +125,16 @@ function Navigation() {
         <Link to="/" onClick={handleLogoClick}>
           <div
             className="
-            h-[100px] text-[#e85d04] bg-[#FAFAFA] flex p-1 items-center justify-center
+            h-[100px] text-[#e85d04] bg-[#FAFAFA] flex flex-col p-1 items-center justify-center
             "
           >
-            <h1 className="font-extrabold text-[55px]">IKONIX</h1>
+            <h1 className="Playfair Display text-[55px] playfair  mt-7 flex items-center justify-center flex-col">
+              IKONIX{" "}
+              <span className="text-[12px] text-black font-extralight">
+                {" "}
+                <p>Calibration and Measurment's</p>
+              </span>
+            </h1>
           </div>
         </Link>
 
@@ -247,6 +254,7 @@ function Navigation() {
             gap-6
             lg:gap-7
             xl:gap-8
+            ml-30
           "
         >
           {navItems.map((item) => {
@@ -296,31 +304,30 @@ function Navigation() {
               </Link>
             );
           })}
-<div className="w-auto h-5 flex gap-3">
+          <div className="w-auto h-5 flex gap-3">
+            {/* Email */}
+            <a
+              href="mailto:info@ikonixinstruments.com"
+              className="flex gap-2 items-center justify-center"
+            >
+              <IoIosMailUnread className="text-[20px] text-[#e85d04] transition" />
+              <p className="text-[11px] hover:text-[#e85d04] transition">
+                info@ikonixinstruments.com
+              </p>
+            </a>
 
-  {/* Email */}
-  <a
-    href="mailto:info@ikonixinstruments.com"
-    className="flex gap-2 items-center justify-center "
-  >
-    <IoIosMailUnread className="text-[20px] text-[#e85d04] transition" />
-    <p className="text-[11px] hover:text-[#e85d04] transition">
-      info@ikonixinstruments.com
-    </p>
-  </a>
-
-  {/* Phone */}
-  <a
-    href="tel:+918118156618"
-    className="flex gap-2 items-center justify-center"
-  >
-    <MdPhoneCallback className="text-[20px] text-[#e85d04] transition" />
-    <p className="text-[11px] hover:text-[#e85d04] transition">
-      +91 81181 56618
-    </p>
-  </a>
-
-</div>
+            {/* Phone */}
+            <a
+              href="tel:+918118156618"
+              className="flex gap-2 items-center justify-center"
+            >
+              <MdPhoneCallback className="text-[20px] text-[#e85d04] transition" />
+              <p className="text-[11px] hover:text-[#e85d04] transition font-sans">
+                +91 81181 56618
+              </p>
+            </a>
+            <a href=""></a>
+          </div>
         </nav>
 
         {/* =====================================================

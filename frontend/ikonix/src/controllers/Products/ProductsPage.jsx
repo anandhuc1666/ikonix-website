@@ -8,6 +8,7 @@ import React, {
 import axios from "axios";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search, ChevronDown, SlidersHorizontal, X } from "lucide-react";
+import { IoLogoWhatsapp } from "react-icons/io";
 
 const API = "https://ikonix-backend.vercel.app/api";
 const PAGE_SIZE = 12;
@@ -55,6 +56,8 @@ export default function ProductsPage() {
     availability: true,
     sort: true,
   });
+
+
   const loadMoreRef = useRef(null);
 
   const fetchProducts = useCallback(async () => {
@@ -226,7 +229,7 @@ export default function ProductsPage() {
   const checkRow = (label, checked, onChange, count) => (
     <label
       key={label}
-      className="flex cursor-pointer items-center gap-2 py-1.5 text-xs text-gray-600 hover:text-gray-900"
+      className="flex cursor-pointer items-center gap-2 py-1.5 text-xs text-black hover:text-[#e85d04] "
     >
       <input
         type="checkbox"
@@ -238,7 +241,6 @@ export default function ProductsPage() {
       {count !== undefined && <span className="text-gray-400">({count})</span>}
     </label>
   );
-
 
   const sidebar = (
     <aside className="max-h-[calc(100vh-7rem)] overflow-y-auto rounded-xl border border-gray-200 bg-white p-4">
@@ -345,6 +347,17 @@ export default function ProductsPage() {
 
   return (
     <main className="mt-15 w-full bg-white sm:mt-25">
+
+
+          <a
+              href="https://wa.me/918111856618"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <IoLogoWhatsapp className="sm:text-6xl text-5xl animate-bounce text-green-600 fixed bottom-10 right-10" />
+            </a>
+
+
       <div className="mx-auto max-w-[1400px] px-5 pt-5 sm:px-8 lg:px-10">
         <p className="text-[10px] uppercase text-gray-500 sm:text-xs">
           <Link to="/" className="hover:text-[#e85d04]">
@@ -354,19 +367,7 @@ export default function ProductsPage() {
           <span className="text-gray-800">Products</span>
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
-            <Search
-              size={17}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            />
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products, brands or model numbers..."
-              className="h-11 w-full rounded-lg border border-gray-200 pl-10 pr-4 text-sm outline-none focus:border-[#e85d04]"
-            />
-          </div>
+
           <button
             type="button"
             onClick={() => setMobileFiltersOpen(true)}
@@ -395,7 +396,9 @@ export default function ProductsPage() {
         </div>
 
         <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[250px_minmax(0,1fr)]">
-          <div className="hidden lg:sticky lg:top-24 lg:block lg:self-start">{sidebar}</div>
+          <div className="hidden lg:sticky lg:top-24 lg:block lg:self-start">
+            {sidebar}
+          </div>
           <section>
             {error && !loading && (
               <div className="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-700">
@@ -421,7 +424,7 @@ export default function ProductsPage() {
                 </button>
               </div>
             )}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4 bg-gray-50">
               {loading
                 ? Array.from({ length: 8 }, (_, i) => (
                     <ProductSkeleton key={i} />
@@ -430,7 +433,8 @@ export default function ProductsPage() {
                     <Link
                       key={product._id}
                       to={`/products/page/${product._id}`}
-                      className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-[#e85d04]/60 hover:shadow-lg"
+                      className="group overflow-hidden rounded-lg border border-gray-200 bg-white transition duration-300 
+                      hover:-translate-y-1 hover:border-[#e85d04]/60 hover:shadow-lg"
                     >
                       <div className="flex h-[160px] items-center justify-center overflow-hidden bg-white p-2 sm:h-[190px]">
                         <img
@@ -463,11 +467,11 @@ export default function ProductsPage() {
                             {product.brandName}
                           </p>
                         )}
-                        <h2 className="mt-1 line-clamp-2 min-h-9 text-xs font-medium leading-4 text-gray-800 sm:text-sm">
+                        <h2 className="mt-1 line-clamp-2 min-h-12 text-xs font-medium leading-4 text-gray-800 sm:text-sm">
                           {product.productName}
                         </h2>
                         {product.modelNumber && (
-                          <p className="mt-1 truncate text-[10px] text-gray-400 sm:text-xs">
+                          <p className="mt-1 truncate text-[10px] text-gray-800 sm:text-xs">
                             Model: {product.modelNumber}
                           </p>
                         )}
@@ -487,7 +491,10 @@ export default function ProductsPage() {
                             ? "In Stock"
                             : "Out of Stock"}
                         </p>
-                        <div className="mt-3 rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04] transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs">
+                        <div
+                          className="mt-3 rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
+                         transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs"
+                        >
                           View Details
                         </div>
                       </div>

@@ -298,8 +298,7 @@ function Brands() {
                 w-8
                 h-8
                 border-4
-                border-orange-100
-                
+
                 rounded-full
                 animate-spin
               "
@@ -374,7 +373,8 @@ function Brands() {
                       md:h-[165px]
                       rounded-lg
                       border
-                      
+                      border-gray-200
+                      hover:border-[#e85d04]
                       bg-white
                       flex
                       flex-col
@@ -386,7 +386,6 @@ function Brands() {
                       hover:-translate-y-1
                       hover:shadow-md
                     "
-                style={{ borderColor: colorCode }}
               >
                 {/* LOGO */}
 
@@ -438,8 +437,8 @@ function Brands() {
                 <h2
                   className="
                         mt-3
-                        text-xs
-                        sm:text-sm
+                        text-[13px]
+                        sm:text-[14px]
                         font-medium
                         text-gray-800
                         text-center
