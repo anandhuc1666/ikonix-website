@@ -514,7 +514,7 @@ function BrandProducts() {
 
                 {/* DETAILS */}
 
-                <div className="p-3 bg-[#fafafa] flex flex-col gap-1">
+                <div className="p-3  flex flex-col gap-1">
                   <p
                     className="
                         text-[12px]

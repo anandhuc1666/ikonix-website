@@ -51,8 +51,8 @@ function Categories() {
   const filteredCategories = useMemo(() => {
     return categories.filter((category) => {
       const matchesSearch =
-        category.categoryName?.toLowerCase().includes(search.toLowerCase()) ||
-        category.brandName?.toLowerCase().includes(search.toLowerCase());
+  category.category?.toLowerCase().includes(search.toLowerCase()) ||
+  category.brandName?.toLowerCase().includes(search.toLowerCase());
 
       const matchesSection =
         activeSection === "All" || category.section === activeSection;
@@ -62,16 +62,23 @@ function Categories() {
   }, [categories, search, activeSection]);
 
   // Group categories by section
-  const groupedCategories = useMemo(() => {
-    return sections
-      .map((section) => ({
-        section,
-        items: filteredCategories.filter(
-          (category) => category.section === section,
+ // Group categories by section and sort category names A-Z
+const groupedCategories = useMemo(() => {
+  return sections
+    .map((section) => ({
+      section,
+      items: filteredCategories
+        .filter((category) => category.section === section)
+        .sort((a, b) =>
+          (a.category || "").localeCompare(
+            b.category || "",
+            undefined,
+            { sensitivity: "base" }
+          )
         ),
-      }))
-      .filter((group) => group.items.length > 0);
-  }, [filteredCategories]);
+    }))
+    .filter((group) => group.items.length > 0);
+}, [filteredCategories]);
 
   const handleCategoryClick = (category) => {
     console.log("Selected category:", category);
@@ -105,7 +112,8 @@ function Categories() {
           </p>
 
           {/* Search */}
-          <div className="mx-auto mt-8 flex max-w-xl items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm focus-within:border-orange-500">
+          <div className="mx-auto mt-8 flex max-w-xl items-center gap-3 rounded-xl border
+           border-gray-200 bg-white px-4 py-3 shadow-sm focus-within:border-orange-500">
             <Search size={20} className="shrink-0 text-gray-400" />
 
             <input
@@ -127,7 +135,7 @@ function Categories() {
                 {Brand.map((brand) => (
                   <div
                     key={brand._id}
-                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center bg-white"
                   >
                     <img
                       src={brand.Image}
@@ -144,7 +152,7 @@ function Categories() {
                 {Brand.map((brand) => (
                   <div
                     key={brand._id}
-                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center bg-white"
                   >
                     <img
                       src={brand.Image}
@@ -158,21 +166,7 @@ function Categories() {
                 {Brand.map((brand) => (
                   <div
                     key={brand._id}
-                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
-                  >
-                    <img
-                      src={brand.Image}
-                      alt={brand.brandName}
-                      className="max-h-[90%] max-w-[90%] object-contain"
-                    />
-                  </div>
-                ))}
-              </div>
-              <div className="flex shrink-0">
-                {Brand.map((brand) => (
-                  <div
-                    key={brand._id}
-                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center"
+                    className="w-[200px] h-16 shadow-sm mx-2 rounded-lg flex items-center justify-center bg-white"
                   >
                     <img
                       src={brand.Image}
@@ -251,13 +245,14 @@ function Categories() {
                       key={category._id}
                       type="button"
                       onClick={() => handleCategoryClick(category)}
-                      className="group overflow-hidden rounded-xl border border-gray-100 bg-white text-left transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg"
+                      className="group overflow-hidden rounded-xl border border-gray-100 bg-white text-left transition duration-300
+                       hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg"
                     >
-                      <div className="aspect-square overflow-hidden bg-gray-50">
+                      <div className="aspect-square overflow-hidden p-5">
                         {category.categoryImage ? (
                           <img
                             src={category.categoryImage}
-                            alt={category.categoryName}
+                            alt={category.category}
                             loading="lazy"
                             className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                           />
@@ -269,8 +264,8 @@ function Categories() {
                       </div>
 
                       <div className="p-3 sm:p-4">
-                        <h3 className="line-clamp-2 text-sm font-bold text-gray-900 transition group-hover:text-orange-600 sm:text-base">
-                          {category.categoryName}
+                        <h3 className="line-clamp-2 text-sm font-bold text-gray-900 transition sm:text-base">
+                          {category.category}
                         </h3>
 
                         <p className="mt-1 truncate text-xs text-gray-500">

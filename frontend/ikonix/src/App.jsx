@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import ScrollToTop from "./controllers/ScrollToTop.jsx";
 // ======================================================
 // ADMIN
 // ======================================================
@@ -39,6 +39,7 @@ import CategorieProducts from "./controllers/Categories/CategorieProducts.jsx";
 function App() {
   return (
     <BrowserRouter>
+     <ScrollToTop />
       <Routes>
         {/* ==================================================
             USER SECTION
@@ -62,9 +63,9 @@ function App() {
           <Route path="/categories/page" element={<Categories />} />
 
           <Route
-  path="/category-products/:categoryId"
-  element={<CategorieProducts />}
-/>
+            path="/category-products/:categoryId"
+            element={<CategorieProducts />}
+          />
         </Route>
 
         {/* ==================================================

@@ -1,13 +1,7 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import {
-  ArrowRight,
-  Search,
-  Package,
-  Loader2,
-} from "lucide-react";
+import { ArrowRight, Search, Package, Loader2, X } from "lucide-react";
 
 const API = "https://ikonix-backend.vercel.app/api";
 
@@ -17,21 +11,16 @@ const API = "https://ikonix-backend.vercel.app/api";
 
 const getCategoryName = (product) => {
   const value =
-    product.category ??
-    product.categoryName ??
-    product.CategoryName;
+    product.category ?? product.categoryName ?? product.CategoryName;
 
   if (typeof value === "string") {
     return value.trim();
   }
 
-  if (typeof value === "object" && value !== null) {
-    return (
-      value.category ??
-      value.categoryName ??
-      value.name ??
-      ""
-    ).toString().trim();
+  if (value && typeof value === "object") {
+    return (value.category ?? value.categoryName ?? value.name ?? "")
+      .toString()
+      .trim();
   }
 
   return "";
@@ -74,23 +63,13 @@ const getProductImage = (product) => {
       return firstImage;
     }
 
-    if (typeof firstImage === "object" && firstImage !== null) {
-      return (
-        firstImage.url ||
-        firstImage.secure_url ||
-        firstImage.image ||
-        ""
-      );
+    if (firstImage && typeof firstImage === "object") {
+      return firstImage.url ?? firstImage.secure_url ?? firstImage.image ?? "";
     }
   }
 
-  if (typeof image === "object" && image !== null) {
-    return (
-      image.url ||
-      image.secure_url ||
-      image.image ||
-      ""
-    );
+  if (image && typeof image === "object") {
+    return image.url ?? image.secure_url ?? image.image ?? "";
   }
 
   return "";
@@ -110,10 +89,7 @@ const getBrandName = (product) => {
   }
 
   return (
-    product.brand?.brandName ??
-    product.brand?.name ??
-    product.brandName ??
-    ""
+    product.brand?.brandName ?? product.brand?.name ?? product.brandName ?? ""
   );
 };
 
@@ -122,25 +98,24 @@ const getBrandName = (product) => {
 // ==========================================
 
 const getProductPrice = (product) =>
-  product.price ??
-  product.productPrice ??
-  product.salePrice ??
-  null;
+  product.price ?? product.productPrice ?? product.salePrice ?? null;
 
 // ==========================================
 // PRODUCT CARD
 // ==========================================
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, onSelect }) => {
   const image = getProductImage(product);
   const price = getProductPrice(product);
 
   return (
-    <Link
-      to={`/product/${product._id}`}
-      className="group overflow-hidden rounded-xl border border-gray-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-lg"
+    <button
+      type="button"
+      onClick={() => onSelect(product)}
+      className="group w-full overflow-hidden rounded-xl border border-gray-200 bg-white
+      text-left transition duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-lg"
     >
-      {/* Product Image */}
+      {/* Image */}
       <div className="aspect-square overflow-hidden bg-white">
         {image ? (
           <img
@@ -159,13 +134,13 @@ const ProductCard = ({ product }) => {
         )}
       </div>
 
-      {/* Product Details */}
+      {/* Details */}
       <div className="p-4">
         <p className="text-xs font-semibold uppercase text-orange-600">
           {getBrandName(product)}
         </p>
 
-        <h3 className="mt-2 line-clamp-2 min-h-10 text-sm font-bold text-gray-800 group-hover:text-orange-600">
+        <h3 className="mt-2 line-clamp-2 min-h-10 text-sm font-bold text-gray-800 ">
           {getProductName(product)}
         </h3>
 
@@ -183,7 +158,7 @@ const ProductCard = ({ product }) => {
           />
         </span>
       </div>
-    </Link>
+    </button>
   );
 };
 
@@ -194,11 +169,18 @@ const ProductCard = ({ product }) => {
 function CategorieProducts() {
   const { categoryId } = useParams();
 
+  // ==========================================
+  // STATES
+  // ==========================================
+
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
   const [error, setError] = useState("");
+
+  const [search, setSearch] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // ==========================================
   // FETCH CATEGORIES AND PRODUCTS
@@ -212,11 +194,10 @@ function CategorieProducts() {
         setLoading(true);
         setError("");
 
-        const [categoryResponse, productResponse] =
-          await Promise.all([
-            axios.get(`${API}/categories`),
-            axios.get(`${API}/products/getAllProducts`),
-          ]);
+        const [categoryResponse, productResponse] = await Promise.all([
+          axios.get(`${API}/categories`),
+          axios.get(`${API}/products/getAllProducts`),
+        ]);
 
         const categoryData = categoryResponse.data;
         const productData = productResponse.data;
@@ -233,17 +214,15 @@ function CategorieProducts() {
           setCategories(categoryList);
           setProducts(productList);
         }
-
       } catch (err) {
         console.error(
           "Category products error:",
-          err.response?.data || err.message
+          err.response?.data || err.message,
         );
 
         if (isMounted) {
           setError("Unable to load products. Please try again.");
         }
-
       } finally {
         if (isMounted) {
           setLoading(false);
@@ -263,15 +242,11 @@ function CategorieProducts() {
   // ==========================================
 
   const selectedCategory = useMemo(
-    () =>
-      categories.find(
-        (category) => category._id === categoryId
-      ),
-    [categories, categoryId]
+    () => categories.find((category) => category._id === categoryId),
+    [categories, categoryId],
   );
 
-  const selectedCategoryName =
-    selectedCategory?.category || "";
+  const selectedCategoryName = selectedCategory?.category || "";
 
   // ==========================================
   // FILTER PRODUCTS BY CATEGORY
@@ -281,12 +256,11 @@ function CategorieProducts() {
   const categoryProducts = useMemo(() => {
     if (!selectedCategoryName) return [];
 
-    return products.filter((product) => {
-      return (
+    return products.filter(
+      (product) =>
         getCategoryName(product).toLowerCase() ===
-        selectedCategoryName.toLowerCase()
-      );
-    });
+        selectedCategoryName.toLowerCase(),
+    );
   }, [products, selectedCategoryName]);
 
   // ==========================================
@@ -295,9 +269,7 @@ function CategorieProducts() {
 
   const filteredProducts = useMemo(() => {
     return categoryProducts.filter((product) =>
-      getProductName(product)
-        .toLowerCase()
-        .includes(search.toLowerCase())
+      getProductName(product).toLowerCase().includes(search.toLowerCase()),
     );
   }, [categoryProducts, search]);
 
@@ -310,10 +282,36 @@ function CategorieProducts() {
       .filter(
         (product) =>
           getCategoryName(product).toLowerCase() !==
-          selectedCategoryName.toLowerCase()
+          selectedCategoryName.toLowerCase(),
       )
       .slice(0, 8);
   }, [products, selectedCategoryName]);
+
+  // ==========================================
+  // POPUP ESCAPE AND SCROLL EFFECT
+  // IMPORTANT: KEEP BEFORE CONDITIONAL RETURNS
+  // ==========================================
+
+  useEffect(() => {
+    if (!selectedProduct) return;
+
+    const previousOverflow = document.body.style.overflow;
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setSelectedProduct(null);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [selectedProduct]);
 
   // ==========================================
   // LOADING
@@ -321,15 +319,10 @@ function CategorieProducts() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
-        <Loader2
-          className="animate-spin text-orange-500"
-          size={40}
-        />
+      <div className="flex min-h-screen flex-col items-center justify-center">
+        <Loader2 className="animate-spin text-orange-500" size={40} />
 
-        <p className="mt-3 text-gray-500">
-          Loading category products...
-        </p>
+        <p className="mt-3 text-gray-500">Loading category products...</p>
       </div>
     );
   }
@@ -340,7 +333,7 @@ function CategorieProducts() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="flex min-h-screen items-center justify-center px-4">
         <p className="text-red-500">{error}</p>
       </div>
     );
@@ -352,17 +345,12 @@ function CategorieProducts() {
 
   if (!selectedCategory) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className="flex min-h-screen flex-col items-center justify-center">
         <Package size={50} className="text-gray-300" />
 
-        <h2 className="mt-4 text-xl font-bold">
-          Category not found
-        </h2>
+        <h2 className="mt-4 text-xl font-bold">Category not found</h2>
 
-        <Link
-          to="/categories"
-          className="mt-4 text-orange-600 hover:underline"
-        >
+        <Link to="/categories" className="mt-4 text-orange-600 hover:underline">
           Back to Categories
         </Link>
       </div>
@@ -375,11 +363,9 @@ function CategorieProducts() {
 
   return (
     <main className="min-h-screen bg-white pt-20">
-
       {/* CATEGORY HEADER */}
       <section className="bg-orange-50 px-4 py-12">
         <div className="mx-auto max-w-7xl">
-
           <p className="text-sm font-bold uppercase tracking-widest text-orange-600">
             IKONIX / Categories
           </p>
@@ -395,15 +381,12 @@ function CategorieProducts() {
           <p className="mt-3 text-sm font-semibold text-orange-600">
             {categoryProducts.length} Products Available
           </p>
-
         </div>
       </section>
 
       {/* CATEGORY PRODUCTS */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-
           <div>
             <h2 className="text-2xl font-bold text-gray-900">
               {selectedCategoryName} Products
@@ -426,17 +409,12 @@ function CategorieProducts() {
               className="w-full text-sm outline-none"
             />
           </div>
-
         </div>
 
         {/* PRODUCT GRID */}
         {filteredProducts.length === 0 ? (
-
           <div className="py-20 text-center">
-            <Package
-              size={50}
-              className="mx-auto text-gray-300"
-            />
+            <Package size={50} className="mx-auto text-gray-300" />
 
             <h3 className="mt-4 text-lg font-semibold text-gray-800">
               No products found
@@ -446,64 +424,243 @@ function CategorieProducts() {
               No products are available in this category.
             </p>
           </div>
-
         ) : (
-
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-
             {filteredProducts.map((product) => (
               <ProductCard
                 key={product._id}
                 product={product}
+                onSelect={setSelectedProduct}
               />
             ))}
-
           </div>
-
         )}
-
       </section>
 
-      {/* RECOMMENDED PRODUCTS */}
-      {recommendedProducts.length > 0 && (
+    
+{/* RECOMMENDED PRODUCTS */}
+{recommendedProducts.length > 0 && (
+  <section className="border-t border-gray-100 bg-gray-50 px-4 py-10 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl">
 
-        <section className="border-t border-gray-100 bg-gray-50 px-4 py-14 sm:px-6 lg:px-8">
+      {/* SECTION HEADER */}
+      <div className="mb-6">
+        <p className="text-[11px] font-bold uppercase tracking-widest text-orange-600">
+          Discover More
+        </p>
 
-          <div className="mx-auto max-w-7xl">
+        <h2 className="mt-1 text-xl font-bold text-gray-900 sm:text-2xl">
+          You May Also Like
+        </h2>
 
-            <div className="mb-8">
+        <p className="mt-1 text-xs text-gray-500">
+          Explore more instruments and products from IKONIX.
+        </p>
+      </div>
 
-              <p className="text-xs font-bold uppercase tracking-widest text-orange-600">
-                Discover More
-              </p>
+      {/* PRODUCT GRID */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
 
-              <h2 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">
-                You May Also Like
-              </h2>
+        {recommendedProducts.map((product) => (
+          <button
+            key={product._id}
+            type="button"
+            onClick={() => setSelectedProduct(product)}
+            className="group min-w-0 overflow-hidden rounded-lg border border-gray-200 bg-white text-left transition-all duration-300 hover:-translate-y-1 hover:border-orange-300 hover:shadow-md"
+          >
 
-              <p className="mt-2 text-sm text-gray-500">
-                Explore more instruments and products from IKONIX.
-              </p>
-
-            </div>
-
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4">
-
-              {recommendedProducts.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  product={product}
+            {/* PRODUCT IMAGE */}
+            <div className="flex aspect-square items-center justify-center overflow-hidden bg-white p-3">
+              {getProductImage(product) ? (
+                <img
+                  src={getProductImage(product)}
+                  alt={getProductName(product)}
+                  loading="lazy"
+                  className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
                 />
-              ))}
-
+              ) : (
+                <Package size={35} className="text-gray-300" />
+              )}
             </div>
 
+            {/* PRODUCT DETAILS */}
+            <div className="p-3">
+
+              {/* BRAND */}
+              <p className="truncate text-[10px] font-bold uppercase tracking-wide text-orange-600 sm:text-xs">
+                {getBrandName(product)}
+              </p>
+
+              {/* PRODUCT NAME */}
+              <h3 className="mt-1 line-clamp-2 min-h-9 text-xs font-semibold leading-5 text-gray-800 sm:text-sm">
+                {getProductName(product)}
+              </h3>
+
+              {/* CATEGORY */}
+              <p className="mt-2 truncate text-[10px] text-gray-500 sm:text-xs">
+                Category:{" "}
+                <span className="font-medium text-gray-700">
+                  {getCategoryName(product) || "Other"}
+                </span>
+              </p>
+
+              {/* PRICE */}
+              {getProductPrice(product) !== null &&
+                getProductPrice(product) !== undefined && (
+                  <p className="mt-2 text-sm font-bold text-gray-900">
+                    ₹{Number(
+                      getProductPrice(product)
+                    ).toLocaleString("en-IN")}
+                  </p>
+                )}
+
+              {/* VIEW DETAILS */}
+              <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-orange-600">
+                View Details
+                <ArrowRight
+                  size={13}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </div>
+
+            </div>
+          </button>
+        ))}
+
+      </div>
+    </div>
+  </section>
+)}
+
+
+      {/* =====================================
+          PRODUCT GLASS POPUP
+      ===================================== */}
+
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 z-[9999] flex items-center justify-center overflow-y-auto bg-black/40 px-4 py-8 backdrop-blur-md"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Product details"
+            onClick={(e) => e.stopPropagation()}
+            className="relative my-auto w-full max-w-5xl overflow-hidden rounded-3xl border border-white/70 bg-white/97 shadow-2xl backdrop-blur-2xl"
+          >
+            {/* CLOSE BUTTON */}
+            <button
+              type="button"
+              onClick={() => setSelectedProduct(null)}
+              className="absolute right-4 top-4 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-md transition hover:bg-orange-500 hover:text-white"
+              aria-label="Close product details"
+            >
+              <X size={21} />
+            </button>
+
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              {/* PRODUCT IMAGE */}
+              <div className="flex min-h-[300px] items-center justify-center bg-white/90 p-8 md:min-h-[500px]">
+                {getProductImage(selectedProduct) ? (
+                  <img
+                    src={getProductImage(selectedProduct)}
+                    alt={getProductName(selectedProduct)}
+                    className="max-h-[420px] w-full object-contain"
+                  />
+                ) : (
+                  <Package size={100} className="text-gray-300" />
+                )}
+              </div>
+
+              {/* PRODUCT INFORMATION */}
+              <div className="flex flex-col justify-center p-7 sm:p-10">
+                <p className="mb-3 text-sm font-bold uppercase tracking-widest text-orange-600">
+                  {getBrandName(selectedProduct)}
+                </p>
+
+                <h2 className="text-2xl font-bold leading-tight text-gray-900 sm:text-3xl">
+                  {getProductName(selectedProduct)}
+                </h2>
+
+                <div className="my-6 h-px bg-gray-200" />
+
+                {/* CATEGORY */}
+                <div className="mb-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    Category
+                  </p>
+
+                  <p className="mt-1 text-base font-medium text-gray-800">
+                    {getCategoryName(selectedProduct) || "Not specified"}
+                  </p>
+                </div>
+
+                {/* PRICE */}
+                {getProductPrice(selectedProduct) !== null &&
+                  getProductPrice(selectedProduct) !== undefined && (
+                    <div className="mb-5">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                        Price
+                      </p>
+
+                      <p className="mt-1 text-2xl font-bold text-orange-600">
+                        ₹
+                        {Number(
+                          getProductPrice(selectedProduct),
+                        ).toLocaleString("en-IN")}
+                      </p>
+                    </div>
+                  )}
+
+                {/* DESCRIPTION */}
+                {selectedProduct.description && (
+                  <div className="mb-6">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                      Description
+                    </p>
+
+                    <p className="mt-2 text-sm leading-7 text-gray-600">
+                      {selectedProduct.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* ADDITIONAL INFORMATION */}
+                <div className="mb-7 rounded-xl border border-gray-100 bg-white/70 p-4">
+                  <p className="text-sm text-gray-600">
+                    Explore product specifications and more information about
+                    this instrument.
+                  </p>
+                </div>
+
+                {/* CLOSE BUTTON */}
+                <a
+                  href={`mailto:info@ikonixinstruments.com?subject=${encodeURIComponent(
+                    `Product Enquiry - ${getProductName(selectedProduct)}`,
+                  )}&body=${encodeURIComponent(
+                    `Hello IKONIX Team,
+
+I would like to enquire about the following product:
+
+Product: ${getProductName(selectedProduct)}
+Brand: ${getBrandName(selectedProduct)}
+
+Please share more details and pricing.
+
+Thank you.`,
+                  )}`}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#e85d04] px-6 py-3.5 font-semibold
+                   text-white shadow-lg shadow-orange-500/20 transition hover:bg-orange-700"
+                >
+                  <icon name="mail" size="lg" />
+                 <span className="text-2xl">📧</span> Send Product Enquiry
+                </a>
+              </div>
+            </div>
           </div>
-
-        </section>
-
+        </div>
       )}
-
     </main>
   );
 }
