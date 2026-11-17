@@ -3,8 +3,8 @@ import axios from "axios";
 import { Lock, Mail, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
-
+// const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+const API_BASE_URL = "http://localhost:5000/api";
 const AdminLogin = () => {
   const navigate = useNavigate();
 

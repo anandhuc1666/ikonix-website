@@ -18,6 +18,9 @@ function Brands() {
 
   const [loading, setLoading] = useState(true);
 
+
+  const API_BASE_URL ="http://localhost:5000/api";
+// const API_BASE_URL = "https://ikonix-backend.vercel.app/api"
   // ======================================================
   // FETCH BRANDS
   // ======================================================
@@ -27,7 +30,7 @@ function Brands() {
       setLoading(true);
 
       const response = await axios.get(
-        "https://ikonix-backend.vercel.app/api/brands/getAllBrands",
+        `${API_BASE_URL}/brands/getAllBrands`,
       );
 
       console.log("Brands Response:", response.data);

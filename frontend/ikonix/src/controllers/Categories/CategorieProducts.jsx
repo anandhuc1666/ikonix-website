@@ -3,8 +3,8 @@ import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { ArrowRight, Search, Package, Loader2, X } from "lucide-react";
 
-const API = "https://ikonix-backend.vercel.app/api";
-
+// const API = "https://ikonix-backend.vercel.app/api";
+const API = "http://localhost:5000/api";
 // ==========================================
 // GET CATEGORY NAME
 // ==========================================
@@ -135,9 +135,9 @@ const ProductCard = ({ product, onSelect }) => {
       </div>
 
       {/* Details */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col items-start justify-between gap-1">
         <p className="text-xs font-semibold uppercase text-orange-600">
-          {getBrandName(product)}
+          {getCategoryName(product)}
         </p>
 
         <h3 className="mt-2 line-clamp-2 min-h-10 text-sm font-bold text-gray-800 ">
@@ -150,12 +150,9 @@ const ProductCard = ({ product, onSelect }) => {
           </p>
         )}
 
-        <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-orange-600">
+        <span className="mt-3 w-full rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
+          transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs">
           View Details
-          <ArrowRight
-            size={15}
-            className="transition group-hover:translate-x-1"
-          />
         </span>
       </div>
     </button>
@@ -515,12 +512,9 @@ function CategorieProducts() {
                 )}
 
               {/* VIEW DETAILS */}
-              <div className="mt-3 flex items-center gap-1 text-xs font-semibold text-orange-600">
+              <div className="mt-3 w-full rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
+          transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs">
                 View Details
-                <ArrowRight
-                  size={13}
-                  className="transition-transform group-hover:translate-x-1"
-                />
               </div>
 
             </div>
@@ -628,9 +622,8 @@ function CategorieProducts() {
 
                 {/* ADDITIONAL INFORMATION */}
                 <div className="mb-7 rounded-xl border border-gray-100 bg-white/70 p-4">
-                  <p className="text-sm text-gray-600">
-                    Explore product specifications and more information about
-                    this instrument.
+                  <p className="text-sm text-gray-600 overflow-y-scroll max-h-32">
+                   {selectedProduct.productDescription}
                   </p>
                 </div>
 

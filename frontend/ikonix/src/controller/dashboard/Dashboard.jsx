@@ -9,6 +9,9 @@ function Dashboard() {
   const [brands, setBrands] = useState([]);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [advertisements, setAdvertisements] = useState([]);
+  const [adsLoading, setAdsLoading] = useState(false);
+  const [deletingAdId, setDeletingAdId] = useState(null);
 
   // YouTube video from database
   const [youtubeVideo, setYoutubeVideo] = useState(null);
@@ -22,6 +25,8 @@ function Dashboard() {
   // ==========================================
   // GET BRANDS + PRODUCTS
   // ==========================================
+ const API_BASE_URL ="http://localhost:5000/api";
+//  const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
 
   const datapassed = async () => {
     try {
@@ -32,7 +37,7 @@ function Dashboard() {
       // ------------------------------------------
 
       const response = await axios.get(
-        "https://ikonix-backend.vercel.app/api/brands/getAllBrands",
+        `${API_BASE_URL}/brands/getAllBrands`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -44,14 +49,14 @@ function Dashboard() {
       // GET ALL PRODUCTS
       // ------------------------------------------
 
-      const productsResponse = await axios.get(
-        "https://ikonix-backend.vercel.app/api/products/getAllProducts",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const productsResponse = await axios.get(
+  `${API_BASE_URL}/products/getAllProducts`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       console.log("Brand Response:", response.data);
       console.log("Products Response:", productsResponse.data);
@@ -80,7 +85,7 @@ function Dashboard() {
       const token = localStorage.getItem("adminToken");
 
       const response = await axios.get(
-        "https://ikonix-backend.vercel.app/api/Youtube/getYoutube",
+        `${API_BASE_URL}/Youtube/getYoutube`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -125,7 +130,7 @@ function Dashboard() {
       }
 
       const response = await axios.post(
-        "https://ikonix-backend.vercel.app/api/Youtube/createYoutube",
+        `${API_BASE_URL}/Youtube/createYoutube`,
         youtubepost,
         {
           headers: {
@@ -208,6 +213,81 @@ function Dashboard() {
   };
 
   // ==========================================
+  // GET ADVERTISEMENTS
+  // ==========================================
+
+  const fetchAdvertisements = async () => {
+    try {
+      setAdsLoading(true);
+      const token = localStorage.getItem("adminToken");
+
+      const response = await axios.get(
+        `${API_BASE_URL}/advertisements/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setAdvertisements(response.data.advertisements || []);
+    } catch (error) {
+      console.error(
+        "Advertisement fetch error:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setAdsLoading(false);
+    }
+  };
+
+  // ==========================================
+  // DELETE ADVERTISEMENT
+  // ==========================================
+
+  const deleteAdvertisement = async (adId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this advertisement?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setDeletingAdId(adId);
+      const token = localStorage.getItem("adminToken");
+
+      await axios.delete(
+        `${API_BASE_URL}/advertisements/delete/${adId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setAdvertisements((currentAds) =>
+        currentAds.filter((ad) => ad._id !== adId)
+      );
+
+      alert("Advertisement deleted successfully.");
+    } catch (error) {
+      console.error(
+        "Advertisement delete error:",
+        error.response?.data || error.message
+      );
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to delete advertisement. Please try again."
+      );
+    } finally {
+      setDeletingAdId(null);
+    }
+  };
+
+  // ==========================================
   // LOAD DASHBOARD
   // ==========================================
 
@@ -218,6 +298,7 @@ function Dashboard() {
       await Promise.all([
         datapassed(),
         fetchYoutubeVideo(),
+        fetchAdvertisements(),
       ]);
 
       setLoading(false);
@@ -307,6 +388,7 @@ const getCategoryPercentage = (count) => {
   // ==========================================
   // RETURN
   // ==========================================
+
 
   return (
     <div className="w-full min-h-screen font-Arimo p-3 flex flex-col gap-3 bg-[#F5F5F5]">
@@ -718,6 +800,103 @@ const getCategoryPercentage = (count) => {
 
         </div>
 
+      </div>
+
+      {/* ========================================
+          ADVERTISEMENT MANAGEMENT
+      ======================================== */}
+
+      <div className="w-full rounded-2xl bg-white p-5 shadow-sm">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800">
+              Advertisement Management
+            </h2>
+            <p className="mt-1 text-xs text-gray-400">
+              View and delete uploaded promotional banners
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <span className="rounded-full bg-orange-50 px-3 py-1 text-sm font-semibold text-[#e85d04]">
+              {advertisements.length} Ads
+            </span>
+            <button
+              type="button"
+              onClick={fetchAdvertisements}
+              disabled={adsLoading}
+              className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+            >
+              {adsLoading ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
+        </div>
+
+        {adsLoading && advertisements.length === 0 ? (
+          <p className="py-8 text-center text-sm text-gray-400">
+            Loading advertisements...
+          </p>
+        ) : advertisements.length === 0 ? (
+          <p className="py-8 text-center text-sm text-gray-400">
+            No advertisements uploaded yet.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {advertisements.map((ad) => (
+              <div
+                key={ad._id}
+                className="overflow-hidden rounded-xl border border-gray-200"
+              >
+                <img
+                  src={ad.image}
+                  alt={ad.title || "Advertisement"}
+                  className="h-44 w-full bg-gray-50 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = "/placeholder-product.png";
+                  }}
+                />
+
+                <div className="space-y-2 p-4">
+                  <div className="flex items-start justify-between gap-2">
+                    <h3 className="text-sm font-semibold text-gray-800">
+                      {ad.title || "Untitled advertisement"}
+                    </h3>
+                    <span
+                      className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-medium ${
+                        ad.isActive
+                          ? "bg-green-100 text-green-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {ad.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-gray-500">
+                    Brand: {ad.brand?.brandName || "Unknown"}
+                  </p>
+
+                  {ad.description && (
+                    <p className="line-clamp-2 text-xs text-gray-500">
+                      {ad.description}
+                    </p>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => deleteAdvertisement(ad._id)}
+                    disabled={deletingAdId === ad._id}
+                    className="mt-2 w-full rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {deletingAdId === ad._id
+                      ? "Deleting..."
+                      : "Delete Advertisement"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </div>

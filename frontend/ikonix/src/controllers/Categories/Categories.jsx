@@ -3,8 +3,8 @@ import axios from "axios";
 import { Search, ArrowRight, Layers } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// const API_BASE_URL = "http://localhost:5000/api";
-const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+const API_BASE_URL = "http://localhost:5000/api";
+// const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
 const sections = [
   "Featured Categories",
   "Main Categories",
@@ -245,7 +245,8 @@ const groupedCategories = useMemo(() => {
                       key={category._id}
                       type="button"
                       onClick={() => handleCategoryClick(category)}
-                      className="group overflow-hidden rounded-xl border border-gray-100 bg-white text-left transition duration-300
+                      className="group  overflow-hidden rounded-xl border flex flex-col border-gray-100 bg-white
+                       text-left transition duration-300
                        hover:-translate-y-1 hover:border-orange-200 hover:shadow-lg"
                     >
                       <div className="aspect-square overflow-hidden p-5">
@@ -262,22 +263,14 @@ const groupedCategories = useMemo(() => {
                           </div>
                         )}
                       </div>
-
-                      <div className="p-3 sm:p-4">
+                      <div className="p-3 sm:p-4 w-full flex flex-col items-center justify-center gap-2">
                         <h3 className="line-clamp-2 text-sm font-bold text-gray-900 transition sm:text-base">
                           {category.category}
                         </h3>
-
-                        <p className="mt-1 truncate text-xs text-gray-500">
-                          {category.brandName}
-                        </p>
-
-                        <span className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-orange-600">
+                        <span className="mt-3 w-full rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
+                         transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs">
                           Explore
-                          <ArrowRight
-                            size={14}
-                            className="transition group-hover:translate-x-1"
-                          />
+                          
                         </span>
                       </div>
                     </button>

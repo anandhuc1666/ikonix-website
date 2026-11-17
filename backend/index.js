@@ -8,6 +8,7 @@ import productRouter from "./src/routes/productRoutes.js";
 import YoutubeRoute from "./src/routes/youtubRoute.js";
 import adminRouter from "./src/routes/adminRoutes.js";
 import categoryRoute from "./src/routes/categoryRoutes.js";
+import advertisementRouter from "./src/routes/advertisementRouter.js";
 
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/api/products", productRouter);
 app.use("/api/Youtube", YoutubeRoute);
 app.use("/api/admin", adminRouter);
 app.use("/api/categories", categoryRoute);
+app.use("/api/advertisements", advertisementRouter);
 
 // Port
 const PORT = process.env.PORT || 3000;

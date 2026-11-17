@@ -4,16 +4,20 @@ import axios from "axios";
 
 import { Link, useParams } from "react-router-dom";
 
-import { ChevronRight, Download, MessageCircle, Package } from "lucide-react";
+import {
+  ChevronRight,
+  Download,
+  MessageCircle,
+  Package,
+  Mail,
+} from "lucide-react";
 import { FaWhatsapp } from "react-icons/fa";
-
-
 
 function ProductDetails() {
   const colorCode = "#e85d04";
 
-  // const API_BASE_URL = "http://localhost:5000/api";
-  const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+  const API_BASE_URL = "http://localhost:5000/api";
+  // const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
 
   const { id } = useParams();
 
@@ -49,7 +53,7 @@ function ProductDetails() {
   const fetchProduct = async () => {
     try {
       const response = await axios.get(
-        `https://ikonix-backend.vercel.app/api/products/getProductById/${id}`,
+        `http://localhost:5000/api/products/getProductById/${id}`,
       );
 
       const selectedProduct = response.data.product;
@@ -753,11 +757,34 @@ function ProductDetails() {
                     transition
                   "
                 >
-                  <FaWhatsapp size={16}  className="text-2xl"/>
+                  <FaWhatsapp size={16} className="text-2xl" />
                   Enquiry Now
                 </a>
 
-                {/* PDF */}
+             
+          <a
+  href={`mailto:info@ikonixinstruments.com?subject=${encodeURIComponent(
+    `Product Enquiry - ${product.productName || "Product"}`
+  )}&body=${encodeURIComponent(
+    `Hello IKONIX Team,
+
+I would like to enquire about the following product:
+
+Product: ${product.productName || ""}
+Model Number: ${product.modelNumber || ""}
+Brand: ${product.brandName || ""}
+Category: ${product.category || ""}
+
+Please share more details and pricing.
+
+Thank you.`
+  )}`}
+  className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e85d04] px-6 py-3 text-xs font-medium text-white transition hover:bg-orange-700"
+>
+  <Mail size={17} />
+  Send Product Enquiry
+</a>
+   {/* PDF */}
 
                 {product.pdfFile && (
                   <button
@@ -915,7 +942,6 @@ function ProductDetails() {
             {relatedProducts.map((item) => (
               <ProductCard
                 key={item._id}
-               
                 product={item}
                 isCurrentProduct={item._id === product._id}
               />

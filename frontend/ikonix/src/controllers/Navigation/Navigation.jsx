@@ -5,7 +5,7 @@ import { UserCircle, Menu, X, Search } from "lucide-react";
 import { IoIosMailUnread } from "react-icons/io";
 import { MdPhoneCallback } from "react-icons/md";
 import { FaWhatsapp } from "react-icons/fa";
-
+import Logo from "../../../public/IKONIX Logo.png";
 function Navigation() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -125,16 +125,15 @@ function Navigation() {
         <Link to="/" onClick={handleLogoClick}>
           <div
             className="
-            h-[100px] text-[#e85d04] bg-[#FAFAFA] flex flex-col p-1 items-center justify-center
+            h-[10px] text-[#e85d04] bg-[#FAFAFA] flex flex-col gap-2 mt-5 p-1 items-center justify-center
             "
           >
-            <h1 className="Playfair Display text-[55px] playfair  mt-7 flex items-center justify-center flex-col">
-              IKONIX{" "}
-              <span className="text-[12px] text-black font-extralight">
+            <img src={Logo} alt="IKONIX Logo" className="h-13"/>
+              <span className="text-[12px]  text-black font-extralight">
                 {" "}
-                <p>Calibration and Measurment's</p>
+                <p>TEST AND MEASUREMENTS</p>
               </span>
-            </h1>
+      
           </div>
         </Link>
 

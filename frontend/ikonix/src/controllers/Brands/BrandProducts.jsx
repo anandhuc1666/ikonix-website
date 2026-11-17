@@ -27,7 +27,8 @@ function BrandProducts() {
   // ======================================================
   // FETCH BRAND + PRODUCTS
   // ======================================================
-
+const API_BASE_URL ="http://localhost:5000/api";
+// const API_BASE_URL = "https://ikonix-backend.vercel.app/api"
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -35,11 +36,11 @@ function BrandProducts() {
 
         const [brandResponse, productResponse] = await Promise.all([
           axios.get(
-            "https://ikonix-backend.vercel.app/api/brands/getAllBrands",
+            `${API_BASE_URL}/brands/getAllBrands`,
           ),
 
           axios.get(
-            "https://ikonix-backend.vercel.app/api/products/getAllProducts",
+            `${API_BASE_URL}/products/getAllProducts`,
           ),
         ]);
 

@@ -10,7 +10,9 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Search, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { IoLogoWhatsapp } from "react-icons/io";
 
-const API = "https://ikonix-backend.vercel.app/api";
+// const API = "https://ikonix-backend.vercel.app/api";
+const API = "http://localhost:5000/api";
+
 const PAGE_SIZE = 12;
 const ORANGE = "#e85d04";
 const PRICE_RANGES = [
@@ -57,7 +59,8 @@ export default function ProductsPage() {
     sort: true,
   });
 
-
+  const [advertisements, setAdvertisements] = useState([]);
+  const [activeAdIndex, setActiveAdIndex] = useState(0);
   const loadMoreRef = useRef(null);
 
   const fetchProducts = useCallback(async () => {
@@ -73,6 +76,37 @@ export default function ProductsPage() {
       setLoading(false);
     }
   }, []);
+
+  const fetchAdvertisements = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/advertisements/active`);
+
+      setAdvertisements(response.data?.advertisements || []);
+    } catch (error) {
+      console.error(
+        "Advertisement fetch error:",
+        error.response?.data || error.message,
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAdvertisements();
+  }, [fetchAdvertisements]);
+
+
+useEffect(() => {
+  if (advertisements.length <= 1) return;
+
+  const interval = setInterval(() => {
+    setActiveAdIndex((current) =>
+      (current + 1) % advertisements.length
+    );
+  }, 4000);
+
+  return () => clearInterval(interval);
+}, [advertisements.length]);
+
 
   useEffect(() => {
     fetchProducts();
@@ -347,16 +381,13 @@ export default function ProductsPage() {
 
   return (
     <main className="mt-15 w-full bg-white sm:mt-25">
-
-
-          <a
-              href="https://wa.me/918111856618"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IoLogoWhatsapp className="sm:text-6xl text-5xl animate-bounce text-green-600 fixed bottom-10 right-10" />
-            </a>
-
+      <a
+        href="https://wa.me/918111856618"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <IoLogoWhatsapp className="sm:text-6xl text-5xl animate-bounce text-green-600 fixed bottom-10 right-10" />
+      </a>
 
       <div className="mx-auto max-w-[1400px] px-5 pt-5 sm:px-8 lg:px-10">
         <p className="text-[10px] uppercase text-gray-500 sm:text-xs">
@@ -367,7 +398,6 @@ export default function ProductsPage() {
           <span className="text-gray-800">Products</span>
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-
           <button
             type="button"
             onClick={() => setMobileFiltersOpen(true)}
@@ -377,6 +407,61 @@ export default function ProductsPage() {
           </button>
         </div>
       </div>
+
+
+      {/* =====================================
+    ADVERTISEMENT CAROUSEL
+===================================== */}
+
+{advertisements.length > 0 && (
+  <section className="w-full px-4 sm:px-8 lg:px-10 pt-5">
+
+    <div className="relative mx-auto max-w-[1400px] overflow-hidden rounded-xl">
+
+      {advertisements.map((ad, index) => (
+        <Link
+          key={ad._id}
+          to={`/brands/page/${encodeURIComponent(ad.brand?.brandName || "")}`}
+          className={`block w-full transition-opacity duration-700 ${
+            activeAdIndex === index
+              ? "opacity-100"
+              : "hidden opacity-0"
+          }`}
+        >
+          <img
+            src={ad.image}
+            alt={ad.title || "Advertisement"}
+            className="w-full h-[150px] sm:h-[230px] lg:h-[350px] object-cover"
+          />
+        </Link>
+      ))}
+
+      {/* SLIDER DOTS */}
+
+      {advertisements.length > 1 && (
+        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+
+          {advertisements.map((ad, index) => (
+            <button
+              key={ad._id}
+              type="button"
+              onClick={() => setActiveAdIndex(index)}
+              className={`h-2 rounded-full transition-all ${
+                activeAdIndex === index
+                  ? "w-6 bg-[#e85d04]"
+                  : "w-2 bg-white"
+              }`}
+              aria-label={`Show advertisement ${index + 1}`}
+            />
+          ))}
+
+        </div>
+      )}
+
+    </div>
+
+  </section>
+)}
 
       <div className="mx-auto max-w-[1400px] px-5 py-7 sm:px-8 lg:px-10">
         <div className="mb-5 flex items-center justify-between gap-3">
@@ -485,11 +570,11 @@ export default function ProductsPage() {
                           className={`mt-1 flex items-center gap-1 text-[10px] sm:text-xs ${Number(product.stock) > 0 ? "text-green-600" : "text-red-500"}`}
                         >
                           <span
-                            className={`h-1.5 w-1.5 rounded-full ${Number(product.stock) > 0 ? "bg-green-500" : "bg-red-500"}`}
+                            className={`h-1.5 w-1.5 rounded-full ${Number(product.stock) > 0 ? "bg-green-500" : "bg-orange-500"}`}
                           />
                           {Number(product.stock) > 0
                             ? "In Stock"
-                            : "Out of Stock"}
+                            : "Direct Enquiry"}
                         </p>
                         <div
                           className="mt-3 rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
