@@ -26,7 +26,7 @@ function Dashboard() {
   // GET BRANDS + PRODUCTS
   // ==========================================
   //  const API_BASE_URL ="http://localhost:5000/api";
-  const API_BASE_URL = "hhttps://ikonix-backend-sandy.vercel.app/api";
+  const API_BASE_URL = "https://ikonix-backend-sandy.vercel.app/api";
 
   const datapassed = async () => {
     try {
@@ -54,9 +54,6 @@ function Dashboard() {
           },
         },
       );
-
-      console.log("Brand Response:", response.data);
-      console.log("Products Response:", productsResponse.data);
 
       // ------------------------------------------
       // SET DATA

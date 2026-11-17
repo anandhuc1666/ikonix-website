@@ -53,7 +53,7 @@ function ProductDetails() {
   const fetchProduct = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/products/getProductById/${id}`,
+        `${API_BASE_URL}/products/getProductById/${id}`,
       );
 
       const selectedProduct = response.data.product;
@@ -79,7 +79,7 @@ function ProductDetails() {
   const fetchAllProducts = async () => {
     try {
       const response = await axios.get(
-        "https://ikonix-backend.vercel.app/api/products/getAllProducts",
+        `${API_BASE_URL}/products/getAllProducts`,
       );
 
       setAllProducts(response.data.products || []);
@@ -761,12 +761,11 @@ function ProductDetails() {
                   Enquiry Now
                 </a>
 
-             
-          <a
-  href={`mailto:info@ikonixinstruments.com?subject=${encodeURIComponent(
-    `Product Enquiry - ${product.productName || "Product"}`
-  )}&body=${encodeURIComponent(
-    `Hello IKONIX Team,
+                <a
+                  href={`mailto:info@ikonixinstruments.com?subject=${encodeURIComponent(
+                    `Product Enquiry - ${product.productName || "Product"}`,
+                  )}&body=${encodeURIComponent(
+                    `Hello IKONIX Team,
 
 I would like to enquire about the following product:
 
@@ -777,14 +776,14 @@ Category: ${product.category || ""}
 
 Please share more details and pricing.
 
-Thank you.`
-  )}`}
-  className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e85d04] px-6 py-3 text-xs font-medium text-white transition hover:bg-orange-700"
->
-  <Mail size={17} />
-  Send Product Enquiry
-</a>
-   {/* PDF */}
+Thank you.`,
+                  )}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-[#e85d04] px-6 py-3 text-xs font-medium text-white transition hover:bg-orange-700"
+                >
+                  <Mail size={17} />
+                  Send Product Enquiry
+                </a>
+                {/* PDF */}
 
                 {product.pdfFile && (
                   <button
