@@ -16,7 +16,7 @@ import {
 
 
 // Authentication
-const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+const API_BASE_URL = "https://ikonix-backend-sandy.vercel.app/api";
 // const API_BASE_URL = "http://localhost:5000/api";
 
 

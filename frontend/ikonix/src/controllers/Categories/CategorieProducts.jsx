@@ -3,8 +3,8 @@ import axios from "axios";
 import { useParams, Link } from "react-router-dom";
 import { ArrowRight, Search, Package, Loader2, X } from "lucide-react";
 
-// const API = "https://ikonix-backend.vercel.app/api";
-const API = "http://localhost:5000/api";
+const API = "https://ikonix-backend-sandy.vercel.app/api";
+// const API = "http://localhost:5000/api";
 // ==========================================
 // GET CATEGORY NAME
 // ==========================================

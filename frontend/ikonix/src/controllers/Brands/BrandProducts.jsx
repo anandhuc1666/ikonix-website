@@ -27,8 +27,8 @@ function BrandProducts() {
   // ======================================================
   // FETCH BRAND + PRODUCTS
   // ======================================================
-const API_BASE_URL ="http://localhost:5000/api";
-// const API_BASE_URL = "https://ikonix-backend.vercel.app/api"
+// const API_BASE_URL ="http://localhost:5000/api";
+const API_BASE_URL = "https://ikonix-backend-sandy.vercel.app/api"
   useEffect(() => {
     const fetchData = async () => {
       try {

@@ -3,8 +3,8 @@ import axios from "axios";
 import { Search, ArrowRight, Layers } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = "http://localhost:5000/api";
-// const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+// const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://ikonix-backend-sandy.vercel.app/api";
 const sections = [
   "Featured Categories",
   "Main Categories",
@@ -51,8 +51,8 @@ function Categories() {
   const filteredCategories = useMemo(() => {
     return categories.filter((category) => {
       const matchesSearch =
-  category.category?.toLowerCase().includes(search.toLowerCase()) ||
-  category.brandName?.toLowerCase().includes(search.toLowerCase());
+        category.category?.toLowerCase().includes(search.toLowerCase()) ||
+        category.brandName?.toLowerCase().includes(search.toLowerCase());
 
       const matchesSection =
         activeSection === "All" || category.section === activeSection;
@@ -62,23 +62,21 @@ function Categories() {
   }, [categories, search, activeSection]);
 
   // Group categories by section
- // Group categories by section and sort category names A-Z
-const groupedCategories = useMemo(() => {
-  return sections
-    .map((section) => ({
-      section,
-      items: filteredCategories
-        .filter((category) => category.section === section)
-        .sort((a, b) =>
-          (a.category || "").localeCompare(
-            b.category || "",
-            undefined,
-            { sensitivity: "base" }
-          )
-        ),
-    }))
-    .filter((group) => group.items.length > 0);
-}, [filteredCategories]);
+  // Group categories by section and sort category names A-Z
+  const groupedCategories = useMemo(() => {
+    return sections
+      .map((section) => ({
+        section,
+        items: filteredCategories
+          .filter((category) => category.section === section)
+          .sort((a, b) =>
+            (a.category || "").localeCompare(b.category || "", undefined, {
+              sensitivity: "base",
+            }),
+          ),
+      }))
+      .filter((group) => group.items.length > 0);
+  }, [filteredCategories]);
 
   const handleCategoryClick = (category) => {
     console.log("Selected category:", category);
@@ -112,8 +110,10 @@ const groupedCategories = useMemo(() => {
           </p>
 
           {/* Search */}
-          <div className="mx-auto mt-8 flex max-w-xl items-center gap-3 rounded-xl border
-           border-gray-200 bg-white px-4 py-3 shadow-sm focus-within:border-orange-500">
+          <div
+            className="mx-auto mt-8 flex max-w-xl items-center gap-3 rounded-xl border
+           border-gray-200 bg-white px-4 py-3 shadow-sm focus-within:border-orange-500"
+          >
             <Search size={20} className="shrink-0 text-gray-400" />
 
             <input
@@ -267,10 +267,11 @@ const groupedCategories = useMemo(() => {
                         <h3 className="line-clamp-2 text-sm font-bold text-gray-900 transition sm:text-base">
                           {category.category}
                         </h3>
-                        <span className="mt-3 w-full rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
-                         transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs">
+                        <span
+                          className="mt-3 w-full rounded-md border border-[#e85d04] px-2 py-2 text-center text-[10px] font-medium text-[#e85d04]
+                         transition group-hover:bg-[#e85d04] group-hover:text-white sm:text-xs"
+                        >
                           Explore
-                          
                         </span>
                       </div>
                     </button>

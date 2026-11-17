@@ -10,8 +10,8 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Search, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { IoLogoWhatsapp } from "react-icons/io";
 
-// const API = "https://ikonix-backend.vercel.app/api";
-const API = "http://localhost:5000/api";
+const API = "https://ikonix-backend-sandy.vercel.app/api";
+// const API = "http://localhost:5000/api";
 
 const PAGE_SIZE = 12;
 const ORANGE = "#e85d04";
@@ -94,19 +94,15 @@ export default function ProductsPage() {
     fetchAdvertisements();
   }, [fetchAdvertisements]);
 
+  useEffect(() => {
+    if (advertisements.length <= 1) return;
 
-useEffect(() => {
-  if (advertisements.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveAdIndex((current) => (current + 1) % advertisements.length);
+    }, 4000);
 
-  const interval = setInterval(() => {
-    setActiveAdIndex((current) =>
-      (current + 1) % advertisements.length
-    );
-  }, 4000);
-
-  return () => clearInterval(interval);
-}, [advertisements.length]);
-
+    return () => clearInterval(interval);
+  }, [advertisements.length]);
 
   useEffect(() => {
     fetchProducts();
@@ -408,60 +404,51 @@ useEffect(() => {
         </div>
       </div>
 
-
       {/* =====================================
     ADVERTISEMENT CAROUSEL
 ===================================== */}
 
-{advertisements.length > 0 && (
-  <section className="w-full px-4 sm:px-8 lg:px-10 pt-5">
+      {advertisements.length > 0 && (
+        <section className="w-full px-4 sm:px-8 lg:px-10 pt-5">
+          <div className="relative mx-auto max-w-[1400px] overflow-hidden rounded-xl">
+            {advertisements.map((ad, index) => (
+              <Link
+                key={ad._id}
+                to={`/brands/page/${encodeURIComponent(ad.brand?.brandName || "")}`}
+                className={`block w-full transition-opacity duration-700 ${
+                  activeAdIndex === index ? "opacity-100" : "hidden opacity-0"
+                }`}
+              >
+                <img
+                  src={ad.image}
+                  alt={ad.title || "Advertisement"}
+                  className="w-full h-[150px] sm:h-[230px] lg:h-[350px] object-cover"
+                />
+              </Link>
+            ))}
 
-    <div className="relative mx-auto max-w-[1400px] overflow-hidden rounded-xl">
+            {/* SLIDER DOTS */}
 
-      {advertisements.map((ad, index) => (
-        <Link
-          key={ad._id}
-          to={`/brands/page/${encodeURIComponent(ad.brand?.brandName || "")}`}
-          className={`block w-full transition-opacity duration-700 ${
-            activeAdIndex === index
-              ? "opacity-100"
-              : "hidden opacity-0"
-          }`}
-        >
-          <img
-            src={ad.image}
-            alt={ad.title || "Advertisement"}
-            className="w-full h-[150px] sm:h-[230px] lg:h-[350px] object-cover"
-          />
-        </Link>
-      ))}
-
-      {/* SLIDER DOTS */}
-
-      {advertisements.length > 1 && (
-        <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
-
-          {advertisements.map((ad, index) => (
-            <button
-              key={ad._id}
-              type="button"
-              onClick={() => setActiveAdIndex(index)}
-              className={`h-2 rounded-full transition-all ${
-                activeAdIndex === index
-                  ? "w-6 bg-[#e85d04]"
-                  : "w-2 bg-white"
-              }`}
-              aria-label={`Show advertisement ${index + 1}`}
-            />
-          ))}
-
-        </div>
+            {advertisements.length > 1 && (
+              <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2">
+                {advertisements.map((ad, index) => (
+                  <button
+                    key={ad._id}
+                    type="button"
+                    onClick={() => setActiveAdIndex(index)}
+                    className={`h-2 rounded-full transition-all ${
+                      activeAdIndex === index
+                        ? "w-6 bg-[#e85d04]"
+                        : "w-2 bg-white"
+                    }`}
+                    aria-label={`Show advertisement ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
       )}
-
-    </div>
-
-  </section>
-)}
 
       <div className="mx-auto max-w-[1400px] px-5 py-7 sm:px-8 lg:px-10">
         <div className="mb-5 flex items-center justify-between gap-3">

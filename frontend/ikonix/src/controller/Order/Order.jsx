@@ -1,17 +1,10 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {
-  ImagePlus,
-  Upload,
-  Trash2,
-  Megaphone,
-  Loader2,
-} from "lucide-react";
+import { ImagePlus, Upload, Trash2, Megaphone, Loader2 } from "lucide-react";
 
 function Order() {
-  // const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
-const API_BASE_URL ="http://localhost:5000/api";
+  const API_BASE_URL = "https://ikonix-backend-sandy.vercel.app/api";
+  // const API_BASE_URL ="http://localhost:5000/api";
   // Cloudinary configuration
   // Replace these with your existing Cloudinary values.
   const CLOUDINARY_CLOUD_NAME = "dkxluyjyz";
@@ -45,7 +38,7 @@ const API_BASE_URL ="http://localhost:5000/api";
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
 
         setBrands(response.data.brands || []);
@@ -93,7 +86,7 @@ const API_BASE_URL ="http://localhost:5000/api";
 
       const response = await axios.post(
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
-        data
+        data,
       );
 
       setFormData((prev) => ({
@@ -153,12 +146,10 @@ const API_BASE_URL ="http://localhost:5000/api";
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      alert(
-        response.data.message || "Advertisement created successfully!"
-      );
+      alert(response.data.message || "Advertisement created successfully!");
 
       setFormData({
         title: "",
@@ -176,13 +167,10 @@ const API_BASE_URL ="http://localhost:5000/api";
     } catch (error) {
       console.error(
         "Advertisement save error:",
-        error.response?.data || error.message
+        error.response?.data || error.message,
       );
 
-      alert(
-        error.response?.data?.message ||
-          "Failed to create advertisement."
-      );
+      alert(error.response?.data?.message || "Failed to create advertisement.");
     } finally {
       setLoading(false);
     }
@@ -190,7 +178,6 @@ const API_BASE_URL ="http://localhost:5000/api";
 
   return (
     <div className="min-h-screen w-full bg-[#F5F5F5] p-4 md:p-6">
-
       {/* HEADER */}
       <div className="mb-6 flex items-center gap-3 rounded-2xl bg-white p-5 shadow-sm">
         <div className="rounded-xl bg-orange-100 p-3">
@@ -211,10 +198,8 @@ const API_BASE_URL ="http://localhost:5000/api";
         onSubmit={handleSubmit}
         className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_380px]"
       >
-
         {/* FORM SECTION */}
         <div className="space-y-5 rounded-2xl bg-white p-5 shadow-sm md:p-7">
-
           <h2 className="border-b pb-4 text-lg font-semibold text-gray-800">
             Advertisement Details
           </h2>
@@ -286,10 +271,7 @@ const API_BASE_URL ="http://localhost:5000/api";
               className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center transition hover:border-[#e85d04]"
             >
               {uploading ? (
-                <Loader2
-                  size={35}
-                  className="animate-spin text-[#e85d04]"
-                />
+                <Loader2 size={35} className="animate-spin text-[#e85d04]" />
               ) : (
                 <ImagePlus size={35} className="text-[#e85d04]" />
               )}
@@ -420,7 +402,6 @@ const API_BASE_URL ="http://localhost:5000/api";
 
         {/* PREVIEW SECTION */}
         <div className="h-fit rounded-2xl bg-white p-5 shadow-sm">
-
           <h2 className="mb-4 text-lg font-semibold text-gray-800">
             Advertisement Preview
           </h2>
@@ -435,9 +416,7 @@ const API_BASE_URL ="http://localhost:5000/api";
             ) : (
               <div className="flex h-44 flex-col items-center justify-center bg-gray-50 text-gray-400">
                 <ImagePlus size={35} />
-                <p className="mt-2 text-xs">
-                  Banner preview will appear here
-                </p>
+                <p className="mt-2 text-xs">Banner preview will appear here</p>
               </div>
             )}
 
@@ -468,7 +447,6 @@ const API_BASE_URL ="http://localhost:5000/api";
             frontend carousel is connected.
           </p>
         </div>
-
       </form>
     </div>
   );

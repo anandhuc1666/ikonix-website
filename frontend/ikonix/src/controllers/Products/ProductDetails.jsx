@@ -16,8 +16,8 @@ import { FaWhatsapp } from "react-icons/fa";
 function ProductDetails() {
   const colorCode = "#e85d04";
 
-  const API_BASE_URL = "http://localhost:5000/api";
-  // const API_BASE_URL = "https://ikonix-backend.vercel.app/api";
+  // const API_BASE_URL = "http://localhost:5000/api";
+  const API_BASE_URL = "https://ikonix-backend-sandy.vercel.app/api";
 
   const { id } = useParams();
 
